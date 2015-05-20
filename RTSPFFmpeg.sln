@@ -3,18 +3,32 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTSPFFmpeg", "RTSPFFmpeg\RTSPFFmpeg.vcxproj", "{6BA0D4E5-20D2-4BFF-84D5-04AFB96B02F9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTSPFFmpeg", "RTSPFFmpeg\RtspClientFfmepg.vcxproj", "{2637B5C5-F5C1-473B-B701-4D9084A68361}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playH264ThreadDLL1", "PlayH264Dll\playH264ThreadDLL.vcxproj", "{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6BA0D4E5-20D2-4BFF-84D5-04AFB96B02F9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6BA0D4E5-20D2-4BFF-84D5-04AFB96B02F9}.Debug|Win32.Build.0 = Debug|Win32
-		{6BA0D4E5-20D2-4BFF-84D5-04AFB96B02F9}.Release|Win32.ActiveCfg = Release|Win32
-		{6BA0D4E5-20D2-4BFF-84D5-04AFB96B02F9}.Release|Win32.Build.0 = Release|Win32
+		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Debug|Win32.Build.0 = Debug|Win32
+		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Debug|x64.ActiveCfg = Debug|Win32
+		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Release|Win32.ActiveCfg = Release|Win32
+		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Release|Win32.Build.0 = Release|Win32
+		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Release|x64.ActiveCfg = Release|Win32
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|Win32.Build.0 = Debug|Win32
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|x64.ActiveCfg = Debug|x64
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|x64.Build.0 = Debug|x64
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|Win32.ActiveCfg = Release|Win32
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|Win32.Build.0 = Release|Win32
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|x64.ActiveCfg = Release|x64
+		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

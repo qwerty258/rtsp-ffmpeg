@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>playH264ThreadDLL1</ProjectName>
+    <ProjectName>PlayH264Dll</ProjectName>
     <ProjectGuid>{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}</ProjectGuid>
     <RootNamespace>playH264ThreadDLL</RootNamespace>
     <Keyword>Win32Proj</Keyword>
@@ -210,7 +210,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Gunit.cpp" />
-    <ClCompile Include="playH264ThreadDLL.cpp" />
+    <ClCompile Include="PlayH264Dll.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -219,21 +219,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="playH264ThreadDLL.def" />
-    <None Include="My Inspector Results\r000mi1\r000mi1.insp" />
-    <None Include="My Inspector Results\r001mi1\r001mi1.insp" />
-    <None Include="My Inspector Results\r002mi1\r002mi1.insp" />
-    <None Include="My Inspector Results\r003mi1\r003mi1.insp" />
-    <None Include="My Inspector Results\r004mi1\r004mi1.insp" />
-    <None Include="My Inspector Results\r005mi1\r005mi1.insp" />
-    <None Include="My Inspector Results\r006mi1\r006mi1.insp" />
-    <None Include="My Inspector Results\r007mi1\r007mi1.insp" />
-    <None Include="My Inspector Results\r008mi1\r008mi1.insp" />
-    <None Include="My Inspector Results\r009mi1\r009mi1.insp" />
-    <None Include="My Inspector Results\r010mi1\r010mi1.insp" />
-    <None Include="My Inspector Results\r011mi1\r011mi1.insp" />
-    <None Include="My Inspector Results\r012mi1\r012mi1.insp" />
-    <None Include="My Inspector Results\r013mi1\r013mi1.insp" />
+    <None Include="PlayH264Dll.def" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DecodeH264threadClass.h" />

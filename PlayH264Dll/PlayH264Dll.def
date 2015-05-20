@@ -1,4 +1,4 @@
-LIBRARY	"playH264ThreadDLL1"
+LIBRARY	"PlayH264Dll"
 EXPORTS
 GetIdlevideoINSTANCE @1
 InitVideoParam @2

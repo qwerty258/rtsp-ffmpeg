@@ -42,7 +42,7 @@
     <ClCompile Include="PlayClient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="rtspClientDLL.cpp">
+    <ClCompile Include="RTSPFFmpeg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,15 +100,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\RtspClientFfmepg.rc2">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="RtspClientFfmepg.def">
+    <None Include="RTSPFFmpeg.def">
       <Filter>源文件</Filter>
+    </None>
+    <None Include="res\RTSPFFmpeg.rc2">
+      <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="RtspClientFfmepg.rc">
+    <ResourceCompile Include="RTSPFFmpeg.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>

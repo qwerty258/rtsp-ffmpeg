@@ -13,18 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="My Inspector Results">
-      <UniqueIdentifier>{70621cb8-cebb-44d9-83a0-471084f1debf}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DecodeH264threadClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="playH264ThreadDLL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -39,53 +33,9 @@
     <ClCompile Include="va.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="playH264ThreadDLL.def">
+    <ClCompile Include="PlayH264Dll.cpp">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="My Inspector Results\r000mi1\r000mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r001mi1\r001mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r002mi1\r002mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r003mi1\r003mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r004mi1\r004mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r005mi1\r005mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r006mi1\r006mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r007mi1\r007mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r008mi1\r008mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r009mi1\r009mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r010mi1\r010mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r011mi1\r011mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r012mi1\r012mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
-    <None Include="My Inspector Results\r013mi1\r013mi1.insp">
-      <Filter>My Inspector Results</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DecodeH264threadClass.h">
@@ -109,5 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PlayH264Dll.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

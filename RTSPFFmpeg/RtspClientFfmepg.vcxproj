@@ -14,6 +14,7 @@
     <ProjectGuid>{2637B5C5-F5C1-473B-B701-4D9084A68361}</ProjectGuid>
     <RootNamespace>RtspClientFfmepg</RootNamespace>
     <Keyword>MFCDLLProj</Keyword>
+    <ProjectName>RTSPFFmpeg</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -104,7 +105,7 @@
     <ClCompile Include="PlayClient.cpp" />
     <ClCompile Include="Rtp.cpp" />
     <ClCompile Include="Rtsp.cpp" />
-    <ClCompile Include="rtspClientDLL.cpp" />
+    <ClCompile Include="RTSPFFmpeg.cpp" />
     <ClCompile Include="RtspRequest.cpp" />
     <ClCompile Include="Socket.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -134,11 +135,11 @@
     <ClInclude Include="VBufferT.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\RtspClientFfmepg.rc2" />
-    <None Include="RtspClientFfmepg.def" />
+    <None Include="res\RTSPFFmpeg.rc2" />
+    <None Include="RTSPFFmpeg.def" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="RtspClientFfmepg.rc" />
+    <ResourceCompile Include="RTSPFFmpeg.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
