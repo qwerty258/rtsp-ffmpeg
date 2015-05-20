@@ -170,7 +170,7 @@ void DxReleaseFrameBuf(struct AVCodecContext *avctx,
     {
         //picture_t *p_pic = (picture_t*)p_ff_pic->opaque;
         //decoder_UnlinkPicture( p_dec, p_pic );
-        av_log(NULL, AV_LOG_ERROR, "%d %s a error is rasied\e\n");
+        av_log(NULL, AV_LOG_ERROR, "%d %s a error is rasied\r\n");
     }
     for(i = 0; i < 4; i++)
         pic->data[i] = NULL;
