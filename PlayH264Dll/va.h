@@ -5,7 +5,7 @@
  *
  * Authors: Yuandong Tu <tuyuandong@gmail.com>
  *
- * This file is part of FFmpeg. 
+ * This file is part of FFmpeg.
  *****************************************************************************/
 
 #ifndef _TYD_VA_H
@@ -25,18 +25,19 @@ struct va_sys_t;
 typedef struct dxva_t dxva_t;
 typedef struct va_sys_t va_dxva2_t;
 
-struct dxva_t {
+struct dxva_t
+{
     va_dxva2_t *sys;
-	int		pix_fmt;
-    int  (*setup)(va_dxva2_t *va, void **hw,const AVCodecContext *avctx);
-    int  (*get)(va_dxva2_t *, AVFrame *frame);
-    void (*release)(va_dxva2_t *, AVFrame *frame);
-    int  (*extract)(va_dxva2_t *, AVFrame *src, AVFrame *dst,void *);
+    int		pix_fmt;
+    int(*setup)(va_dxva2_t *va, void **hw, const AVCodecContext *avctx);
+    int(*get)(va_dxva2_t *, AVFrame *frame);
+    void(*release)(va_dxva2_t *, AVFrame *frame);
+    int(*extract)(va_dxva2_t *, AVFrame *src, AVFrame *dst, void *);
 };
 
-static inline int dxva_Setup(dxva_t *va, void **hw,const AVCodecContext *avctx)
+static inline int dxva_Setup(dxva_t *va, void **hw, const AVCodecContext *avctx)
 {
-    return va->setup(va->sys,hw,avctx);
+    return va->setup(va->sys, hw, avctx);
 }
 static inline int dxva_Get(dxva_t *va, AVFrame *frame)
 {
@@ -47,9 +48,9 @@ static inline void dxva_Release(dxva_t *va, AVFrame *frame)
     va->release(va->sys, frame);
 }
 
-static inline int dxva_Extract(dxva_t *va, AVFrame *src, AVFrame *dst,void *p)
+static inline int dxva_Extract(dxva_t *va, AVFrame *src, AVFrame *dst, void *p)
 {
-    return va->extract(va->sys, src, dst,p);
+    return va->extract(va->sys, src, dst, p);
 }
 
 extern dxva_t *dxva_New(int);
@@ -59,15 +60,15 @@ extern void dxva_Delete(dxva_t *va);
 
 #if 1
 
-enum PixelFormat DxGetFormat(AVCodecContext *avctx,const enum PixelFormat *pi_fmt);
+enum PixelFormat DxGetFormat(AVCodecContext *avctx, const enum PixelFormat *pi_fmt);
 
-int DxGetFrameBuf( struct AVCodecContext *avctx,AVFrame *pic);
+int DxGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
 
-int	DxReGetFrameBuf( struct AVCodecContext *avctx, AVFrame *pic);
+int	DxReGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
 
-void DxReleaseFrameBuf( struct AVCodecContext *avctx,AVFrame *pic);
+void DxReleaseFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
 
-int DxPictureCopy(struct AVCodecContext *avctx,AVFrame *src, AVFrame* dst,void*);
+int DxPictureCopy(struct AVCodecContext *avctx, AVFrame *src, AVFrame* dst, void*);
 #endif
 
 

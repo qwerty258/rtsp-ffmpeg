@@ -2,6 +2,6 @@
 #include <fstream>
 
 
- void WriteLog(const char* filename,const char * str);
+void WriteLog(const char* filename, const char * str);
 
 

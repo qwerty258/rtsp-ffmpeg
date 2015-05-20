@@ -53,109 +53,121 @@ extern "C" {
 /****************STRUCTURES******************/
 #pragma pack(push, 1)
 
-typedef struct _DXVA2_ExtendedFormat {
+typedef struct _DXVA2_ExtendedFormat
+{
 #ifdef DXVA2API_USE_BITFIELDS
-  union {
-    struct {
-      UINT SampleFormat           : 8;
-      UINT VideoChromaSubsampling : 4;
-      UINT NominalRange           : 3;
-      UINT VideoTransferMatrix    : 3;
-      UINT VideoLighting          : 4;
-      UINT VideoPrimaries         : 5;
-      UINT VideoTransferFunction  : 5;
+    union
+    {
+        struct
+        {
+            UINT SampleFormat : 8;
+            UINT VideoChromaSubsampling : 4;
+            UINT NominalRange : 3;
+            UINT VideoTransferMatrix : 3;
+            UINT VideoLighting : 4;
+            UINT VideoPrimaries : 5;
+            UINT VideoTransferFunction : 5;
+        };
+        UINT value;
     };
-    UINT value;
-  };
 #else
     UINT value;
 #endif
 } DXVA2_ExtendedFormat;
 
-typedef struct _DXVA2_Frequency {
-  UINT Numerator;
-  UINT Denominator;
+typedef struct _DXVA2_Frequency
+{
+    UINT Numerator;
+    UINT Denominator;
 } DXVA2_Frequency;
 
-typedef struct _DXVA2_VideoDesc {
-  UINT SampleWidth;
-  UINT SampleHeight;
-  DXVA2_ExtendedFormat SampleFormat;
-  D3DFORMAT Format;
-  DXVA2_Frequency InputSampleFreq;
-  DXVA2_Frequency OutputFrameFreq;
-  UINT UABProtectionLevel;
-  UINT Reserved;
+typedef struct _DXVA2_VideoDesc
+{
+    UINT SampleWidth;
+    UINT SampleHeight;
+    DXVA2_ExtendedFormat SampleFormat;
+    D3DFORMAT Format;
+    DXVA2_Frequency InputSampleFreq;
+    DXVA2_Frequency OutputFrameFreq;
+    UINT UABProtectionLevel;
+    UINT Reserved;
 } DXVA2_VideoDesc;
 
-typedef struct _DXVA2_ConfigPictureDecode {
-  GUID guidConfigBitstreamEncryption;
-  GUID guidConfigMBcontrolEncryption;
-  GUID guidConfigResidDiffEncryption;
-  UINT ConfigBitstreamRaw;
-  UINT ConfigMBcontrolRasterOrder;
-  UINT ConfigResidDiffHost;
-  UINT ConfigSpatialResid8;
-  UINT ConfigResid8Subtraction;
-  UINT ConfigSpatialHost8or9Clipping;
-  UINT ConfigSpatialResidInterleaved;
-  UINT ConfigIntraResidUnsigned;
-  UINT ConfigResidDiffAccelerator;
-  UINT ConfigHostInverseScan;
-  UINT ConfigSpecificIDCT;
-  UINT Config4GroupedCoefs;
-  USHORT ConfigMinRenderTargetBuffCount;
-  USHORT ConfigDecoderSpecific;
+typedef struct _DXVA2_ConfigPictureDecode
+{
+    GUID guidConfigBitstreamEncryption;
+    GUID guidConfigMBcontrolEncryption;
+    GUID guidConfigResidDiffEncryption;
+    UINT ConfigBitstreamRaw;
+    UINT ConfigMBcontrolRasterOrder;
+    UINT ConfigResidDiffHost;
+    UINT ConfigSpatialResid8;
+    UINT ConfigResid8Subtraction;
+    UINT ConfigSpatialHost8or9Clipping;
+    UINT ConfigSpatialResidInterleaved;
+    UINT ConfigIntraResidUnsigned;
+    UINT ConfigResidDiffAccelerator;
+    UINT ConfigHostInverseScan;
+    UINT ConfigSpecificIDCT;
+    UINT Config4GroupedCoefs;
+    USHORT ConfigMinRenderTargetBuffCount;
+    USHORT ConfigDecoderSpecific;
 } DXVA2_ConfigPictureDecode;
 
-typedef struct _DXVA2_DecodeBufferDesc {
-  DWORD CompressedBufferType;
-  UINT BufferIndex;
-  UINT DataOffset;
-  UINT DataSize;
-  UINT FirstMBaddress;
-  UINT NumMBsInBuffer;
-  UINT Width;
-  UINT Height;
-  UINT Stride;
-  UINT ReservedBits;
-  PVOID pvPVPState;
+typedef struct _DXVA2_DecodeBufferDesc
+{
+    DWORD CompressedBufferType;
+    UINT BufferIndex;
+    UINT DataOffset;
+    UINT DataSize;
+    UINT FirstMBaddress;
+    UINT NumMBsInBuffer;
+    UINT Width;
+    UINT Height;
+    UINT Stride;
+    UINT ReservedBits;
+    PVOID pvPVPState;
 } DXVA2_DecodeBufferDesc;
 
-typedef struct _DXVA2_DecodeExtensionData {
-  UINT Function;
-  PVOID pPrivateInputData;
-  UINT PrivateInputDataSize;
-  PVOID pPrivateOutputData;
-  UINT PrivateOutputDataSize;
+typedef struct _DXVA2_DecodeExtensionData
+{
+    UINT Function;
+    PVOID pPrivateInputData;
+    UINT PrivateInputDataSize;
+    PVOID pPrivateOutputData;
+    UINT PrivateOutputDataSize;
 } DXVA2_DecodeExtensionData;
 
-typedef struct _DXVA2_DecodeExecuteParams {
-  UINT NumCompBuffers;
-  DXVA2_DecodeBufferDesc *pCompressedBuffers;
-  DXVA2_DecodeExtensionData *pExtensionData;
+typedef struct _DXVA2_DecodeExecuteParams
+{
+    UINT NumCompBuffers;
+    DXVA2_DecodeBufferDesc *pCompressedBuffers;
+    DXVA2_DecodeExtensionData *pExtensionData;
 } DXVA2_DecodeExecuteParams;
 
-enum {
-    DXVA2_VideoDecoderRenderTarget    = 0,
-    DXVA2_VideoProcessorRenderTarget    = 1,
-    DXVA2_VideoSoftwareRenderTarget    = 2
+enum
+{
+    DXVA2_VideoDecoderRenderTarget = 0,
+    DXVA2_VideoProcessorRenderTarget = 1,
+    DXVA2_VideoSoftwareRenderTarget = 2
 };
 
-enum {
-    DXVA2_PictureParametersBufferType    = 0,
-    DXVA2_MacroBlockControlBufferType    = 1,
-    DXVA2_ResidualDifferenceBufferType    = 2,
-    DXVA2_DeblockingControlBufferType    = 3,
-    DXVA2_InverseQuantizationMatrixBufferType    = 4,
-    DXVA2_SliceControlBufferType    = 5,
-    DXVA2_BitStreamDateBufferType    = 6,
-    DXVA2_MotionVectorBuffer    = 7,
-    DXVA2_FilmGrainBuffer    = 8
+enum
+{
+    DXVA2_PictureParametersBufferType = 0,
+    DXVA2_MacroBlockControlBufferType = 1,
+    DXVA2_ResidualDifferenceBufferType = 2,
+    DXVA2_DeblockingControlBufferType = 3,
+    DXVA2_InverseQuantizationMatrixBufferType = 4,
+    DXVA2_SliceControlBufferType = 5,
+    DXVA2_BitStreamDateBufferType = 6,
+    DXVA2_MotionVectorBuffer = 7,
+    DXVA2_FilmGrainBuffer = 8
 };
 
 /* DXVA MPEG-I/II and VC-1 */
-typedef struct _DXVA_PictureParameters {
+typedef struct _DXVA_PictureParameters
+{
     USHORT  wDecodedPictureIndex;
     USHORT  wDeblockedPictureIndex;
     USHORT  wForwardRefPictureIndex;
@@ -194,12 +206,14 @@ typedef struct _DXVA_PictureParameters {
     UCHAR   bBitstreamConcealmentMethod;
 } DXVA_PictureParameters, *LPDXVA_PictureParameters;
 
-typedef struct _DXVA_QmatrixData {
+typedef struct _DXVA_QmatrixData
+{
     BYTE    bNewQmatrix[4];
     WORD    Qmatrix[4][8 * 8];
 } DXVA_QmatrixData, *LPDXVA_QmatrixData;
 
-typedef struct _DXVA_SliceInfo {
+typedef struct _DXVA_SliceInfo
+{
     USHORT  wHorizontalPosition;
     USHORT  wVerticalPosition;
     UINT    dwSliceBitsInBuffer;
@@ -213,11 +227,14 @@ typedef struct _DXVA_SliceInfo {
 } DXVA_SliceInfo, *LPDXVA_SliceInfo;
 
 /* DXVA H264 */
-typedef struct {
+typedef struct
+{
 #ifdef DXVA2API_USE_BITFIELDS
-    union {
-        struct {
-            UCHAR Index7Bits     : 7;
+    union
+    {
+        struct
+        {
+            UCHAR Index7Bits : 7;
             UCHAR AssociatedFlag : 1;
         };
         UCHAR bPicEntry;
@@ -228,28 +245,31 @@ typedef struct {
 } DXVA_PicEntry_H264;
 
 
-typedef struct {
+typedef struct
+{
     USHORT wFrameWidthInMbsMinus1;
     USHORT wFrameHeightInMbsMinus1;
     DXVA_PicEntry_H264 CurrPic;
     UCHAR  num_ref_frames;
 #ifdef DXVA2API_USE_BITFIELDS
-    union {
-        struct {
-            USHORT field_pic_flag           : 1;
-            USHORT MbaffFrameFlag           : 1;
+    union
+    {
+        struct
+        {
+            USHORT field_pic_flag : 1;
+            USHORT MbaffFrameFlag : 1;
             USHORT residual_colour_transform_flag : 1;
-            USHORT sp_for_switch_flag       : 1;
-            USHORT chroma_format_idc        : 2;
-            USHORT RefPicFlag               : 1;
+            USHORT sp_for_switch_flag : 1;
+            USHORT chroma_format_idc : 2;
+            USHORT RefPicFlag : 1;
             USHORT constrained_intra_pred_flag : 1;
-            USHORT weighted_pred_flag       : 1;
-            USHORT weighted_bipred_idc      : 2;
-            USHORT MbsConsecutiveFlag       : 1;
-            USHORT frame_mbs_only_flag      : 1;
-            USHORT transform_8x8_mode_flag  : 1;
+            USHORT weighted_pred_flag : 1;
+            USHORT weighted_bipred_idc : 2;
+            USHORT MbsConsecutiveFlag : 1;
+            USHORT frame_mbs_only_flag : 1;
+            USHORT transform_8x8_mode_flag : 1;
             USHORT MinLumaBipredSize8x8Flag : 1;
-            USHORT IntraPicFlag             : 1;
+            USHORT IntraPicFlag : 1;
         };
         USHORT wBitFields;
     };
@@ -292,13 +312,15 @@ typedef struct {
     UCHAR   SliceGroupMap[810];
 } DXVA_PicParams_H264;
 
-typedef struct {
+typedef struct
+{
     UCHAR   bScalingLists4x4[6][16];
     UCHAR   bScalingLists8x8[2][64];
 } DXVA_Qmatrix_H264;
 
 
-typedef struct {
+typedef struct
+{
     UINT    BSNALunitDataLocation;
     UINT    SliceBytesInBuffer;
     USHORT  wBadSliceChopping;
@@ -325,13 +347,15 @@ typedef struct {
     USHORT  slice_id;
 } DXVA_Slice_H264_Long;
 
-typedef struct {
+typedef struct
+{
     UINT    BSNALunitDataLocation;
     UINT    SliceBytesInBuffer;
     USHORT  wBadSliceChopping;
 } DXVA_Slice_H264_Short;
 
-typedef struct {
+typedef struct
+{
     USHORT  wFrameWidthInMbsMinus1;
     USHORT  wFrameHeightInMbsMinus1;
     DXVA_PicEntry_H264 InPic;
@@ -364,23 +388,23 @@ typedef struct {
 extern "C" {
 #endif
 
-typedef struct IDirectXVideoDecoderService IDirectXVideoDecoderService;
+    typedef struct IDirectXVideoDecoderService IDirectXVideoDecoderService;
 
 #undef INTERFACE
 #define INTERFACE IDirectXVideoDecoder
-DECLARE_INTERFACE_(IDirectXVideoDecoder,IUnknown)
-{
-    STDMETHOD(QueryInterface)(THIS_ REFIID,PVOID*) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
-    STDMETHOD(GetVideoDecoderService)(THIS_ IDirectXVideoDecoderService**) PURE;
-    STDMETHOD(GetCreationParameters)(THIS_ GUID*,DXVA2_VideoDesc*,DXVA2_ConfigPictureDecode*,IDirect3DSurface9***,UINT*) PURE;
-    STDMETHOD(GetBuffer)(THIS_ UINT,void**,UINT*) PURE;
-    STDMETHOD(ReleaseBuffer)(THIS_ UINT) PURE;
-    STDMETHOD(BeginFrame)(THIS_ IDirect3DSurface9 *,void*) PURE;
-    STDMETHOD(EndFrame)(THIS_ HANDLE *) PURE;
-    STDMETHOD(Execute)(THIS_ const DXVA2_DecodeExecuteParams*) PURE;
-};
+    DECLARE_INTERFACE_(IDirectXVideoDecoder, IUnknown)
+    {
+        STDMETHOD(QueryInterface)(THIS_ REFIID, PVOID*) PURE;
+        STDMETHOD_(ULONG, AddRef)(THIS)PURE;
+        STDMETHOD_(ULONG, Release)(THIS)PURE;
+        STDMETHOD(GetVideoDecoderService)(THIS_ IDirectXVideoDecoderService**) PURE;
+        STDMETHOD(GetCreationParameters)(THIS_ GUID*, DXVA2_VideoDesc*, DXVA2_ConfigPictureDecode*, IDirect3DSurface9***, UINT*) PURE;
+        STDMETHOD(GetBuffer)(THIS_ UINT, void**, UINT*) PURE;
+        STDMETHOD(ReleaseBuffer)(THIS_ UINT) PURE;
+        STDMETHOD(BeginFrame)(THIS_ IDirect3DSurface9 *, void*) PURE;
+        STDMETHOD(EndFrame)(THIS_ HANDLE *) PURE;
+        STDMETHOD(Execute)(THIS_ const DXVA2_DecodeExecuteParams*) PURE;
+    };
 
 #if !defined(__cplusplus) || defined(CINTERFACE)
 #define IDirectXVideoDecoder_QueryInterface(p,a,b) (p)->lpVtbl->QueryInterface(p,a,b)
@@ -408,13 +432,13 @@ DECLARE_INTERFACE_(IDirectXVideoDecoder,IUnknown)
 
 #undef INTERFACE
 #define INTERFACE IDirectXVideoAccelerationService
-DECLARE_INTERFACE_(IDirectXVideoAccelerationService,IUnknown)
-{
-    STDMETHOD(QueryInterface)(THIS_ REFIID,PVOID*) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
-    STDMETHOD(CreateSurface)(THIS_ UINT,UINT,UINT,D3DFORMAT,D3DPOOL,DWORD,DWORD,IDirect3DSurface9**,HANDLE*) PURE;
-};
+    DECLARE_INTERFACE_(IDirectXVideoAccelerationService, IUnknown)
+    {
+        STDMETHOD(QueryInterface)(THIS_ REFIID, PVOID*) PURE;
+        STDMETHOD_(ULONG, AddRef)(THIS)PURE;
+        STDMETHOD_(ULONG, Release)(THIS)PURE;
+        STDMETHOD(CreateSurface)(THIS_ UINT, UINT, UINT, D3DFORMAT, D3DPOOL, DWORD, DWORD, IDirect3DSurface9**, HANDLE*) PURE;
+    };
 
 #if !defined(__cplusplus) || defined(CINTERFACE)
 #define IDirectXVideoAccelerationService_QueryInterface(p,a,b)    (p)->lpVtbl->QueryInterface(p,a,b)
@@ -430,17 +454,17 @@ DECLARE_INTERFACE_(IDirectXVideoAccelerationService,IUnknown)
 
 #undef INTERFACE
 #define INTERFACE IDirectXVideoDecoderService
-DECLARE_INTERFACE_(IDirectXVideoDecoderService,IDirectXVideoAccelerationService)
-{
-    STDMETHOD(QueryInterface)(THIS_ REFIID,PVOID*) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
-    STDMETHOD(CreateSurface)(THIS_ UINT,UINT,UINT,D3DFORMAT,D3DPOOL,DWORD,DWORD,IDirect3DSurface9**,HANDLE*) PURE;
-    STDMETHOD(GetDecoderDeviceGuids)(THIS_ UINT*,GUID **) PURE;
-    STDMETHOD(GetDecoderRenderTargets)(THIS_ REFGUID,UINT*,D3DFORMAT**) PURE;
-    STDMETHOD(GetDecoderConfigurations)(THIS_ REFGUID,const DXVA2_VideoDesc*,IUnknown*,UINT*,DXVA2_ConfigPictureDecode**) PURE;
-    STDMETHOD(CreateVideoDecoder)(THIS_ REFGUID,const DXVA2_VideoDesc*,DXVA2_ConfigPictureDecode*,IDirect3DSurface9**,UINT,IDirectXVideoDecoder**) PURE;
-};
+    DECLARE_INTERFACE_(IDirectXVideoDecoderService, IDirectXVideoAccelerationService)
+    {
+        STDMETHOD(QueryInterface)(THIS_ REFIID, PVOID*) PURE;
+        STDMETHOD_(ULONG, AddRef)(THIS)PURE;
+        STDMETHOD_(ULONG, Release)(THIS)PURE;
+        STDMETHOD(CreateSurface)(THIS_ UINT, UINT, UINT, D3DFORMAT, D3DPOOL, DWORD, DWORD, IDirect3DSurface9**, HANDLE*) PURE;
+        STDMETHOD(GetDecoderDeviceGuids)(THIS_ UINT*, GUID **) PURE;
+        STDMETHOD(GetDecoderRenderTargets)(THIS_ REFGUID, UINT*, D3DFORMAT**) PURE;
+        STDMETHOD(GetDecoderConfigurations)(THIS_ REFGUID, const DXVA2_VideoDesc*, IUnknown*, UINT*, DXVA2_ConfigPictureDecode**) PURE;
+        STDMETHOD(CreateVideoDecoder)(THIS_ REFGUID, const DXVA2_VideoDesc*, DXVA2_ConfigPictureDecode*, IDirect3DSurface9**, UINT, IDirectXVideoDecoder**) PURE;
+    };
 
 #if !defined(__cplusplus) || defined(CINTERFACE)
 #define IDirectXVideoDecoderService_QueryInterface(p,a,b) (p)->lpVtbl->QueryInterface(p,a,b)
@@ -464,19 +488,19 @@ DECLARE_INTERFACE_(IDirectXVideoDecoderService,IDirectXVideoAccelerationService)
 
 #undef INTERFACE
 #define INTERFACE IDirect3DDeviceManager9
-DECLARE_INTERFACE_(IDirect3DDeviceManager9,IUnknown)
-{
-    STDMETHOD(QueryInterface)(THIS_ REFIID,PVOID*) PURE;
-    STDMETHOD_(ULONG,AddRef)(THIS) PURE;
-    STDMETHOD_(ULONG,Release)(THIS) PURE;
-    STDMETHOD(ResetDevice)(THIS_ IDirect3DDevice9*,UINT) PURE;
-    STDMETHOD(OpenDeviceHandle)(THIS_ HANDLE*) PURE;
-    STDMETHOD(CloseDeviceHandle)( THIS_ HANDLE) PURE;
-    STDMETHOD(TestDevice)( THIS_ HANDLE) PURE;
-    STDMETHOD(LockDevice)( THIS_ HANDLE,IDirect3DDevice9**,BOOL) PURE;
-    STDMETHOD(UnlockDevice)( THIS_ HANDLE,BOOL) PURE;
-    STDMETHOD(GetVideoService)( THIS_ HANDLE,REFIID,void**) PURE;
-};
+    DECLARE_INTERFACE_(IDirect3DDeviceManager9, IUnknown)
+    {
+        STDMETHOD(QueryInterface)(THIS_ REFIID, PVOID*) PURE;
+        STDMETHOD_(ULONG, AddRef)(THIS)PURE;
+        STDMETHOD_(ULONG, Release)(THIS)PURE;
+        STDMETHOD(ResetDevice)(THIS_ IDirect3DDevice9*, UINT) PURE;
+        STDMETHOD(OpenDeviceHandle)(THIS_ HANDLE*) PURE;
+        STDMETHOD(CloseDeviceHandle)(THIS_ HANDLE) PURE;
+        STDMETHOD(TestDevice)(THIS_ HANDLE) PURE;
+        STDMETHOD(LockDevice)(THIS_ HANDLE, IDirect3DDevice9**, BOOL) PURE;
+        STDMETHOD(UnlockDevice)(THIS_ HANDLE, BOOL) PURE;
+        STDMETHOD(GetVideoService)(THIS_ HANDLE, REFIID, void**) PURE;
+    };
 
 #if !defined(__cplusplus) || defined(CINTERFACE)
 #define IDirect3DDeviceManager9_QueryInterface(p,a,b) (p)->lpVtbl->QueryInterface(p,a,b)
