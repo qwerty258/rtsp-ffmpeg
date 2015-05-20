@@ -11,11 +11,11 @@
 extern "C" {
 #endif // __cplusplus
 
-    RTSPFFMPEG_API int GetRtspINSTANCE();
+    RTSPFFMPEG_API int GetRtspINSTANCE(void);
     RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URL, char* UserName, char* PWD);
     RTSPFFMPEG_API int PlayRtsp(int INSTANCE, HWND hd);
     RTSPFFMPEG_API int StopRtsp(int INSTANCE);
-    RTSPFFMPEG_API int InitRtspDLL();
+    RTSPFFMPEG_API int InitRtspDLL(void);
     RTSPFFMPEG_API int FreeRtspDLL(int INSTANCE);
     RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1);
     RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1);
