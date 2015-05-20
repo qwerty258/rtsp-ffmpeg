@@ -6,13 +6,15 @@
 #include <cstdint>
 #include <concurrent_queue.h>
 
-extern "C"
-{
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <libavcodec\avcodec.h>
 #include <libavformat\avformat.h>
 #include <libswscale\swscale.h>
+#ifdef __cplusplus
 }
-
+#endif
 
 #pragma comment(lib,"Ws2_32.lib")  
 #pragma comment(lib,"avcodec.lib")
