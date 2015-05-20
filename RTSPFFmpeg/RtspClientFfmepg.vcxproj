@@ -116,7 +116,6 @@
   <ItemGroup>
     <ClInclude Include="Decode.h" />
     <ClInclude Include="PlayClient.h" />
-    <ClInclude Include="cmd.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Rtp.h" />
     <ClInclude Include="Rtsp.h" />

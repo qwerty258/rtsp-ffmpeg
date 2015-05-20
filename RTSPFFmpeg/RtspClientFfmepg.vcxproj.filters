@@ -47,9 +47,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="cmd.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Rtp.h">
       <Filter>头文件</Filter>
     </ClInclude>
