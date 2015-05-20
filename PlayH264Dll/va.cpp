@@ -19,7 +19,7 @@ enum PixelFormat DxGetFormat(AVCodecContext *avctx,
     char a[15] = "c:\\";
     itoa((int)gPlayWnd,a+3,10);
     FILE *fp = fopen(a,"a+");
-    fputs("½øÈëDXGetFormat£º\n",fp);
+    fputs("è¿›å…¥DXGetFormatï¼š\n",fp);
     fclose(fp);
 #endif 
 
@@ -49,7 +49,7 @@ enum PixelFormat DxGetFormat(AVCodecContext *avctx,
                 av_log(NULL, AV_LOG_ERROR, "acceleration setup failure");
 #ifdef log_va
                 fp = fopen(a,"a+");
-                fputs("ÍË³öDXGetFormat£ºacceleration setup failure\n",fp);
+                fputs("é€€å‡ºDXGetFormatï¼šacceleration setup failure\n",fp);
                 char b[10];
 
                 fclose(fp);
@@ -70,7 +70,7 @@ enum PixelFormat DxGetFormat(AVCodecContext *avctx,
             avctx->draw_horiz_band = NULL;
 #ifdef log_va
             fp = fopen(a,"a+");
-            fputs("ÍË³öDXGetFormat£º³É¹¦\n",fp);
+            fputs("é€€å‡ºDXGetFormatï¼šæˆåŠŸ\n",fp);
             fclose(fp);
 #endif 
             return pi_fmt[i];
@@ -81,13 +81,13 @@ enum PixelFormat DxGetFormat(AVCodecContext *avctx,
         dxva_Delete(p_va);
 #ifdef log_va
         fp = fopen(a,"a+");
-        fputs("ÍË³öDXGetFormat£º²»Ö§³ÖÓ²¼þ¼ÓËÙ\n",fp);
+        fputs("é€€å‡ºDXGetFormatï¼šä¸æ”¯æŒç¡¬ä»¶åŠ é€Ÿ\n",fp);
         fclose(fp);
 #endif 
     }
 #ifdef log_va
     fp = fopen(a,"a+");
-    fputs("ÍË³öDXGetFormat£ºvaÉêÇëÊ§°Ü\n",fp);
+    fputs("é€€å‡ºDXGetFormatï¼švaç”³è¯·å¤±è´¥\n",fp);
     fclose(fp);
 #endif 
     avctx->opaque = NULL;

@@ -39,19 +39,19 @@ const int ListCount = 100;
 typedef int (WINAPI *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, int bufsize, int buftype);//define my CallBack Func
 
 //////////////////////////////////////////////////////////////////////////
-//°ëÍ¸Ã÷Ìî³ä¶à±ßĞÎ»Øµ÷º¯Êı£¨bmpÍ¼Æ¬Buffer£¬bmpÍ¼Æ¬wid£¬bmpÍ¼Æ¬high£©
+//åŠé€æ˜å¡«å……å¤šè¾¹å½¢å›è°ƒå‡½æ•°ï¼ˆbmpå›¾ç‰‡Bufferï¼Œbmpå›¾ç‰‡widï¼Œbmpå›¾ç‰‡highï¼‰
 typedef int(WINAPI *TDrawRectCallBack)(char*, int, int);
 //////////////////////////////////////////////////////////////////////////
 typedef int (WINAPI *TDrawLineCallBack)(int, HDC);//define my CallBack Func
 //////////////////////////////////////////////////////////////////////////
-//TBmpCallBack²ÎÊıËµÃ÷£ºchar*£¨BMPbufer£©,int(buferSize),bmpWidth,bmpHight,int(Ö¡ºÅ),int(Í¨µÀºÅ),int(Êı¾İÀàĞÍ),HWND,¾ä±ú
+//TBmpCallBackå‚æ•°è¯´æ˜ï¼šchar*ï¼ˆBMPbuferï¼‰,int(buferSize),bmpWidth,bmpHight,int(å¸§å·),int(é€šé“å·),int(æ•°æ®ç±»å‹),HWND,å¥æŸ„
 typedef int (WINAPI *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
 //////////////////////////////////////////////////////////////////////////
-//TYUVCallBack²ÎÊıËµÃ÷: yuvbufferÁ÷£¬Í¼Æ¬³¤ºÍ¿í
+//TYUVCallBackå‚æ•°è¯´æ˜: yuvbufferæµï¼Œå›¾ç‰‡é•¿å’Œå®½
 typedef int (WINAPI *TYUVCallBack)(unsigned char *buffer, int width, int length, void *);
 
 typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);
-//ÊÕµ½ÍøÂçÊı¾İ¿é
+//æ”¶åˆ°ç½‘ç»œæ•°æ®å—
 typedef struct
 {
     int  fileSize;
@@ -62,16 +62,16 @@ typedef struct
 
 typedef struct
 {
-    int width;             //Êµ¼Ê¿í¶È
-    int height;            //Êµ¼Ê¸ß¶È
-    int playWidth;         //ÏÔÊ¾¿í¶È
-    int playHeight;        //ÏÔÊ¾¸ß¶È
-    int fps;               //²¥·ÅÆµÂÊ
-    HWND playHandle;       //²¥·Å¾ä±ú
-    int stopPlay;          //²¥·Å¿ØÖÆ
+    int width;             //å®é™…å®½åº¦
+    int height;            //å®é™…é«˜åº¦
+    int playWidth;         //æ˜¾ç¤ºå®½åº¦
+    int playHeight;        //æ˜¾ç¤ºé«˜åº¦
+    int fps;               //æ’­æ”¾é¢‘ç‡
+    HWND playHandle;       //æ’­æ”¾å¥æŸ„
+    int stopPlay;          //æ’­æ”¾æ§åˆ¶
     int playChannle;
-    bool isDecode;        //ÊÇ·ñ½âÂë
-    //int  VideoCode;       //ÂëÁ÷ÀàĞÍ  0£¬H264  1 mpeg4 
+    bool isDecode;        //æ˜¯å¦è§£ç 
+    //int  VideoCode;       //ç æµç±»å‹  0ï¼ŒH264  1 mpeg4 
 }myparamInput;
 
 typedef struct
@@ -134,7 +134,7 @@ public:
     unsigned long int getW() { return writeNetBufIndex; }
     unsigned long int getR() { return readNetBufIndex; }
 public:
-    int type;//½âÂëÀàĞÍ 1,h264,2,mpeg,3,FLV
+    int type;//è§£ç ç±»å‹ 1,h264,2,mpeg,3,FLV
     void *userBuffer;
     bool nHWAcceleration;
 };

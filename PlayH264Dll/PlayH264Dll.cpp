@@ -15,7 +15,7 @@ struct DecodeList
 {
     playH264VideoClass *pt;
     CRITICAL_SECTION cs;
-    int idle; //1 ÆôÓÃ 0 Í£ÓÃ 2 Ëø×¡
+    int idle; //1 å¯ç”¨ 0 åœç”¨ 2 é”ä½
 };
 
 AVCodecContext* m_pCodecContext[MACPL];
@@ -41,7 +41,7 @@ int checkINSTANCE(int INSTANCE)
         return -1;
     }
 }
-extern CLASSDLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//²»ÓÃ
+extern CLASSDLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//ä¸ç”¨
 {
     try
     {
@@ -73,8 +73,8 @@ extern CLASSDLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
     //   playH264VideoClass *DC=(playH264VideoClass *)deList[num].pt;
     do
     {
-        uint8_t *pout;//×°ÍêÕûµÄÒ»¸öÖ¡ÓÃ£¬Èç¹ûÃ»Íê¾ÍÊÇNULL
-        int pout_len;//×°ÍêÕûÖ¡µÄ³¤¶È£¬Èç¹ûÃ»Íê¾ÍÊÇNULL
+        uint8_t *pout;//è£…å®Œæ•´çš„ä¸€ä¸ªå¸§ç”¨ï¼Œå¦‚æœæ²¡å®Œå°±æ˜¯NULL
+        int pout_len;//è£…å®Œæ•´å¸§çš„é•¿åº¦ï¼Œå¦‚æœæ²¡å®Œå°±æ˜¯NULL
         int len = av_parser_parse2(m_parser[num], m_pCodecContext[num], &pout, &pout_len,
             pInBuffer + pos, size - pos, pts, dts, AV_NOPTS_VALUE);
 
@@ -116,7 +116,7 @@ extern CLASSDLL_API int initVideoDLL()
     //SDL_putenv(sdl_var);
     /*FILE *fp;
     fp = fopen("c:\\20150205.txt","a+");
-    fputs("³õÊ¼»¯³É¹¦",fp);
+    fputs("åˆå§‹åŒ–æˆåŠŸ",fp);
     fclose(fp);*/
 
     if(debug == 1)
@@ -133,7 +133,7 @@ extern CLASSDLL_API int initVideoDLL()
     //         m_pFrame[i]=avcodec_alloc_frame();
     //         m_parser[i]=av_parser_init(CODEC_ID_H264);
     //     }
-    //en»¹ÊÇde?
+    //enè¿˜æ˜¯de?
     //for(int i=0;i<MACPL;i++)
     //  {
     //     AVCodec *codec;   
@@ -264,7 +264,7 @@ extern __declspec(dllexport) int freeVideos(int INSTANCE)
         int ru = checkINSTANCE(INSTANCE);
         if(ru < 0) return -1;
         if(deList[INSTANCE].idle != 1) return -1;
-        deList[INSTANCE].idle = 2;//±£Ö¤Ëø×¡
+        deList[INSTANCE].idle = 2;//ä¿è¯é”ä½
         playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
         DC->freeParam();
         if(debug == 1)
@@ -289,7 +289,7 @@ extern __declspec(dllexport) int freeVideos(int INSTANCE)
         if(debug == 1)
                   WriteLog("C:\\1.log", "freeVideos4");
 
-        deList[INSTANCE].idle = 0;// ÊÍ·ÅËø
+        deList[INSTANCE].idle = 0;// é‡Šæ”¾é”
 
         //FILE *fp;
         //fp = fopen("c:\\free.txt","a+");
@@ -357,7 +357,7 @@ extern __declspec(dllexport) void exitdll()
     }
 }
 
-extern CLASSDLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//²»ÓÃ
+extern CLASSDLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//ä¸ç”¨
 {
 
     //FILE *fp;
@@ -378,7 +378,7 @@ extern CLASSDLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)/
         return -1;
     }
 }
-extern CLASSDLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//²»ÓÃ
+extern CLASSDLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//ä¸ç”¨
 {
     try
     {
@@ -401,7 +401,7 @@ extern CLASSDLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//²»ÓÃ
     }
 
 }
-extern CLASSDLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//²»ÓÃ
+extern CLASSDLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//ä¸ç”¨
 {
     try
     {
@@ -470,8 +470,7 @@ extern CLASSDLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
         return -1;
     }
 }
-//Ö§³ÖÓ²¼ş¼ÓËÙ£¬³õÊ¼Ä¬ÈÏ²»Ó²¼ş¼ÓËÙ£¨Ö§³Öh264Êı¾İºÍYUVÊı¾İ»Øµ÷£¬µ«ÊÇ²¥·ÅĞÔÄÜ¸ß£©£¬
-//²»Ê¹ÓÃÓ²¼ş¼ÓËÙÖ§³ÖËùÓĞÒÑÖª»Øµ÷
+//æ”¯æŒç¡¬ä»¶åŠ é€Ÿï¼Œåˆå§‹é»˜è®¤ä¸ç¡¬ä»¶åŠ é€Ÿï¼ˆæ”¯æŒh264æ•°æ®å’ŒYUVæ•°æ®å›è°ƒï¼Œä½†æ˜¯æ’­æ”¾æ€§èƒ½é«˜ï¼‰ï¼Œä¸ä½¿ç”¨ç¡¬ä»¶åŠ é€Ÿæ”¯æŒæ‰€æœ‰å·²çŸ¥å›è°ƒ
 extern CLASSDLL_API int RevoHWAcceleration(int instance)
 {
     try
