@@ -14,118 +14,118 @@
 class VBufferT : public VBuffer, public TLock
 {
 public:
-	VBufferT()
-	{
-	};
+    VBufferT()
+    {
+    };
 
-	virtual ~VBufferT()
-	{
-	};
+    virtual ~VBufferT()
+    {
+    };
 
-	virtual BOOL AllocateBuffer(UINT nBufferCount = 100, UINT nBufferSize = 1024*1024)
-	{
-		ATLock lock(this);
+    virtual BOOL AllocateBuffer(UINT nBufferCount = 100, UINT nBufferSize = 1024 * 1024)
+    {
+        ATLock lock(this);
 
-		return VBuffer::AllocateBuffer(nBufferCount, nBufferSize);
-	};
+        return VBuffer::AllocateBuffer(nBufferCount, nBufferSize);
+    };
 
-	virtual void FreeBuffer()
-	{
-		ATLock lock(this);
+    virtual void FreeBuffer()
+    {
+        ATLock lock(this);
 
-		VBuffer::FreeBuffer();
-	};
+        VBuffer::FreeBuffer();
+    };
 
-	virtual void ResetBuffer()
-	{
-		ATLock lock(this);
+    virtual void ResetBuffer()
+    {
+        ATLock lock(this);
 
-		VBuffer::ResetBuffer();
-	};
+        VBuffer::ResetBuffer();
+    };
 
-	virtual BOOL AddEmptyBuffer(Buffer* pEmptyBuffer)
-	{
-		ATLock lock(this);
+    virtual BOOL AddEmptyBuffer(Buffer* pEmptyBuffer)
+    {
+        ATLock lock(this);
 
-		return VBuffer::AddEmptyBuffer(pEmptyBuffer);
-	};
+        return VBuffer::AddEmptyBuffer(pEmptyBuffer);
+    };
 
-	virtual BOOL AddFullBuffer(Buffer* pFullBuffer)
-	{
-		ATLock lock(this);
+    virtual BOOL AddFullBuffer(Buffer* pFullBuffer)
+    {
+        ATLock lock(this);
 
-		return VBuffer::AddFullBuffer(pFullBuffer);
-	};
+        return VBuffer::AddFullBuffer(pFullBuffer);
+    };
 
-	virtual Buffer* GetEmptyBuffer()
-	{
-		ATLock lock(this);
+    virtual Buffer* GetEmptyBuffer()
+    {
+        ATLock lock(this);
 
-		return VBuffer::GetEmptyBuffer();
-	};
+        return VBuffer::GetEmptyBuffer();
+    };
 
-	virtual Buffer* GetFullBuffer()
-	{
-		ATLock lock(this);
+    virtual Buffer* GetFullBuffer()
+    {
+        ATLock lock(this);
 
-		return VBuffer::GetFullBuffer();
-	};
+        return VBuffer::GetFullBuffer();
+    };
 
-	virtual UINT GetFullBufferCount()
-	{
-		ATLock lock(this);
+    virtual UINT GetFullBufferCount()
+    {
+        ATLock lock(this);
 
-		return VBuffer::GetFullBufferCount();
-	};
+        return VBuffer::GetFullBufferCount();
+    };
 
-	virtual UINT GetEmptyBufferCount()
-	{
-		ATLock lock(this);
+    virtual UINT GetEmptyBufferCount()
+    {
+        ATLock lock(this);
 
-		return VBuffer::GetEmptyBufferCount();
-	};
-	
-	virtual ULONG GetDataSize()
-	{
-		ATLock lock(this);
+        return VBuffer::GetEmptyBufferCount();
+    };
 
-		return VBuffer::GetDataSize();
-	};
+    virtual ULONG GetDataSize()
+    {
+        ATLock lock(this);
 
-	virtual ULONG GetBufferSize()
-	{
-		ATLock lock(this);
+        return VBuffer::GetDataSize();
+    };
 
-		return VBuffer::GetBufferSize();
-	};
+    virtual ULONG GetBufferSize()
+    {
+        ATLock lock(this);
 
-	virtual ULONG GetEmptyBufferSize()
-	{
-		ATLock lock(this);
+        return VBuffer::GetBufferSize();
+    };
 
-		return VBuffer::GetEmptyBufferSize();
-	};
+    virtual ULONG GetEmptyBufferSize()
+    {
+        ATLock lock(this);
 
-	virtual ULONG GetFullBufferSize()
-	{
-		ATLock lock(this);
+        return VBuffer::GetEmptyBufferSize();
+    };
 
-		return VBuffer::GetFullBufferSize();
-	};
+    virtual ULONG GetFullBufferSize()
+    {
+        ATLock lock(this);
 
-	virtual BOOL GetData(BYTE* pData, UINT nDataSize)
-	{
-		ATLock lock(this);
+        return VBuffer::GetFullBufferSize();
+    };
 
-		return VBuffer::GetData(pData, nDataSize);
-	}
+    virtual BOOL GetData(BYTE* pData, UINT nDataSize)
+    {
+        ATLock lock(this);
 
-	virtual BOOL SetData(BYTE* pData, UINT nDataSize)
-	{
-		ATLock lock(this);
+        return VBuffer::GetData(pData, nDataSize);
+    }
 
-		return VBuffer::SetData(pData, nDataSize);
-	}
+    virtual BOOL SetData(BYTE* pData, UINT nDataSize)
+    {
+        ATLock lock(this);
+
+        return VBuffer::SetData(pData, nDataSize);
+    }
 
 protected:
 

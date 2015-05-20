@@ -23,33 +23,33 @@ using namespace std;
 class Socket
 {
 public:
-	Socket(UINT mtu = 1500);
-	virtual ~Socket();
+    Socket(UINT mtu = 1500);
+    virtual ~Socket();
 
-	virtual void Close();
+    virtual void Close();
 
-	virtual int Write(PBYTE pBuffer, int writeSize, UINT nTimeOut = 500000);  // 0.5sec
-	virtual int Read(BYTE* pBuffer, int readSize, UINT nTimeOut = 1500000); // 1.5sec
+    virtual int Write(PBYTE pBuffer, int writeSize, UINT nTimeOut = 500000);  // 0.5sec
+    virtual int Read(BYTE* pBuffer, int readSize, UINT nTimeOut = 1500000); // 1.5sec
 
-	virtual SOCKADDR_IN GetBindAddr();
-	virtual SOCKADDR_IN GetConnectAddr();
+    virtual SOCKADDR_IN GetBindAddr();
+    virtual SOCKADDR_IN GetConnectAddr();
 
-	virtual	UINT GetMTU();
+    virtual	UINT GetMTU();
 
-	static BOOL GetLocalIPList(vector<string>& vIPList);
-	static BOOL GetAdapterSpeed(vector<int>& vList);
+    static BOOL GetLocalIPList(vector<string>& vIPList);
+    static BOOL GetAdapterSpeed(vector<int>& vList);
 
 protected:
-	void	ReportError();
-	int		Select(int mode, int timeoutUsec);
+    void	ReportError();
+    int		Select(int mode, int timeoutUsec);
 
-	BOOL	m_isOpen;
+    BOOL	m_isOpen;
 
-	SOCKET		m_Socket;
-	SOCKADDR_IN m_BindAddr;
-	SOCKADDR_IN m_ConnectAddr;
+    SOCKET		m_Socket;
+    SOCKADDR_IN m_BindAddr;
+    SOCKADDR_IN m_ConnectAddr;
 
-	UINT	m_Mtu;
+    UINT	m_Mtu;
 };
 
 #endif //__SOCKET_H__
