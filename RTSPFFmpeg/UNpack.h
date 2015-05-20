@@ -39,23 +39,23 @@ typedef struct
     |                             ....                              |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     */
-    //intel µÄcpu ÊÇintelÎªĞ¡¶Ë×Ö½ÚĞò£¨µÍ¶Ë´æµ½µ×µØÖ·£© ¶øÍøÂçÁ÷Îª´ó¶Ë×Ö½ÚĞò£¨¸ß¶Ë´æµ½µÍµØÖ·£©  
-    /*intel µÄcpu £º ¸ß¶Ë->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->µÍ¶Ë
-     ÔÚÄÚ´æÖĞ´æ´¢ £º
-     µÍ->4001£¨ÄÚ´æµØÖ·£©version:2
-     4002£¨ÄÚ´æµØÖ·£©padding:1
-     4003£¨ÄÚ´æµØÖ·£©extension:1
-     ¸ß->4004£¨ÄÚ´æµØÖ·£©csrc_len:4
+    //intel çš„cpu æ˜¯intelä¸ºå°ç«¯å­—èŠ‚åºï¼ˆä½ç«¯å­˜åˆ°åº•åœ°å€ï¼‰ è€Œç½‘ç»œæµä¸ºå¤§ç«¯å­—èŠ‚åºï¼ˆé«˜ç«¯å­˜åˆ°ä½åœ°å€ï¼‰  
+    /*intel çš„cpu ï¼š é«˜ç«¯->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->ä½ç«¯
+     åœ¨å†…å­˜ä¸­å­˜å‚¨ ï¼š
+     ä½->4001ï¼ˆå†…å­˜åœ°å€ï¼‰version:2
+     4002ï¼ˆå†…å­˜åœ°å€ï¼‰padding:1
+     4003ï¼ˆå†…å­˜åœ°å€ï¼‰extension:1
+     é«˜->4004ï¼ˆå†…å­˜åœ°å€ï¼‰csrc_len:4
 
-     ÍøÂç´«Êä½âÎö £º ¸ß¶Ë->version:2->padding:1->extension:1->csrc_len:4->µÍ¶Ë  (ÎªÕıÈ·µÄÎÄµµÃèÊö¸ñÊ½)
+     ç½‘ç»œä¼ è¾“è§£æ ï¼š é«˜ç«¯->version:2->padding:1->extension:1->csrc_len:4->ä½ç«¯  (ä¸ºæ­£ç¡®çš„æ–‡æ¡£æè¿°æ ¼å¼)
 
-     ´æÈë½ÓÊÕÄÚ´æ £º
-     µÍ->4001£¨ÄÚ´æµØÖ·£©version:2
-     4002£¨ÄÚ´æµØÖ·£©padding:1
-     4003£¨ÄÚ´æµØÖ·£©extension:1
-     ¸ß->4004£¨ÄÚ´æµØÖ·£©csrc_len:4
-     ±¾µØÄÚ´æ½âÎö £º¸ß¶Ë->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->µÍ¶Ë £¬
-     ¼´£º
+     å­˜å…¥æ¥æ”¶å†…å­˜ ï¼š
+     ä½->4001ï¼ˆå†…å­˜åœ°å€ï¼‰version:2
+     4002ï¼ˆå†…å­˜åœ°å€ï¼‰padding:1
+     4003ï¼ˆå†…å­˜åœ°å€ï¼‰extension:1
+     é«˜->4004ï¼ˆå†…å­˜åœ°å€ï¼‰csrc_len:4
+     æœ¬åœ°å†…å­˜è§£æ ï¼šé«˜ç«¯->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->ä½ç«¯ ï¼Œ
+     å³ï¼š
      unsigned char csrc_len:4;        // expect 0
      unsigned char extension:1;       // expect 1
      unsigned char padding:1;         // expect 0
@@ -83,11 +83,11 @@ typedef struct
     unsigned char forbidden_bit;           //! Should always be FALSE  
     unsigned char nal_reference_idc;       //! NALU_PRIORITY_xxxx  
     unsigned char nal_unit_type;           //! NALU_TYPE_xxxx    
-    unsigned int startcodeprefix_len;      //! Ç°×º×Ö½ÚÊı  
-    unsigned int len;                      //! °üº¬nal Í·µÄnal ³¤¶È£¬´ÓµÚÒ»¸ö00000001µ½ÏÂÒ»¸ö000000001µÄ³¤¶È  
-    unsigned int max_size;                 //! ×ö¶àÒ»¸önal µÄ³¤¶È  
-    unsigned char * buf;                   //! °üº¬nal Í·µÄnal Êı¾İ  
-    unsigned int lost_packets;             //! Ô¤Áô  
+    unsigned int startcodeprefix_len;      //! å‰ç¼€å­—èŠ‚æ•°  
+    unsigned int len;                      //! åŒ…å«nal å¤´çš„nal é•¿åº¦ï¼Œä»ç¬¬ä¸€ä¸ª00000001åˆ°ä¸‹ä¸€ä¸ª000000001çš„é•¿åº¦  
+    unsigned int max_size;                 //! åšå¤šä¸€ä¸ªnal çš„é•¿åº¦  
+    unsigned char * buf;                   //! åŒ…å«nal å¤´çš„nal æ•°æ®  
+    unsigned int lost_packets;             //! é¢„ç•™  
 } NALU_t;
 
 /*
@@ -174,13 +174,13 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     NALU_t * n = NULL;
     FU_INDICATOR    *fu_ind = NULL;
     FU_HEADER       *fu_hdr = NULL;
-    int total_bytes = 0;                 //µ±Ç°°ü´«³öµÄÊı¾İ  
-    static int total_recved = 0;         //Ò»¹²´«ÊäµÄÊı¾İ  
-    int fwrite_number = 0;               //´æÈëÎÄ¼şµÄÊı¾İ³¤¶È  
+    int total_bytes = 0;                 //å½“å‰åŒ…ä¼ å‡ºçš„æ•°æ®  
+    static int total_recved = 0;         //ä¸€å…±ä¼ è¾“çš„æ•°æ®  
+    int fwrite_number = 0;               //å­˜å…¥æ–‡ä»¶çš„æ•°æ®é•¿åº¦  
 
-    //memcpy(recvbuf,bufIn, len);          //¸´ÖÆrtp°ü  
+    //memcpy(recvbuf,bufIn, len);          //å¤åˆ¶rtpåŒ…  
 
-    //printf("°ü³¤¶È+ rtpÍ·£º   = %d\n",len);  
+    //printf("åŒ…é•¿åº¦+ rtpå¤´ï¼š   = %d\n",len);  
 
     //////////////////////////////////////////////////////////////////////////  
     //begin rtp_payload and rtp_header  
@@ -196,26 +196,26 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     }
 
     rtp_hdr = (RTP_FIXED_HEADER*)&bufIn[0];
-    // printf("°æ±¾ºÅ     : %d\n",rtp_hdr->version);  
+    // printf("ç‰ˆæœ¬å·     : %d\n",rtp_hdr->version);  
     p->version = rtp_hdr->version;
     p->padding = rtp_hdr->padding;
     p->extension = rtp_hdr->extension;
     p->cc = rtp_hdr->csrc_len;
-    //printf("±êÖ¾Î»     : %d\n",rtp_hdr->marker);  
+    //printf("æ ‡å¿—ä½     : %d\n",rtp_hdr->marker);  
     p->marker = rtp_hdr->marker;
-    //printf("¸ºÔØÀàĞÍ    :%d\n",rtp_hdr->payloadtype);  
+    //printf("è´Ÿè½½ç±»å‹    :%d\n",rtp_hdr->payloadtype);  
     p->pt = rtp_hdr->payloadtype;
-    // printf("°üºÅ      : %d \n",rtp_hdr->seq_no);  
+    // printf("åŒ…å·      : %d \n",rtp_hdr->seq_no);  
     p->seq_no = rtp_hdr->seq_no;
-    //printf("Ê±¼ä´Á     : %d\n",rtp_hdr->timestamp);  
+    //printf("æ—¶é—´æˆ³     : %d\n",rtp_hdr->timestamp);  
     p->timestamp = rtp_hdr->timestamp;
-    //printf("Ö¡ºÅ      : %d\n",rtp_hdr->ssrc);  
+    //printf("å¸§å·      : %d\n",rtp_hdr->ssrc);  
     p->ssrc = rtp_hdr->ssrc;
 
     //end rtp_payload and rtp_header  
     //////////////////////////////////////////////////////////////////////////  
     //begin nal_hdr  
-    if(!(n = AllocNALU(4096)))          //Îª½á¹¹Ìånalu_t¼°Æä³ÉÔ±buf·ÖÅä¿Õ¼ä¡£·µ»ØÖµÎªÖ¸Ïònalu_t´æ´¢¿Õ¼äµÄÖ¸Õë  
+    if(!(n = AllocNALU(4096)))          //ä¸ºç»“æ„ä½“nalu_tåŠå…¶æˆå‘˜bufåˆ†é…ç©ºé—´ã€‚è¿”å›å€¼ä¸ºæŒ‡å‘nalu_tå­˜å‚¨ç©ºé—´çš„æŒ‡é’ˆ  
     {
         //printf("NALU_t MMEMORY ERROR\n");  
     }
@@ -224,43 +224,43 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     //       //printf("NALU_HEADER MEMORY ERROR\n");  
     //   }  
 
-    nalu_hdr = (NALU_HEADER*)&bufIn[12];                        //ÍøÂç´«Êä¹ıÀ´µÄ×Ö½ÚĞò £¬µ±´æÈëÄÚ´æ»¹ÊÇºÍÎÄµµÃèÊöµÄÏà·´£¬Ö»ÒªÆ¥ÅäÍøÂç×Ö½ÚĞòºÍÎÄµµÃèÊö¼´¿É´«ÊäÕıÈ·¡£  
-    //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //ÍøÂç´«ÊäÖĞµÄ·½Ê½Îª£ºF->NRI->TYPE.. ÄÚ´æÖĞ´æ´¢·½Ê½Îª TYPE->NRI->F (ºÍnalÍ·Æ¥Åä)¡£  
-    n->forbidden_bit = nalu_hdr->F << 7;                          //ÄÚ´æÖĞµÄ×Ö½ÚĞò¡£  
+    nalu_hdr = (NALU_HEADER*)&bufIn[12];                        //ç½‘ç»œä¼ è¾“è¿‡æ¥çš„å­—èŠ‚åº ï¼Œå½“å­˜å…¥å†…å­˜è¿˜æ˜¯å’Œæ–‡æ¡£æè¿°çš„ç›¸åï¼Œåªè¦åŒ¹é…ç½‘ç»œå­—èŠ‚åºå’Œæ–‡æ¡£æè¿°å³å¯ä¼ è¾“æ­£ç¡®ã€‚  
+    //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //ç½‘ç»œä¼ è¾“ä¸­çš„æ–¹å¼ä¸ºï¼šF->NRI->TYPE.. å†…å­˜ä¸­å­˜å‚¨æ–¹å¼ä¸º TYPE->NRI->F (å’Œnalå¤´åŒ¹é…)ã€‚  
+    n->forbidden_bit = nalu_hdr->F << 7;                          //å†…å­˜ä¸­çš„å­—èŠ‚åºã€‚  
     // printf("nal_reference_idc:  %d\n",nalu_hdr->NRI);  
     n->nal_reference_idc = nalu_hdr->NRI << 5;
-    //printf("nal ¸ºÔØÀàĞÍ:       %d\n",nalu_hdr->TYPE);  
+    //printf("nal è´Ÿè½½ç±»å‹:       %d\n",nalu_hdr->TYPE);  
     n->nal_unit_type = nalu_hdr->TYPE;
 
     //end nal_hdr  
     //////////////////////////////////////////////////////////////////////////  
-    //¿ªÊ¼½â°ü  
-    if(nalu_hdr->TYPE != 7 && (*nfirst))  //²»ÊÇ67¿ªÍ·µÄ°ü£¬²¢ÇÒ»¹ÊÇµÚÒ»¸ö°ü
+    //å¼€å§‹è§£åŒ…  
+    if(nalu_hdr->TYPE != 7 && (*nfirst))  //ä¸æ˜¯67å¼€å¤´çš„åŒ…ï¼Œå¹¶ä¸”è¿˜æ˜¯ç¬¬ä¸€ä¸ªåŒ…
     {
-        // printf("Õâ¸ö°üÓĞ´íÎó£¬0ÎŞ¶¨Òå\n"); 
+        // printf("è¿™ä¸ªåŒ…æœ‰é”™è¯¯ï¼Œ0æ— å®šä¹‰\n"); 
         return;
     }
     *nfirst = false;
-    if(nalu_hdr->TYPE > 0 && nalu_hdr->TYPE < 24)  //µ¥°ü  
+    if(nalu_hdr->TYPE > 0 && nalu_hdr->TYPE < 24)  //å•åŒ…  
     {
-        //printf("µ±Ç°°üÎªµ¥°ü\n");  
+        //printf("å½“å‰åŒ…ä¸ºå•åŒ…\n");  
         poutfile[0] = 0x00;
         poutfile[1] = 0x00;
         poutfile[2] = 0x00;
         poutfile[3] = 0x01;
-        //Ğ´½øÆğÊ¼×Ö½Ú0x00000001  
+        //å†™è¿›èµ·å§‹å­—èŠ‚0x00000001  
         total_bytes += 4;
         memcpy(p->payload, &bufIn[13], len - 13);
         p->paylen = len - 13;
-        memcpy(poutfile + 4, nalu_hdr, 1);  //Ğ´NAL_HEADER  
+        memcpy(poutfile + 4, nalu_hdr, 1);  //å†™NAL_HEADER  
         total_bytes += 1;
-        memcpy(poutfile + 5, p->payload, p->paylen);//Ğ´NALÊı¾İ
+        memcpy(poutfile + 5, p->payload, p->paylen);//å†™NALæ•°æ®
         total_bytes += p->paylen;
         poutfile[total_bytes] = '\0';
-        //printf("°ü³¤¶È + nal= %d\n",total_bytes);  
+        //printf("åŒ…é•¿åº¦ + nal= %d\n",total_bytes);  
     }
 
-    else if(nalu_hdr->TYPE == 28)                    //FU-A·ÖÆ¬°ü£¬½âÂëË³ĞòºÍ´«ÊäË³ĞòÏàÍ¬  
+    else if(nalu_hdr->TYPE == 28)                    //FU-Aåˆ†ç‰‡åŒ…ï¼Œè§£ç é¡ºåºå’Œä¼ è¾“é¡ºåºç›¸åŒ  
     {
         /*if ((fu_ind = (FU_INDICATOR *)malloc(sizeof(FU_INDICATOR))) == NULL)
         {
@@ -271,7 +271,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
         printf("FU_HEADER MEMORY ERROR\n");
         }  */
 
-        fu_ind = (FU_INDICATOR*)&bufIn[12];     //·ÖÆ¬°üÓÃµÄÊÇFU_INDICATOR¶ø²»ÊÇNALU_HEADER  
+        fu_ind = (FU_INDICATOR*)&bufIn[12];     //åˆ†ç‰‡åŒ…ç”¨çš„æ˜¯FU_INDICATORè€Œä¸æ˜¯NALU_HEADER  
         //printf("FU_INDICATOR->F     :%d\n",fu_ind->F);  
         n->forbidden_bit = fu_ind->F << 7;
         //printf("FU_INDICATOR->NRI   :%d\n",fu_ind->NRI);  
@@ -279,26 +279,26 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
         n->nal_unit_type = fu_ind->TYPE;
 
-        fu_hdr = (FU_HEADER*)&bufIn[13];        //FU_HEADER¸³Öµ  
+        fu_hdr = (FU_HEADER*)&bufIn[13];        //FU_HEADERèµ‹å€¼  
         //printf("FU_HEADER->S        :%d\n",fu_hdr->S);  
         //printf("FU_HEADER->E        :%d\n",fu_hdr->E);  
         //printf("FU_HEADER->R        :%d\n",fu_hdr->R);  
         //printf("FU_HEADER->TYPE     :%d\n",fu_hdr->TYPE);  
-        n->nal_unit_type = fu_hdr->TYPE;               //Ó¦ÓÃµÄÊÇFU_HEADERµÄTYPE  
+        n->nal_unit_type = fu_hdr->TYPE;               //åº”ç”¨çš„æ˜¯FU_HEADERçš„TYPE  
 
-        if(rtp_hdr->marker == 1)                      //·ÖÆ¬°ü×îºóÒ»¸ö°ü  
+        if(rtp_hdr->marker == 1)                      //åˆ†ç‰‡åŒ…æœ€åä¸€ä¸ªåŒ…  
         {
-            //printf("µ±Ç°°üÎªFU-A·ÖÆ¬°ü×îºóÒ»¸ö°ü\n");  
+            //printf("å½“å‰åŒ…ä¸ºFU-Aåˆ†ç‰‡åŒ…æœ€åä¸€ä¸ªåŒ…\n");  
             memcpy(p->payload, &bufIn[14], len - 14);
             p->paylen = len - 14;
-            memcpy(poutfile, p->payload, p->paylen);  //Ğ´NALÊı¾İ  
+            memcpy(poutfile, p->payload, p->paylen);  //å†™NALæ•°æ®  
             total_bytes = p->paylen;
             poutfile[total_bytes] = '\0';
-            //printf("°ü³¤¶È + FU = %d\n",total_bytes);    
+            //printf("åŒ…é•¿åº¦ + FU = %d\n",total_bytes);    
         }
-        else if(rtp_hdr->marker == 0)                 //·ÖÆ¬°ü µ«²»ÊÇ×îºóÒ»¸ö°ü  
+        else if(rtp_hdr->marker == 0)                 //åˆ†ç‰‡åŒ… ä½†ä¸æ˜¯æœ€åä¸€ä¸ªåŒ…  
         {
-            if(fu_hdr->S == 1)                        //·ÖÆ¬µÄµÚÒ»¸ö°ü  
+            if(fu_hdr->S == 1)                        //åˆ†ç‰‡çš„ç¬¬ä¸€ä¸ªåŒ…  
             {
                 unsigned char F;
                 unsigned char NRI;
@@ -308,52 +308,52 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
                 poutfile[0] = 0x00;
                 poutfile[1] = 0x00;
                 poutfile[2] = 0x00;
-                poutfile[3] = 0x01;               //Ğ´ÆğÊ¼×Ö½ÚÂë0x00000001  
+                poutfile[3] = 0x01;               //å†™èµ·å§‹å­—èŠ‚ç 0x00000001  
                 total_bytes += 4;
 
                 F = fu_ind->F << 7;
                 NRI = fu_ind->NRI << 5;
-                TYPE = fu_hdr->TYPE;                                            //Ó¦ÓÃµÄÊÇFU_HEADERµÄTYPE  
-                //nh = n->forbidden_bit|n->nal_reference_idc|n->nal_unit_type;  //¶ş½øÖÆÎÄ¼şÒ²ÊÇ°´ ´ó×Ö½ÚĞò´æ´¢  
+                TYPE = fu_hdr->TYPE;                                            //åº”ç”¨çš„æ˜¯FU_HEADERçš„TYPE  
+                //nh = n->forbidden_bit|n->nal_reference_idc|n->nal_unit_type;  //äºŒè¿›åˆ¶æ–‡ä»¶ä¹Ÿæ˜¯æŒ‰ å¤§å­—èŠ‚åºå­˜å‚¨  
                 nh = F | NRI | TYPE;
 
-                poutfile[4] = nh;              //Ğ´NAL HEADER  
+                poutfile[4] = nh;              //å†™NAL HEADER  
 
                 total_bytes += 1;
                 memcpy(p->payload, &bufIn[14], len - 14);
                 p->paylen = len - 14;
-                memcpy(poutfile + 5, p->payload, p->paylen);  //Ğ´NALÊı¾İ  
+                memcpy(poutfile + 5, p->payload, p->paylen);  //å†™NALæ•°æ®  
                 total_bytes += p->paylen;
                 poutfile[total_bytes] = '\0';
-                //printf("°ü³¤¶È + FU_First = %d\n",total_bytes);      
+                //printf("åŒ…é•¿åº¦ + FU_First = %d\n",total_bytes);      
             }
-            else                                      //Èç¹û²»ÊÇµÚÒ»¸ö°ü  
+            else                                      //å¦‚æœä¸æ˜¯ç¬¬ä¸€ä¸ªåŒ…  
             {
-                //printf("µ±Ç°°üÎªFU-A·ÖÆ¬°ü\n");  
+                //printf("å½“å‰åŒ…ä¸ºFU-Aåˆ†ç‰‡åŒ…\n");  
                 memcpy(p->payload, &bufIn[14], len - 14);
                 p->paylen = len - 14;
-                memcpy(poutfile, p->payload, p->paylen);  //Ğ´NALÊı¾İ  
+                memcpy(poutfile, p->payload, p->paylen);  //å†™NALæ•°æ®  
                 total_bytes = p->paylen;
                 poutfile[total_bytes] = '\0';
-                //printf("°ü³¤¶È + FU = %d\n",total_bytes);    
+                //printf("åŒ…é•¿åº¦ + FU = %d\n",total_bytes);    
             }
         }
     }
-    else if(nalu_hdr->TYPE == 29)                //FU-B·ÖÆ¬°ü£¬½âÂëË³ĞòºÍ´«ÊäË³ĞòÏàÍ¬  
+    else if(nalu_hdr->TYPE == 29)                //FU-Båˆ†ç‰‡åŒ…ï¼Œè§£ç é¡ºåºå’Œä¼ è¾“é¡ºåºç›¸åŒ  
     {
-        if(rtp_hdr->marker == 1)                  //·ÖÆ¬°ü×îºóÒ»¸ö°ü  
+        if(rtp_hdr->marker == 1)                  //åˆ†ç‰‡åŒ…æœ€åä¸€ä¸ªåŒ…  
         {
-            //printf("µ±Ç°°üÎªFU-B·ÖÆ¬°ü×îºóÒ»¸ö°ü\n");  
+            //printf("å½“å‰åŒ…ä¸ºFU-Båˆ†ç‰‡åŒ…æœ€åä¸€ä¸ªåŒ…\n");  
 
         }
-        else if(rtp_hdr->marker == 0)             //·ÖÆ¬°ü µ«²»ÊÇ×îºóÒ»¸ö°ü  
+        else if(rtp_hdr->marker == 0)             //åˆ†ç‰‡åŒ… ä½†ä¸æ˜¯æœ€åä¸€ä¸ªåŒ…  
         {
-            //printf("µ±Ç°°üÎªFU-B·ÖÆ¬°ü\n");  
+            //printf("å½“å‰åŒ…ä¸ºFU-Båˆ†ç‰‡åŒ…\n");  
         }
     }
     else
     {
-        //printf("Õâ¸ö°üÓĞ´íÎó£¬30-31 Ã»ÓĞ¶¨Òå\n");  
+        //printf("è¿™ä¸ªåŒ…æœ‰é”™è¯¯ï¼Œ30-31 æ²¡æœ‰å®šä¹‰\n");  
     }
     /*total_recved += total_bytes;
     printf("total_recved = %d\n",total_recved);  */
@@ -368,7 +368,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", L"", MB_OK);
+        MessageBox(NULL, L"è·å–åŠ¨æ€åº“å¥æŸ„å¤±è´¥", L"", MB_OK);
     }
 
     TCHAR path1[1024], path2[1024];
@@ -387,7 +387,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
     DecodeVideo(ID, poutfile, total_bytes);
 
-    //char a[10] = "c:\\°ü";
+    //char a[10] = "c:\\åŒ…";
     //itoa(ID,a+5,10);
     //FILE *fp;
     //fp = fopen(a,"ab+");
@@ -395,7 +395,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     //fclose(fp);
 
 
-    //½áÊø½â°ü  
+    //ç»“æŸè§£åŒ…  
     //////////////////////////////////////////////////////////////////////////  
     return;
 }
@@ -428,7 +428,7 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
     HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", L"", MB_OK);
+        MessageBox(NULL, L"è·å–åŠ¨æ€åº“å¥æŸ„å¤±è´¥", L"", MB_OK);
     }
 
     TCHAR path1[1024], path2[1024];
