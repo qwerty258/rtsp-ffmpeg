@@ -1,9 +1,6 @@
-#include "PlayClient.h"
+#include "RTSPFFmpeg.h"
 
-#define CLASSDLL_API __declspec(dllexport)
 #define  MACPL 100
-
-
 struct ClientList
 {
     RTSPCLientClass *pt;
@@ -25,7 +22,8 @@ int checkINSTANCE(int INSTANCE)
         return -1;
     }
 }
-__declspec(dllexport) int GetRtspINSTANCE()
+
+RTSPFFMPEG_API int GetRtspINSTANCE()
 {
 #ifdef log
     FILE *fp;
@@ -52,7 +50,8 @@ __declspec(dllexport) int GetRtspINSTANCE()
     return -1;
 
 }
-__declspec(dllexport) int InitRtspVideoParam(int INSTANCE, char* URL, char* UserName, char* PWD)
+
+RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URL, char* UserName, char* PWD)
 {
 #ifdef log
     FILE *fp;
@@ -75,7 +74,8 @@ __declspec(dllexport) int InitRtspVideoParam(int INSTANCE, char* URL, char* User
     }
     return 0;
 }
-__declspec(dllexport) int PlayRtsp(int INSTANCE, HWND hd)
+
+RTSPFFMPEG_API int PlayRtsp(int INSTANCE, HWND hd)
 {
 #ifdef log
     FILE *fp;
@@ -97,7 +97,7 @@ __declspec(dllexport) int PlayRtsp(int INSTANCE, HWND hd)
     return 0;
 }
 
-__declspec(dllexport)	int StopRtsp(int INSTANCE)
+RTSPFFMPEG_API int StopRtsp(int INSTANCE)
 {
     try
     {
@@ -116,7 +116,8 @@ __declspec(dllexport)	int StopRtsp(int INSTANCE)
     }
     return 0;
 }
-__declspec(dllexport) int InitRtspDLL()
+
+RTSPFFMPEG_API int InitRtspDLL()
 {
 #ifdef log
     FILE *fp;
@@ -132,7 +133,7 @@ __declspec(dllexport) int InitRtspDLL()
     return 0;
 }
 
-__declspec(dllexport) int FreeRtspDLL(int INSTANCE)
+RTSPFFMPEG_API int FreeRtspDLL(int INSTANCE)
 {
 
     try
@@ -170,7 +171,8 @@ __declspec(dllexport) int FreeRtspDLL(int INSTANCE)
         return -1;
     }
 }
-__declspec(dllexport) int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)
+
+RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)
 {
 
     try
@@ -187,7 +189,8 @@ __declspec(dllexport) int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f
         return -1;
     }
 }
-__declspec(dllexport) int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1)
+
+RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1)
 {
 
     try
@@ -204,7 +207,8 @@ __declspec(dllexport) int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1)
         return -1;
     }
 }
-__declspec(dllexport) int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2)
+
+RTSPFFMPEG_API int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2)
 {
     try
     {
@@ -220,7 +224,8 @@ __declspec(dllexport) int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2)
         return -1;
     }
 }
-__declspec(dllexport) int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3)
+
+RTSPFFMPEG_API int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3)
 {
     try
     {
@@ -239,7 +244,7 @@ __declspec(dllexport) int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3
 
 //
 //获取YUV数据
-__declspec(dllexport) int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *buffer)
+RTSPFFMPEG_API int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *buffer)
 {
     try
     {
@@ -257,7 +262,7 @@ __declspec(dllexport) int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *b
     }
 }
 //获取H264数据
-__declspec(dllexport) int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
+RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
 {
     try
     {
@@ -274,7 +279,7 @@ __declspec(dllexport) int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
     }
 }
 //设置是否取消硬解
-__declspec(dllexport) int RevoHWAcceleration(int INSTANCE)
+RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE)
 {
     try
     {

@@ -20,7 +20,7 @@ typedef int(_cdecl *TDrawRectCallBack)(char*, int, int);
 typedef int(_cdecl *TDrawLineCallBack)(int, HDC);//define my CallBack Func
 typedef int(_cdecl *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
 typedef int(_cdecl *TYUVCallBack)(char *, int len, int wid, void *);//YUV回调
-typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);//H264回调
+typedef int(_cdecl *TH264CallBack)(int, char *, int len, int wid, int height);//H264回调
 
 typedef int(_cdecl *setYUVCallBack)(int, TYUVCallBack, void *);
 typedef int(_cdecl *setH264CallBack)(int, TH264CallBack);

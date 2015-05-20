@@ -1,7 +1,9 @@
+#pragma once
+
 #include <list>
 #include <map>
 
-#include "RtspRequest.h"   
+#include "RtspRequest.h"
 #include "Rtp.h"
 
 #include "VBuffer.h"
