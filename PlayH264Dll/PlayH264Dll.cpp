@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "DecodeH264threadClass.h"
+#include "PlayH264Dll.h"
 #include <fstream>
 #include  "Gunit.h"
 #pragma warning(disable: 4996)  
@@ -41,7 +41,8 @@ int checkINSTANCE(int INSTANCE)
         return -1;
     }
 }
-extern CLASSDLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//不用
+
+PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//不用
 {
     try
     {
@@ -57,7 +58,8 @@ extern CLASSDLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//不用
         return -1;
     }
 }
-extern CLASSDLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
+
+PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
 {
 
 
@@ -109,7 +111,8 @@ WriteLog("C:\\1.log","decoeVideo2");*/
     //     //   while(DC->writeNetBuf(num,NULL,0));
     //}
 }
-extern CLASSDLL_API int initVideoDLL()
+
+PLAYH264DLL_API int initVideoDLL()
 {
     //  	char sdl_var[64];
     //sprintf(sdl_var, "SDL_WINDOWID=%d", hd);
@@ -151,7 +154,8 @@ extern CLASSDLL_API int initVideoDLL()
 
     return 0;
 }
-extern CLASSDLL_API int GetIdlevideoINSTANCE()
+
+PLAYH264DLL_API int GetIdlevideoINSTANCE()
 {
     if(debug == 1)
                 WriteLog("C:\\1.log", "GetIdlevideoINSTANCE");
@@ -172,7 +176,8 @@ extern CLASSDLL_API int GetIdlevideoINSTANCE()
     }
     return -1;
 }
-extern __declspec(dllexport) int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type)
+
+PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type)
 {
     if(debug == 1)
                 WriteLog("C:\\1.log", "InitVideoParam1");
@@ -221,7 +226,7 @@ extern __declspec(dllexport) int InitVideoParam(int INSTANCE, myparamInput *Mypa
     //f1=fopen("c:\\buf264.h264","wb");
 }
 
-extern __declspec(dllexport) int pauseVideos(int INSTANCE)
+PLAYH264DLL_API int pauseVideos(int INSTANCE)
 {
     try
     {
@@ -237,7 +242,7 @@ extern __declspec(dllexport) int pauseVideos(int INSTANCE)
     return 0;
 }
 
-extern __declspec(dllexport) int playVideos(int INSTANCE)
+PLAYH264DLL_API int playVideos(int INSTANCE)
 {
     if(debug == 1)
             WriteLog("C:\\1.log", "playVideos");
@@ -255,7 +260,7 @@ extern __declspec(dllexport) int playVideos(int INSTANCE)
     return 0;
 }
 
-extern __declspec(dllexport) int freeVideos(int INSTANCE)
+PLAYH264DLL_API int freeVideos(int INSTANCE)
 {
     try
     {
@@ -305,7 +310,7 @@ extern __declspec(dllexport) int freeVideos(int INSTANCE)
     }
 }
 
-extern __declspec(dllexport) int inputBuf(int INSTANCE, char *buf, int bufsize)
+PLAYH264DLL_API int inputBuf(int INSTANCE, char *buf, int bufsize)
 {
     // 	FILE *fp;
     //fp = fopen("c:\\20150205.h264","ab+");
@@ -332,7 +337,8 @@ extern __declspec(dllexport) int inputBuf(int INSTANCE, char *buf, int bufsize)
         return -1;
     }
 }
-extern __declspec(dllexport) int resize(int INSTANCE, int width, int height)
+
+PLAYH264DLL_API int resize(int INSTANCE, int width, int height)
 {
     try
     {
@@ -348,7 +354,7 @@ extern __declspec(dllexport) int resize(int INSTANCE, int width, int height)
     }
 }
 
-extern __declspec(dllexport) void exitdll()
+PLAYH264DLL_API void exitdll()
 {
     for(int i = 0; i < MACPL; i++)
     {
@@ -357,7 +363,7 @@ extern __declspec(dllexport) void exitdll()
     }
 }
 
-extern CLASSDLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//不用
+PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//不用
 {
 
     //FILE *fp;
@@ -378,7 +384,8 @@ extern CLASSDLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)/
         return -1;
     }
 }
-extern CLASSDLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//不用
+
+PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//不用
 {
     try
     {
@@ -401,7 +408,8 @@ extern CLASSDLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//不用
     }
 
 }
-extern CLASSDLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//不用
+
+PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//不用
 {
     try
     {
@@ -424,7 +432,7 @@ extern CLASSDLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)
     }
 }
 
-extern CLASSDLL_API int SetYUVCallBack(int INSTANCE, TYUVCallBack yuvf, void *buffer)
+PLAYH264DLL_API int SetYUVCallBack(int INSTANCE, TYUVCallBack yuvf, void *buffer)
 {
     try
     {
@@ -448,7 +456,7 @@ extern CLASSDLL_API int SetYUVCallBack(int INSTANCE, TYUVCallBack yuvf, void *bu
     }
 }
 
-extern CLASSDLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
+PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
 {
     try
     {
@@ -471,7 +479,7 @@ extern CLASSDLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
     }
 }
 //支持硬件加速，初始默认不硬件加速（支持h264数据和YUV数据回调，但是播放性能高），不使用硬件加速支持所有已知回调
-extern CLASSDLL_API int RevoHWAcceleration(int instance)
+PLAYH264DLL_API int RevoHWAcceleration(int instance)
 {
     try
     {
