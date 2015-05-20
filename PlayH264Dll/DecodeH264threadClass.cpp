@@ -559,7 +559,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         {
             dxva_Delete((dxva_t *)c->opaque);
         }
-        av_free(c);
+        av_freep(c);
         //avcodec_free_context(&c);
         delete[] netBuf;
         //delete[] bmpBuf;

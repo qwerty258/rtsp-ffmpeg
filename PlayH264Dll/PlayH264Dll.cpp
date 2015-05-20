@@ -273,7 +273,8 @@ extern __declspec(dllexport) int freeVideos(int INSTANCE)
         //   m_pFrame[INSTANCE]=avcodec_alloc_frame();
         //   m_parser[INSTANCE]=av_parser_init(CODEC_ID_H264);
         avcodec_close(m_pCodecContext[INSTANCE]);
-        avcodec_free_context(&m_pCodecContext[INSTANCE]);
+        // avcodec_free_context(&m_pCodecContext[INSTANCE]);
+        av_freep(&m_pCodecContext[INSTANCE]);
         if(debug == 1)
                   WriteLog("C:\\1.log", "freeVideos2");
         //av_free(m_pFrame[INSTANCE]->data[0]);
