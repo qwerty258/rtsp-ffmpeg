@@ -1,5 +1,4 @@
-
-//#pragma comment(lib,"playH264ThreadDLL1.lib")
+#pragma once
 
 
 //解码播放时用到的数据结构

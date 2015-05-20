@@ -2,7 +2,7 @@
 // Contact:			70565912@qq.com
 //////////////////////////////////////////////////////////////////////////
 #pragma once
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <assert.h>
 #include <tchar.h>
 #include <string>

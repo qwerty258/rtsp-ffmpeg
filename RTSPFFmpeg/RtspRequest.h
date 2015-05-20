@@ -1,6 +1,6 @@
 #ifndef __RTSP_REQUEST_H__
 #define __RTSP_REQUEST_H__
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "Rtsp.h"
 
 class RtspRequest : public Rtsp
