@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 //为了方便，所以所有的rtp和rtcp通讯全部在rtsp类中完成，代码可读性在后续版本中提高
-
+#pragma once
 
 #define RTCP_PT_START		1
 #define RTCP_PT_SIZE		1
@@ -26,12 +26,10 @@
 #define RTCP_PLAYLOAD_START 24
 #define RTCP_PLAYLOAD_SIZE  4
 
-#if !defined(AFX_RTSP_H__8C4DD607_2EBB_4D85_B489_E739ACD1D93F__INCLUDED_)
-#define AFX_RTSP_H__8C4DD607_2EBB_4D85_B489_E739ACD1D93F__INCLUDED_
+#define RTSP_PROTOCOL_PORT 554
 
 #include "Tcp.h"
-
-#define RTSP_PROTOCOL_PORT 554
+#include <ctime>
 
 typedef struct
 {
@@ -164,5 +162,3 @@ public:
     static int ssrc;
 
 };
-
-#endif // !defined(AFX_RTSP_H__8C4DD607_2EBB_4D85_B489_E739ACD1D93F__INCLUDED_)
