@@ -747,8 +747,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     D3DPRESENT_PARAMETERS *d3dpp;
     LPDIRECT3DDEVICE9 d3ddev;
 
-    Create9 CreateFunc = (Create9)GetProcAddress(va->hd3d9_dll,
-                                     TEXT("Direct3DCreate9"));
+    Create9 CreateFunc = (Create9)GetProcAddress(va->hd3d9_dll, "Direct3DCreate9");
     if(!CreateFunc)
     {
         av_log(NULL, AV_LOG_ERROR, "Cannot locate reference to Direct3DCreate9 ABI in DLL");
@@ -946,8 +945,7 @@ static int D3dCreateDeviceManager(va_dxva2_t *va)
     typedef HRESULT(WINAPI *CreateDeviceManager9)(UINT *pResetToken,
                                            IDirect3DDeviceManager9 **);
     CreateDeviceManager9 CreateDeviceManagerFunc =
-      (CreateDeviceManager9)GetProcAddress(va->hdxva2_dll,
-                             TEXT("DXVA2CreateDirect3DDeviceManager9"));
+      (CreateDeviceManager9)GetProcAddress(va->hdxva2_dll, "DXVA2CreateDirect3DDeviceManager9");
 
     if(!CreateDeviceManagerFunc)
     {
@@ -998,8 +996,7 @@ static int DxCreateVideoService(va_dxva2_t *va)
                                          REFIID riid,
                                          void **ppService);
     CreateVideoService CreateVideoServiceFunc =
-      (CreateVideoService)GetProcAddress(va->hdxva2_dll,
-                             TEXT("DXVA2CreateVideoService"));
+      (CreateVideoService)GetProcAddress(va->hdxva2_dll, "DXVA2CreateVideoService");
 
     if(!CreateVideoServiceFunc)
     {
@@ -1275,7 +1272,7 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
     {
 #ifdef log_GPU
         char a[10] = "c:\\";
-        itoa((int)gPlayWnd,a+3,10);
+        itoa((int)gPlayWnd, a + 3, 10);
         FILE *fp = fopen(a,"a+");
         fputs("IDirectXVideoDecoderService_GetDecoderConfigurations failed\n",fp);
         fclose(fp);
@@ -1317,7 +1314,7 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
     {
 #ifdef log_GPU
         char a[10] = "c:\\";
-        itoa((int)gPlayWnd,a+3,10);
+        itoa((int)gPlayWnd, a + 3, 10);
         FILE *fp = fopen(a,"a+");
         fputs("Failed to find a supported decoder configuration\n",fp);
         fclose(fp);
@@ -1338,7 +1335,7 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
     {
 #ifdef log_GPU
         char a[10] = "c:\\";
-        itoa((int)gPlayWnd,a+3,10);
+        itoa((int)gPlayWnd, a + 3, 10);
         FILE *fp = fopen(a,"a+");
         fputs("IDirectXVideoDecoderService_CreateVideoDecoder failed\n",fp);
         fclose(fp);
