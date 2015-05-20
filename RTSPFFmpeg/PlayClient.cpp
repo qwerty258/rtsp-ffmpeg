@@ -79,24 +79,32 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
     ans = 0;
 
     // *****************************************************************************************
-    HMODULE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
-    if(hDllhandle == NULL)
-    {
-        MessageBox(NULL, L"get DLL HMODULE error", L"", MB_OK);
-    }
+    //HMODULE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
+    //if(hDllhandle == NULL)
+    //{
+    //    MessageBox(NULL, L"get DLL HMODULE error", L"", MB_OK);
+    //}
 
-    TCHAR path1[1024], path2[1024];
-    memset(path1, 0, 1024 * sizeof(TCHAR));
-    memset(path2, 0, 1024 * sizeof(TCHAR));
+    //TCHAR path1[1024], path2[1024];
+    //memset(path1, 0, 1024 * sizeof(TCHAR));
+    //memset(path2, 0, 1024 * sizeof(TCHAR));
 
-    GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
+    //GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
-    wcsncpy_s(path2, path1, len);
-    wcscat_s(path2, L"PlayH264DLL.dll");
+    //int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
+    //wcsncpy_s(path2, path1, len);
+    //wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
-    HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+    HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
+    if(NULL == hdll)
+    {
+        TCHAR* temp = new TCHAR[2048];
+        wsprintfW(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
+        MessageBox(0, temp, NULL, MB_OK);
+        delete[] temp;
+        return -1;
+    }
 
     initVideoDLL = (finitVideoDLL)GetProcAddress(hdll, "initVideoDLL");
 
@@ -155,7 +163,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     RCC->INSTANCE = GetIdlevideoINSTANCE();
 #ifdef log
     char a[10];
-    itoa(RCC->INSTANCE,a,10);
+    itoa(RCC->INSTANCE, a, 10);
 #endif
     /*FILE *fp1;
     fp1 = fopen("c:\\instance1.log","a+");
@@ -175,9 +183,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //itoa(initPort,a,10);
     FILE *fp;
     fp=fopen("c:\\test.log","ab+");
-    fputs(a,fp);
-    fputs(" ",fp);
-    fputs("enter rtsp ",fp);
+    fputs(a, fp);
+    fputs(" ", fp);
+    fputs("enter rtsp ", fp);
     fclose(fp);
 #endif
     //建立通信
@@ -232,9 +240,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 #ifdef log
         fp=fopen("c:\\test.log","ab+");
-        fputs(a,fp);
-        fputs(" ",fp);
-        fputs("open error!",fp);
+        fputs(a, fp);
+        fputs(" ", fp);
+        fputs("open error!", fp);
         fclose(fp);
 #endif
 
@@ -250,7 +258,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         { delete RTSPCLient; RTSPCLient = NULL; }
 
         RCC->ans = 4; return -1;
-    }
+}
 
     if(!RTSPCLient->RequestOptions())
         if(!RTSPCLient->RequestOptions_test(RCC->UserName, RCC->Pwd))
@@ -258,9 +266,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 #ifdef log
             fp=fopen("c:\\test.log","ab+");
-            fputs(a,fp);
-            fputs(" ",fp);
-            fputs("option error!",fp);
+            fputs(a, fp);
+            fputs(" ", fp);
+            fputs("option error!", fp);
             fclose(fp);
 #endif
 
@@ -285,9 +293,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 #ifdef log
             fp=fopen("c:\\test.log","ab+");
-            fputs(a,fp);
-            fputs(" ",fp);
-            fputs("sdp error! ",fp);
+            fputs(a, fp);
+            fputs(" ", fp);
+            fputs("sdp error! ", fp);
             fclose(fp);
 #endif
 
@@ -318,9 +326,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             {
 #ifdef log
                 fp=fopen("c:\\test.log","ab+");
-                fputs(a,fp);
-                fputs(" ",fp);
-                fputs("setup error! ",fp);
+                fputs(a, fp);
+                fputs(" ", fp);
+                fputs("setup error! ", fp);
                 fclose(fp);
 #endif
 
@@ -336,7 +344,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 { delete RTSPCLient; RTSPCLient = NULL; }
 
                 RCC->ans = 4; return -1;
-            }
+    }
     }
 
     //audio
@@ -348,9 +356,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             {
 #ifdef log
                 fp=fopen("c:\\test.log","ab+");
-                fputs(a,fp);
-                fputs(" ",fp);
-                fputs("setup error! ",fp);
+                fputs(a, fp);
+                fputs(" ", fp);
+                fputs("setup error! ", fp);
                 fclose(fp);
 #endif
 
@@ -366,7 +374,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 { delete RTSPCLient; RTSPCLient = NULL; }
 
                 RCC->ans = 4; return -1;
-            }
+    }
     }
 
     RTSPCLient->m_SetupName = "";
@@ -379,9 +387,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 #ifdef log
         fp=fopen("c:\\test.log","ab+");
-        fputs(a,fp);
-        fputs(" ",fp);
-        fputs("play error! ",fp);
+        fputs(a, fp);
+        fputs(" ", fp);
+        fputs("play error! ", fp);
         fclose(fp);
 #endif
 
@@ -538,9 +546,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 #ifdef log
     fp=fopen("c:\\test.log","ab+");
-    fputs(a,fp);
-    fputs(" ",fp);
-    fputs("out cir ",fp);
+    fputs(a, fp);
+    fputs(" ", fp);
+    fputs("out cir ", fp);
     fclose(fp);
 #endif
 
@@ -599,15 +607,15 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 #ifdef log
     fp=fopen("c:\\test.log","ab+");
-    fputs(a,fp);
-    fputs(" ",fp);
-    fputs("end play ",fp);
+    fputs(a, fp);
+    fputs(" ", fp);
+    fputs("end play ", fp);
     fclose(fp);
 #endif
 
 
     return 1;
-}
+        }
 
 //
 //typedef DWORD WINAPI (* beginrecv)(LPVOID lpParam);
