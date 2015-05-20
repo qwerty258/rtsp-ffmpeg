@@ -10,11 +10,11 @@ const UINT16 RTP_H263_HEADER_SIZE = 2;
 class Rtp : public Udp
 {
 public:
-    //±£´æ½âÂëÆ÷ÀàĞÍ
+    //ä¿å­˜è§£ç å™¨ç±»å‹
     int Decode;
-    //±£´æ½âÂëÆ÷id
+    //ä¿å­˜è§£ç å™¨id
     int ID;
-    //½â°üÊ±£¬ÊÇ·ñÊÇµÚÒ»¸ö°ü
+    //è§£åŒ…æ—¶ï¼Œæ˜¯å¦æ˜¯ç¬¬ä¸€ä¸ªåŒ…
     bool nfirst;
 
     Rtp(UINT mtu = 1500);

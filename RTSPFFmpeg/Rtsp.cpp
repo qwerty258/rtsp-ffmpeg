@@ -6,7 +6,7 @@
 #include "UNpack.h"
 #include "string_t.h"
 
-int Rtsp::ssrc = 0xfa15cb45;//ÆðÊ¼ÖµËæ±ã¶¨ËÀÒ»¸öÔ´£¬ÒÔºó+1
+int Rtsp::ssrc = 0xfa15cb45;//èµ·å§‹å€¼éšä¾¿å®šæ­»ä¸€ä¸ªæºï¼Œä»¥åŽ+1
 
 Rtsp::Rtsp()
 {
@@ -73,7 +73,7 @@ int Rtsp::Read_Start(int& type, short int* size)
 
     int tmpLen = 4 - iRead;
 
-    int countT = 0;//Á¬½Ó20´Î
+    int countT = 0;//è¿žæŽ¥20æ¬¡
 
     while(tmpLen > 0 && countT < 20)
     {
@@ -129,7 +129,7 @@ int Rtsp::Read_Start(int& type, short int* size)
     //if(start[1] == 0)
     //{
     //	FILE * fp;
-    //	fp = fopen("c:\\¶Ô±È.txt","ab+");
+    //	fp = fopen("c:\\å¯¹æ¯”.txt","ab+");
     //	fwrite(start+2,1,2,fp);
     //	fputc('\0',fp);
     //	fwrite(&size,1,2,fp);
@@ -145,7 +145,7 @@ int Rtsp::Read_Head()
     char head[12];
     int iRead = Socket::Read((BYTE *)head, 12);
 
-    // Ì×½Ó×Ö¶ÁÈ¡´íÎó
+    // å¥—æŽ¥å­—è¯»å–é”™è¯¯
     if(iRead == -1)
         return -1;
 
@@ -160,7 +160,7 @@ int Rtsp::Read_PlayLoad(short int len)
 
     int tmpLen = len - iRead;
 
-    int countT = 0;//Á¬½Ó20´Î
+    int countT = 0;//è¿žæŽ¥20æ¬¡
 
     while(tmpLen > 0 && countT < 20)
     {
@@ -174,7 +174,7 @@ int Rtsp::Read_PlayLoad(short int len)
     if(countT == 20)
         return -1;
 
-    //char a[10] = "c:\\°üÐò";
+    //char a[10] = "c:\\åŒ…åº";
     //itoa(ID,a+7,10);
     //FILE *fp;
     //fp = fopen(a,"ab+");
@@ -182,7 +182,7 @@ int Rtsp::Read_PlayLoad(short int len)
     //fclose(fp);
 
     /*FILE *fp;
-    fp = fopen("c:\\°ü.txt","ab+");
+    fp = fopen("c:\\åŒ….txt","ab+");
     fwrite(buffer+2,1,2,fp);
     fclose(fp);
 
@@ -200,7 +200,7 @@ int Rtsp::Read_PlayLoad(short int len)
     senum++;*/
 
     /*FILE * fp;
-    fp = fopen("c:\\¼ì²â.log","ab+");
+    fp = fopen("c:\\æ£€æµ‹.log","ab+");
     fputs("SIZE:",fp);
 
     char s[10];
@@ -371,7 +371,7 @@ void copy(recieveSRFrom *des, recieveSRFrom *src)
 
 int Rtsp::Handle_RTCPVideo(BYTE *pBuffer, int len)
 {
-    //¼ÇÂ¼SRÊý¾Ý
+    //è®°å½•SRæ•°æ®
 
     recieveSRFrom tmpSR;
     tmpSR.SR.head = pBuffer[0];
@@ -383,7 +383,7 @@ int Rtsp::Handle_RTCPVideo(BYTE *pBuffer, int len)
     memcpy(tmpSR.SR.packetCount, pBuffer + RTCP_PACKET_START, RTCP_PACKET_SIZE);
     memcpy(tmpSR.SR.octetCount, pBuffer + RTCP_PLAYLOAD_START, RTCP_PLAYLOAD_SIZE);
 
-    //¼ÇÂ¼SDESÊý¾Ý
+    //è®°å½•SDESæ•°æ®
     UINT8 tmp[2] = {0};
     memcpy(tmp, &tmpSR.SR.length[1], 1);
     memcpy(tmp + 1, &tmpSR.SR.length[0], 1);
@@ -414,19 +414,19 @@ int Rtsp::Read(string& str)
         iRead = Socket::Read((BYTE*)&c, 1);
         if(iRead == 1)
         {
-            //ÖÐÐÄÁ¦Î¬µÄÏà»ú»áÁ¢Âí·¢ËÍrtcp°ü£¬ÔÚÕâ·Ý´úÂëÀïÒªÈ¥³ýÕâ¸ö¸ÉÈÅ
+            //ä¸­å¿ƒåŠ›ç»´çš„ç›¸æœºä¼šç«‹é©¬å‘é€rtcpåŒ…ï¼Œåœ¨è¿™ä»½ä»£ç é‡Œè¦åŽ»é™¤è¿™ä¸ªå¹²æ‰°
             if(c == 0x24)
             {
                 char size[2];
                 char leave[1500];
 
-                Socket::Read((BYTE *)leave, 1);//¶ªÆú
+                Socket::Read((BYTE *)leave, 1);//ä¸¢å¼ƒ
 
                 Socket::Read((BYTE *)(size + 1), 1);
                 Socket::Read((BYTE *)size, 1);
                 short int i = 0;
                 i = *((int *)size);
-                Socket::Read((BYTE*)leave, i);//¶ªÆú
+                Socket::Read((BYTE*)leave, i);//ä¸¢å¼ƒ
                 continue;
             }
 
@@ -440,11 +440,11 @@ int Rtsp::Read(string& str)
     if(c == '\r')
         iRead = Socket::Read((BYTE*)&c, 1);
 
-    // Ì×½Ó×Ö¶ÁÈ¡´íÎó
+    // å¥—æŽ¥å­—è¯»å–é”™è¯¯
     if(iRead == -1)
         return -1;
 
-    // ¿ÕÐÐ´ú±í»ØÓ¦½áÊø
+    // ç©ºè¡Œä»£è¡¨å›žåº”ç»“æŸ
     if(str.size() == 0 && (c == '\r' || c == '\n'))
     {
         printf("<< ''\n\n");
@@ -511,7 +511,7 @@ BOOL Rtsp::ParseMrl(string mrl, string* pPreSuffix, string* pSuffix, int* pPort)
 
     mrl.erase(0, iFind + 7);	//remove "rtsp://"
 
-    port = RTSP_PROTOCOL_PORT;	//±ê×¼rtspÐ­Òé¶Ë¿Ú
+    port = RTSP_PROTOCOL_PORT;	//æ ‡å‡†rtspåè®®ç«¯å£
     iFind = mrl.find(':');
     if(iFind != string::npos)
     {

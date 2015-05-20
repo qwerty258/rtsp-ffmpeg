@@ -1,19 +1,19 @@
 #include "stdafx.h"
 #include "Rtcp.h"
 
-int Rtcp::ssrc = 0xfa15cb45;//ÆğÊ¼ÖµËæ±ã¶¨ËÀÒ»¸öÔ´£¬ÒÔºó+1
+int Rtcp::ssrc = 0xfa15cb45;//èµ·å§‹å€¼éšä¾¿å®šæ­»ä¸€ä¸ªæºï¼Œä»¥å+1
 
 Rtcp::Rtcp(UINT mtu):Udp(mtu)
 {
 	memset(&rcvf,0,sizeof(recieveSRFrom));
 	memset(&sdt,0,sizeof(sendRRTo));
-	initS = 0;//È·¶¨µÚÒ»¸ö°üÊÇ·ñ±»Ìî
-	memset(sSeNum,0,2);//×î³õµÄ°üÊı
-	memset(lSeNum,0,2);//ÉÏÒ»´Î·¢ËÍRRµÄ°üÊı
-	memset(eSeNum,0,2);//×îºóÒ»´ÎµÄ°üÊı
-	allGet = 0;//×Ü½ÓÊÜÊı
-	perGet = 0;//µ¥´Î½ÓÊÜÊı
-	memset(LSR,0,4);//:´Óreportee¶Ë×îºóÊÕµ½µÄSender ReportÖĞNTP timestampµÄÖĞ32bits.(ÎŞÔòÎª0) 
+	initS = 0;//ç¡®å®šç¬¬ä¸€ä¸ªåŒ…æ˜¯å¦è¢«å¡«
+	memset(sSeNum,0,2);//æœ€åˆçš„åŒ…æ•°
+	memset(lSeNum,0,2);//ä¸Šä¸€æ¬¡å‘é€RRçš„åŒ…æ•°
+	memset(eSeNum,0,2);//æœ€åä¸€æ¬¡çš„åŒ…æ•°
+	allGet = 0;//æ€»æ¥å—æ•°
+	perGet = 0;//å•æ¬¡æ¥å—æ•°
+	memset(LSR,0,4);//:ä»reporteeç«¯æœ€åæ”¶åˆ°çš„Sender Reportä¸­NTP timestampçš„ä¸­32bits.(æ— åˆ™ä¸º0) 
 	R_S = 0;
 	jitter = 0;
 }
@@ -143,7 +143,7 @@ void copy(recieveSRFrom *des, recieveSRFrom *src)
 
 int Rtcp::Handle(BYTE* pBuffer, UINT16 bufferSize)
 {
-	//¼ÇÂ¼SRÊı¾İ
+	//è®°å½•SRæ•°æ®
 	
 	recieveSRFrom tmpSR;
 	tmpSR.SR.head = pBuffer[0];
@@ -155,7 +155,7 @@ int Rtcp::Handle(BYTE* pBuffer, UINT16 bufferSize)
 	memcpy(tmpSR.SR.packetCount,pBuffer+RTCP_PACKET_START,RTCP_PACKET_SIZE);
 	memcpy(tmpSR.SR.octetCount,pBuffer+RTCP_PLAYLOAD_START,RTCP_PLAYLOAD_SIZE);
 
-	//¼ÇÂ¼SDESÊı¾İ
+	//è®°å½•SDESæ•°æ®
 	UINT8 tmp[2] = {0};
 	memcpy(tmp,&tmpSR.SR.length[1],1);
 	memcpy(tmp+1,&tmpSR.SR.length[0],1);

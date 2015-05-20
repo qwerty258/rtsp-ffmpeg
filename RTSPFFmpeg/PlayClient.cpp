@@ -82,7 +82,7 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
     HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", L"", MB_OK);
+        MessageBox(NULL, L"è·å–åŠ¨æ€åº“å¥æŸ„å¤±è´¥", L"", MB_OK);
     }
 
     TCHAR path1[1024], path2[1024];
@@ -111,15 +111,15 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
     return 1;
 }
 
-//Ïß³Ìº¯Êı
+//çº¿ç¨‹å‡½æ•°
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
-    //½âÂëÆ÷×¼±¸¹¤×÷
+    //è§£ç å™¨å‡†å¤‡å·¥ä½œ
     RTSPCLientClass *RCC = (RTSPCLientClass *)lpParam;
-    myparamInput *Myparam = new myparamInput();//²¥·Å½áÊøĞèÒªÉ¾³ı
-    RECT *rect = new RECT;//²¥·Å½áÊøĞèÒªÉ¾³ı
+    myparamInput *Myparam = new myparamInput();//æ’­æ”¾ç»“æŸéœ€è¦åˆ é™¤
+    RECT *rect = new RECT;//æ’­æ”¾ç»“æŸéœ€è¦åˆ é™¤
     GetWindowRect(RCC->hd, rect);
-    Myparam->playHandle = RCC->hd;  // È¡µÃ¿Ø¼şµÄ¾ä±ú
+    Myparam->playHandle = RCC->hd;  // å–å¾—æ§ä»¶çš„å¥æŸ„
     Myparam->stopPlay = 0;
     Myparam->playChannle = 1;
     Myparam->fps = 25;
@@ -137,7 +137,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", L"", MB_OK);
+        MessageBox(NULL, L"è·å–åŠ¨æ€åº“å¥æŸ„å¤±è´¥", L"", MB_OK);
     }
 
     TCHAR path1[1024], path2[1024];
@@ -182,7 +182,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     fputs("enter rtsp ",fp);
     fclose(fp);
 #endif
-    //½¨Á¢Í¨ĞÅ
+    //å»ºç«‹é€šä¿¡
     string setupName = "";
     srand((unsigned int)time(0));
     static int initPort = rand() % 8000;
@@ -201,10 +201,10 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //fputc('\n',fp);
     //fclose(fp);
 
-    //»ñÈ¡±¾µØIP
+    //è·å–æœ¬åœ°IP
     CString ip;
     WORD wVersionRequested;
-    WSADATA wsaData;//³õÊ¼»¯
+    WSADATA wsaData;//åˆå§‹åŒ–
     char name[255];
     memset(name, '\0', 255);
 
@@ -226,7 +226,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     RtspRequest *RTSPCLient = new RtspRequest;
-    //½¨Á¢rtspÁ¬½Ó Í¨¹ıtcp´«Êä
+    //å»ºç«‹rtspè¿æ¥ é€šè¿‡tcpä¼ è¾“
 
     if(!RTSPCLient->Open(RCC->Url, (LPSTR)(LPCTSTR)ip, rtpPort + 5))
     {
@@ -240,7 +240,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         fclose(fp);
 #endif
 
-        //Ê§°ÜÁËÒ²ĞèÒªÇåÀí
+        //å¤±è´¥äº†ä¹Ÿéœ€è¦æ¸…ç†
         /*int ret = freeVideos(RCC->INSTANCE);
             if(ret <0)
             return -1;*/
@@ -266,7 +266,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             fclose(fp);
 #endif
 
-            //Ê§°ÜÁËÒ²ĞèÒªÇåÀí
+            //å¤±è´¥äº†ä¹Ÿéœ€è¦æ¸…ç†
             /*int ret = freeVideos(RCC->INSTANCE);
                 if(ret <0)
                 return -1;*/
@@ -280,7 +280,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             RCC->ans = 4; return -1;
         }
 
-    if(!RTSPCLient->RequestDescribe(&sdp))//ÓĞÊ±ºò»áÁ¬²»ÉÏ
+    if(!RTSPCLient->RequestDescribe(&sdp))//æœ‰æ—¶å€™ä¼šè¿ä¸ä¸Š
         if(!RTSPCLient->RequestDescribe_test(&sdp, RCC->UserName, RCC->Pwd))
         {
 
@@ -293,7 +293,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             fclose(fp);
 #endif
 
-            //Ê§°ÜÁËÒ²ĞèÒªÇåÀí
+            //å¤±è´¥äº†ä¹Ÿéœ€è¦æ¸…ç†
             /*int ret = freeVideos(RCC->INSTANCE);
                 if(ret <0)
                 return -1;*/
@@ -326,7 +326,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 fclose(fp);
 #endif
 
-                //Ê§°ÜÁËÒ²ĞèÒªÇåÀí
+                //å¤±è´¥äº†ä¹Ÿéœ€è¦æ¸…ç†
                 /*int ret = freeVideos(RCC->INSTANCE);
                     if(ret <0)
                     return -1;*/
@@ -356,7 +356,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 fclose(fp);
 #endif
 
-                //Ê§°ÜÁËÒ²ĞèÒªÇåÀí
+                //å¤±è´¥äº†ä¹Ÿéœ€è¦æ¸…ç†
                 /*int ret = freeVideos(RCC->INSTANCE);
                     if(ret <0)
                     return -1;*/
@@ -387,7 +387,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         fclose(fp);
 #endif
 
-        //Ê§°ÜÁËÒ²ĞèÒªÇåÀí
+        //å¤±è´¥äº†ä¹Ÿéœ€è¦æ¸…ç†
         /*int ret = freeVideos(RCC->INSTANCE);
             if(ret <0)
             return -1;*/
@@ -402,7 +402,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
 
-    //³õÊ¼»¯½âÂëÆ÷dll
+    //åˆå§‹åŒ–è§£ç å™¨dll
     if(RTSPCLient->frame != -1)
         Myparam->fps = RTSPCLient->frame;
 
@@ -411,7 +411,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //InitVideoParamNew = (fInitVideoParamNew)GetProcAddress(hdll,"InitVideoParamNew");
     InitVideoParam(RCC->INSTANCE, Myparam, RTSPCLient->Decode);
     //InitVideoParamNew(RCC->INSTANCE,Myparam,RTSPCLient->Decode,2);
-    //ÉèÖÃ»Øµ÷
+    //è®¾ç½®å›è°ƒ
     SetCallBack = (fSetCallBack)GetProcAddress(hdll, "SetCallBack");
     SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hdll, "SetDrawLineCallBack");
     SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(hdll, "SetBmpCallBack");
@@ -433,7 +433,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     RTSPCLient->initS = 0;
 
     if(RCC->circulation)
-        return -1;//ÒÑ¾­ÔÚ²¥·ÅÁË
+        return -1;//å·²ç»åœ¨æ’­æ”¾äº†
 
     RCC->circulation = true;
     DWORD time1 = GetTickCount();
@@ -466,7 +466,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         {
             int i = RTSPCLient->Read_PlayLoad(size);
         }
-        else if(type == 2 || type == 3)//ÆäÓà2-3µÄÁ÷È«²¿¶ªÆú
+        else if(type == 2 || type == 3)//å…¶ä½™2-3çš„æµå…¨éƒ¨ä¸¢å¼ƒ
         {
             RTSPCLient->Read_Leave(size);
         }
@@ -476,7 +476,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         }
 
 
-        //RTCPÄ£¿é,Ã¿¸ô´óÔ¼5s£¬·¢ËÍÒ»´ÎÊı¾İ£¬¼ä¸ôÊ±¼ä¿É¸ù¾İÊµ¼Ê´ø¿í½øĞĞµ÷Õû
+        //RTCPæ¨¡å—,æ¯éš”å¤§çº¦5sï¼Œå‘é€ä¸€æ¬¡æ•°æ®ï¼Œé—´éš”æ—¶é—´å¯æ ¹æ®å®é™…å¸¦å®½è¿›è¡Œè°ƒæ•´
         time2 = GetTickCount();
         if(time2 - time1 > 5000)
         {
@@ -548,16 +548,16 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     //FILE *fp;
     //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("¹Ø±ÕÍË³öÑ­»·",fp);
+    //fputs("å…³é—­é€€å‡ºå¾ªç¯",fp);
     //fclose(fp);
 
-    //¹ØÍ¨ĞÅ
+    //å…³é€šä¿¡
     //if(!RTSPCLient->RequestPause())
     //	RTSPCLient->RequestPause_test(RCC->UserName,RCC->Pwd);
 
 
     //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("¹Ø±Õ¹ı³Ì1",fp);
+    //fputs("å…³é—­è¿‡ç¨‹1",fp);
     //fclose(fp);
 
     //if(!RTSPCLient->RequestTeardown())
@@ -565,23 +565,23 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 
     //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("¹Ø±Õ¹ı³Ì2",fp);
+    //fputs("å…³é—­è¿‡ç¨‹2",fp);
     //fclose(fp);
 
     //pRtp->Close();
     //pRtcp->Close();
 
-    //¹Ø½âÂë
+    //å…³è§£ç 
     freeVideos = (ffreeVideos)GetProcAddress(hdll, "freeVideos");
     int ret = freeVideos(RCC->INSTANCE);
     if(ret < 0)
         return -1;
 
     //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("¹Ø±Õ¹ı³Ì3",fp);
+    //fputs("å…³é—­è¿‡ç¨‹3",fp);
     //fclose(fp);
 
-    //Çå¿Õ¼ä
+    //æ¸…ç©ºé—´
     //if(pRtp!=NULL)
     //{delete pRtp;pRtp = NULL;}
     if(Myparam != NULL)
@@ -592,7 +592,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     { delete RTSPCLient; RTSPCLient = NULL; }
 
     //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("¹Ø±Õ¹ı³Ì4",fp);
+    //fputs("å…³é—­è¿‡ç¨‹4",fp);
     //fclose(fp);
 
     //buff.FreeBuffer();
@@ -614,35 +614,35 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 //
 //typedef DWORD WINAPI (* beginrecv)(LPVOID lpParam);
 //**************************************************
-//º¯Êı¹¦ÄÜ£ºÊµÊ±²¥·Å
-//ÊäÈë²ÎÊı£º
-//Êä³ö²ÎÊı£º 
-//·µ»ØÖµ£º  1²¥·Å³É¹¦£¬-1²¥·ÅÊ§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå®æ—¶æ’­æ”¾
+//è¾“å…¥å‚æ•°ï¼š
+//è¾“å‡ºå‚æ•°ï¼š 
+//è¿”å›å€¼ï¼š  1æ’­æ”¾æˆåŠŸï¼Œ-1æ’­æ”¾å¤±è´¥
 //**************************************************
 int RTSPCLientClass::PlayURL(HWND hd)
 {
-    //½øÈëÏß³Ì
+    //è¿›å…¥çº¿ç¨‹
     this->hd = hd;
     CreateThread(NULL, 0, RTSPVideo, this, 0, &threadID);
     while(ans != 1 && ans != 4)
         Sleep(1);
     if(threadID == -1 || ans == 4)
-        return -1;//½øÈëÏß³ÌÊ§°Ü
+        return -1;//è¿›å…¥çº¿ç¨‹å¤±è´¥
     return 1;
 }
 
 //**************************************************
-//º¯Êı¹¦ÄÜ£º¹Ø±ÕÊµÊ±²¥·Å
-//ÊäÈë²ÎÊı£º
-//Êä³ö²ÎÊı£º 
-//·µ»ØÖµ£º  -1¹Ø±ÕÊ§°Ü£¬1¹Ø±Õ³É¹¦
+//å‡½æ•°åŠŸèƒ½ï¼šå…³é—­å®æ—¶æ’­æ”¾
+//è¾“å…¥å‚æ•°ï¼š
+//è¾“å‡ºå‚æ•°ï¼š 
+//è¿”å›å€¼ï¼š  -1å…³é—­å¤±è´¥ï¼Œ1å…³é—­æˆåŠŸ
 //**************************************************
 int RTSPCLientClass::stopURL()
 {
-    //ÍËÑ­»·
+    //é€€å¾ªç¯
     /*FILE *fp;
     fp =fopen("c:\\20150206.txt","a+");
-    fputs("¹Ø±Õ¿ªÊ¼",fp);
+    fputs("å…³é—­å¼€å§‹",fp);
     fclose(fp);*/
 
     circulation = false;
@@ -651,7 +651,7 @@ int RTSPCLientClass::stopURL()
 
 
     /*fp =fopen("c:\\20150206.txt","a+");
-    fputs("¹Ø±Õ³É¹¦",fp);
+    fputs("å…³é—­æˆåŠŸ",fp);
     fclose(fp);*/
 
     return 1;

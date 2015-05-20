@@ -25,7 +25,7 @@ public:
     char* UserName;
     char* Pwd;
     bool circulation;
-    int ans;//0 ³õÊ¼×´Ì¬£¬1 ½øÈëÑ­»·£¬2 ÍË³öÏß³Ì
+    int ans;//0 åˆå§‹çŠ¶æ€ï¼Œ1 è¿›å…¥å¾ªç¯ï¼Œ2 é€€å‡ºçº¿ç¨‹
     HWND hd;
     PFCALLBACK func;
     TDrawLineCallBack funcD;

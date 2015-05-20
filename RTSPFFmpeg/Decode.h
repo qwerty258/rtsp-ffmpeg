@@ -1,17 +1,17 @@
 #pragma once
 
 
-//½âÂë²¥·ÅÊ±ÓÃµ½µÄÊı¾İ½á¹¹
+//è§£ç æ’­æ”¾æ—¶ç”¨åˆ°çš„æ•°æ®ç»“æ„
 typedef struct
 {
-    int width;             //Êµ¼Ê¿í¶È
-    int height;            //Êµ¼Ê¸ß¶È
-    int playWidth;         //ÏÔÊ¾¿í¶È
-    int playHeight;        //ÏÔÊ¾¸ß¶È
-    int fps;               //²¥·ÅÆµÂÊ
-    HWND playHandle;       //²¥·Å¾ä±ú
-    int stopPlay;          //²¥·Å¿ØÖÆ
-    int playChannle;		//²¥·ÅµÄÍ¨µÀºÅ
+    int width;             //å®é™…å®½åº¦
+    int height;            //å®é™…é«˜åº¦
+    int playWidth;         //æ˜¾ç¤ºå®½åº¦
+    int playHeight;        //æ˜¾ç¤ºé«˜åº¦
+    int fps;               //æ’­æ”¾é¢‘ç‡
+    HWND playHandle;       //æ’­æ”¾å¥æŸ„
+    int stopPlay;          //æ’­æ”¾æ§åˆ¶
+    int playChannle;		//æ’­æ”¾çš„é€šé“å·
     bool isDecode;
 }myparamInput;
 
@@ -19,8 +19,8 @@ typedef int(_cdecl *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, 
 typedef int(_cdecl *TDrawRectCallBack)(char*, int, int);
 typedef int(_cdecl *TDrawLineCallBack)(int, HDC);//define my CallBack Func
 typedef int(_cdecl *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
-typedef int(_cdecl *TYUVCallBack)(char *, int len, int wid, void *);//YUV»Øµ÷
-typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);//H264»Øµ÷
+typedef int(_cdecl *TYUVCallBack)(char *, int len, int wid, void *);//YUVå›è°ƒ
+typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);//H264å›è°ƒ
 
 typedef int(_cdecl *setYUVCallBack)(int, TYUVCallBack, void *);
 typedef int(_cdecl *setH264CallBack)(int, TH264CallBack);

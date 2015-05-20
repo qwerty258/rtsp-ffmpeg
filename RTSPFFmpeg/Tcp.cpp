@@ -29,7 +29,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
         return FALSE;
     }
 
-    //i_val = 1;	// ×èÈû·½Ê½
+    //i_val = 1;	// é˜»å¡æ–¹å¼
     //error = ioctlsocket(m_Socket, FIONBIO, (ULONG*)&i_val);
     //if (error == SOCKET_ERROR)
     //{
@@ -37,7 +37,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
     //	return FALSE;
     //}
 
-    //ÉèÖÃÊ¹ÓÃkeep alive    
+    //è®¾ç½®ä½¿ç”¨keep alive    
     i_val = 1;
     error = setsockopt(m_Socket, SOL_SOCKET, SO_KEEPALIVE, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -50,7 +50,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
     tcp_keepalive	outKeepAlive = {0};
     u_long			ulBytesReturn = 0;
 
-    //keep aliveÎª10Ãë3´Î
+    //keep aliveä¸º10ç§’3æ¬¡
     inKeepAlive.onoff = 1;
     inKeepAlive.keepaliveinterval = 10000;
     inKeepAlive.keepalivetime = 3;
@@ -65,7 +65,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
         return FALSE;
     }
 
-    // ¿ÉÖØÓÃ
+    // å¯é‡ç”¨
     i_val = 1;
     error = setsockopt(m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -74,7 +74,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
         return FALSE;
     }
 
-    // °ó¶¨Ì×½Ó×Ö
+    // ç»‘å®šå¥—æ¥å­—
     inIp = inet_addr(bindIp);
 
     m_BindAddr.sin_family = AF_INET;

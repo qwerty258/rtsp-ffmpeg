@@ -306,14 +306,14 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
     pDescribeBuffer[describeSize] = '\0';
 
     *pDescribe = (char*)pDescribeBuffer;
-    //ÌáÈ¡×Ö·û´®¹©setupÊ¹ÓÃ
+    //æå–å­—ç¬¦ä¸²ä¾›setupä½¿ç”¨
     int tip;
-    //Ñ°ÕÒvideoÂëÁ÷
+    //å¯»æ‰¾videoç æµ
     tip = pDescribe->find("m=video", 0);
 
     if(tip < 0) return false;
 
-    //ÔÚvideoÂëÁ÷ÖÐÑ°ÕÒ½âÂë¸ñÊ½
+    //åœ¨videoç æµä¸­å¯»æ‰¾è§£ç æ ¼å¼
     int deTip = pDescribe->find("a=rtpmap:96 MP4V-ES", tip + 1);
     if(deTip >= 0)
         Decode = 2;
@@ -327,7 +327,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
     }
 
     //
-    //Ñ°ÕÒÊÇ·ñÓÐ¸ø¶¨Ö¡ÂÊ
+    //å¯»æ‰¾æ˜¯å¦æœ‰ç»™å®šå¸§çŽ‡
     frame = -1;
     int frameTip = pDescribe->find("a=framerate:", tip + 1);
     if(frameTip >= 0)
@@ -341,7 +341,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
     {
         char videotemp[200];
         int i = 1;
-        videotemp[0] = '0';//´ú±íÌí¼Ó
+        videotemp[0] = '0';//ä»£è¡¨æ·»åŠ 
         while(*(pDescribeBuffer + videoTip + 10) != '\r')
         {
             videotemp[i] = *(pDescribeBuffer + videoTip + 10);
@@ -355,7 +355,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
     {
         char videotemp[200];
         int i = 1;
-        videotemp[0] = '1';//´ú±íÍêÕû
+        videotemp[0] = '1';//ä»£è¡¨å®Œæ•´
         while(*(pDescribeBuffer + videoTip + 10) != '\r')
         {
             videotemp[i] = *(pDescribeBuffer + videoTip + 10);
@@ -365,7 +365,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
         videotemp[i] = '\0';
         m_SetupName_video = videotemp;
     }
-    //Ñ°ÕÒaudioÂëÁ÷
+    //å¯»æ‰¾audioç æµ
 
     tip = pDescribe->find("m=audio", 0);
 
@@ -378,7 +378,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
         {
             char audiotemp[200];
             int i = 1;
-            audiotemp[0] = '0';//´ú±íÌí¼Ó
+            audiotemp[0] = '0';//ä»£è¡¨æ·»åŠ 
             while(*(pDescribeBuffer + audioTip + 10) != '\r')
             {
                 audiotemp[i] = *(pDescribeBuffer + audioTip + 10);
@@ -392,7 +392,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
         {
             char audiotemp[200];
             int i = 1;
-            audiotemp[0] = '1';//´ú±íÍêÕû
+            audiotemp[0] = '1';//ä»£è¡¨å®Œæ•´
             while(*(pDescribeBuffer + audioTip + 10) != '\r')
             {
                 audiotemp[i] = *(pDescribeBuffer + audioTip + 10);
@@ -449,12 +449,12 @@ void RtspRequest::SendRequest(string requestType)
 
     if(m_Session[0] > 0)
         Write(session);
-    Write("User-Agent: LibVLC/2.1.3 (LIVE555 Streaming Media v2014.01.21)");//infitoÉãÏñÍ·±ØÐë¼Ó£¿
+    Write("User-Agent: LibVLC/2.1.3 (LIVE555 Streaming Media v2014.01.21)");//infitoæ‘„åƒå¤´å¿…é¡»åŠ ï¼Ÿ
     WriteFields();
     //Write("Authorization: Basic YWRtaW46MTIzNDU=");
     Write("");
 }
-//Âë±í
+//ç è¡¨
 unsigned char EncodeIndex[] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -470,8 +470,8 @@ unsigned char DecodeIndex[] = {
     0x40, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
     0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x40, 0x40, 0x40, 0x40, 0x40};
 
-//baseh264½âÂëº¯Êý
-inline char GetCharIndex(char c) //ÄÚÁªº¯Êý¿ÉÒÔÊ¡È¥º¯Êýµ÷ÓÃ¹ý³Ì£¬ÌáËÙ  
+//baseh264è§£ç å‡½æ•°
+inline char GetCharIndex(char c) //å†…è”å‡½æ•°å¯ä»¥çœåŽ»å‡½æ•°è°ƒç”¨è¿‡ç¨‹ï¼Œæé€Ÿ  
 {
     if((c >= 'A') && (c <= 'Z'))
     {
@@ -499,16 +499,16 @@ inline char GetCharIndex(char c) //ÄÚÁªº¯Êý¿ÉÒÔÊ¡È¥º¯Êýµ÷ÓÃ¹ý³Ì£¬ÌáËÙ
     }
     return 0;
 }
-int fnBase64Decode(char *lpString, char *lpSrc, int sLen)   //½âÂëº¯Êý  
+int fnBase64Decode(char *lpString, char *lpSrc, int sLen)   //è§£ç å‡½æ•°  
 {
     static char lpCode[4];
     register int vLen = 0;
-    if(sLen % 4)        //Base64±àÂë³¤¶È±Ø¶¨ÊÇ4µÄ±¶Êý£¬°üÀ¨'='  
+    if(sLen % 4)        //Base64ç¼–ç é•¿åº¦å¿…å®šæ˜¯4çš„å€æ•°ï¼ŒåŒ…æ‹¬'='  
     {
         lpString[0] = '\0';
         return -1;
     }
-    while(sLen > 2)      //²»×ãÈý¸ö×Ö·û£¬ºöÂÔ  
+    while(sLen > 2)      //ä¸è¶³ä¸‰ä¸ªå­—ç¬¦ï¼Œå¿½ç•¥  
     {
         lpCode[0] = GetCharIndex(lpSrc[0]);
         lpCode[1] = GetCharIndex(lpSrc[1]);
@@ -525,7 +525,7 @@ int fnBase64Decode(char *lpString, char *lpSrc, int sLen)   //½âÂëº¯Êý
     }
     return vLen;
 }
-//base64¼ÓÂëº¯Êý
+//base64åŠ ç å‡½æ•°
 void Base64_Encode(unsigned char* src, unsigned char* dest, int srclen)
 {
     int sign = 0;
@@ -606,7 +606,7 @@ void RtspRequest::SendRequest_test(string requestType, char *name, char *pwd)
 
     if(m_Session[0] > 0)
         Write(session);
-    //Ð´ÈëÊÚÈ¨
+    //å†™å…¥æŽˆæƒ
     char tempAuth[200];
     strcpy(tempAuth, name);
     strcat(tempAuth, ":");
@@ -641,7 +641,7 @@ BOOL RtspRequest::GetResponses()
     {
         iRead = Read(str);
 
-        //ÖÐÐÄÁ¦Î¬µÄÏà»ú»áÁ¢Âí·¢ËÍrtcp°ü£¬ÔÚÕâ·Ý´úÂëÀïÒªÈ¥³ýÕâ¸ö¸ÉÈÅ,Ö»ÓÐµ±24 ** 00 **µÄÄ£Ê½Ê±²ÅÓÐÐ§£¬²»È»ÒªÖØÐÂÉè¼Æ´úÂë
+        //ä¸­å¿ƒåŠ›ç»´çš„ç›¸æœºä¼šç«‹é©¬å‘é€rtcpåŒ…ï¼Œåœ¨è¿™ä»½ä»£ç é‡Œè¦åŽ»é™¤è¿™ä¸ªå¹²æ‰°,åªæœ‰å½“24 ** 00 **çš„æ¨¡å¼æ—¶æ‰æœ‰æ•ˆï¼Œä¸ç„¶è¦é‡æ–°è®¾è®¡ä»£ç 
         /*if(*((char *)str.c_str()) == 0x24)
         {
         int size;
@@ -667,7 +667,7 @@ BOOL RtspRequest::GetResponses()
             iFind = str.find("Session:");
             if(iFind != -1)
             {
-                //session = _atoi64( str.substr(iFind+8).c_str() );//×Ö·ûÊý×Ö»ì´î¾Í²»ÐÐÁË
+                //session = _atoi64( str.substr(iFind+8).c_str() );//å­—ç¬¦æ•°å­—æ··æ­å°±ä¸è¡Œäº†
                 int head, tail;
                 head = iFind + 8;
                 tail = iFind + 8;
@@ -719,7 +719,7 @@ BOOL RtspRequest::SearchResponses(string* pStr, string field)
         {
             *pStr = m_Responses[iResponse];
 
-            //È¥³ýÍ·²¿¶àÓà×Ö·û
+            //åŽ»é™¤å¤´éƒ¨å¤šä½™å­—ç¬¦
             pStr->erase(0, iFind + field.size());
 
             iFind = pStr->find_first_not_of(':');

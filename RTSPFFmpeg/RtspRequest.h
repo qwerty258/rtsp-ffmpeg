@@ -23,7 +23,7 @@ public:
     virtual BOOL RequestPause_test(char *, char *);
     virtual BOOL RequestTeardown();
     virtual BOOL RequestTeardown_test(char *, char *);
-    //ÎªÁË¿´µÄÇå³ş£¬ÒÔÉÏ½Ô²»ÓÃÖØÔØ
+    //ä¸ºäº†çœ‹çš„æ¸…æ¥šï¼Œä»¥ä¸Šçš†ä¸ç”¨é‡è½½
     virtual void Close();
 
     string  m_SetupName;
@@ -42,12 +42,12 @@ protected:
     BOOL GenerateTransportField(string *pTransport, int streamingMode, int clientRtpPort, int clientRtcpPort);
 
     string  m_RequestsMrl;
-    string  m_AuUserAPSD;//´æÓÃ»§ÃûÃÜÂë£¬ÔİÊ±²»Ğ´
+    string  m_AuUserAPSD;//å­˜ç”¨æˆ·åå¯†ç ï¼Œæš‚æ—¶ä¸å†™
     vector<string> m_Responses;
 
 public:
 
-    int frame;//Ö¡ÂÊ
+    int frame;//å¸§ç‡
 };
 
 #endif //__RTSP_REQUEST_H__

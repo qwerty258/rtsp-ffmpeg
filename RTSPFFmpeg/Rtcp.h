@@ -41,11 +41,11 @@
 //	UINT8 PT;
 //	UINT8 length[2];
 //	UINT8 SSRC[4];
-//	UINT8 SSRC_1[4];//SSRC of first source¶ÔÓ¦SRµÄSSRC
-//	UINT8 fractionLost;//´ÓÉÏ¸ösr»òrrÒÔÀ´µÄ¶ª°üÂÊ,±íÏÖÎª½ÓÊÕ·½´Ë¶ÎÊ±¼äÄÚÆÚ´ıµÄRTP°üÓëËùÊÕµ½µÄRTP°üÊıÄ¿µÄ²îÖµºÍËûÆÚ´ıµÄRTP±¨ÎÄµÄÊıÄ¿µÄ±ÈÖµ£¬ÈôÎª¸ºÖµ£¬ÖÃÎª0
-//	UINT8 cumulationLost[3];//ÀÛ¼Æ¶ª°üÂÊ
+//	UINT8 SSRC_1[4];//SSRC of first sourceå¯¹åº”SRçš„SSRC
+//	UINT8 fractionLost;//ä»ä¸Šä¸ªsræˆ–rrä»¥æ¥çš„ä¸¢åŒ…ç‡,è¡¨ç°ä¸ºæ¥æ”¶æ–¹æ­¤æ®µæ—¶é—´å†…æœŸå¾…çš„RTPåŒ…ä¸æ‰€æ”¶åˆ°çš„RTPåŒ…æ•°ç›®çš„å·®å€¼å’Œä»–æœŸå¾…çš„RTPæŠ¥æ–‡çš„æ•°ç›®çš„æ¯”å€¼ï¼Œè‹¥ä¸ºè´Ÿå€¼ï¼Œç½®ä¸º0
+//	UINT8 cumulationLost[3];//ç´¯è®¡ä¸¢åŒ…ç‡
 //	UINT8 EHSNR[4];//extended highest sequence number received
-//	UINT8 interJitter[4];//µ½´ïÊ±¼ä¶¶¶¯
+//	UINT8 interJitter[4];//åˆ°è¾¾æ—¶é—´æŠ–åŠ¨
 //	UINT8 LSR[4];//last SR
 //	UINT8 DLSR[4];//delay since last SR
 //} RtcpRR;
@@ -56,8 +56,8 @@
 //	UINT8 PT;
 //	UINT8 length[2];
 //	UINT8 SSRC[4];//
-//	UINT8 user[100];//ÓÃ»§ÃèÊö
-//}RtcpSDES;//Õâ¸ö°´Ğ­ÒéÎªÀ©ÕÅ£¬µ«ÕâÀïÖ»È¡µ¥Ò»Êı¾İ¿éÇé¿ö
+//	UINT8 user[100];//ç”¨æˆ·æè¿°
+//}RtcpSDES;//è¿™ä¸ªæŒ‰åè®®ä¸ºæ‰©å¼ ï¼Œä½†è¿™é‡Œåªå–å•ä¸€æ•°æ®å—æƒ…å†µ
 //
 //typedef struct 
 //{
@@ -96,18 +96,18 @@ private:
 protected:
 
 public:
-	//ÒÔÏÂ´ó¶Ë¸ñÊ½
-	int initS;//È·¶¨µÚÒ»¸ö°üÊÇ·ñ±»Ìî
-	unsigned char sSeNum[2];//×î³õµÄ°üÊı
-	unsigned char lSeNum[2];//ÉÏÒ»´Î·¢ËÍRRµÄ°üÊı
-	unsigned char eSeNum[2];//×îºóÒ»´ÎµÄ°üÊı
-	UINT16 allGet;//×Ü½ÓÊÜÊı
-	UINT8 perGet;//µ¥´Î½ÓÊÜÊı
-	unsigned char LSR[4];//:´Óreportee¶Ë×îºóÊÕµ½µÄSender ReportÖĞNTP timestampµÄÖĞ32bits.(ÎŞÔòÎª0) 
-	time_t  lTime;//SSRC_nÔ´µÄÉÏ¸öSR
+	//ä»¥ä¸‹å¤§ç«¯æ ¼å¼
+	int initS;//ç¡®å®šç¬¬ä¸€ä¸ªåŒ…æ˜¯å¦è¢«å¡«
+	unsigned char sSeNum[2];//æœ€åˆçš„åŒ…æ•°
+	unsigned char lSeNum[2];//ä¸Šä¸€æ¬¡å‘é€RRçš„åŒ…æ•°
+	unsigned char eSeNum[2];//æœ€åä¸€æ¬¡çš„åŒ…æ•°
+	UINT16 allGet;//æ€»æ¥å—æ•°
+	UINT8 perGet;//å•æ¬¡æ¥å—æ•°
+	unsigned char LSR[4];//:ä»reporteeç«¯æœ€åæ”¶åˆ°çš„Sender Reportä¸­NTP timestampçš„ä¸­32bits.(æ— åˆ™ä¸º0) 
+	time_t  lTime;//SSRC_næºçš„ä¸Šä¸ªSR
 
 	int R_S;//R-S
-	int jitter;//Ê±¼ä¶¶¶¯
+	int jitter;//æ—¶é—´æŠ–åŠ¨
 
 	recieveSRFrom rcvf;
 	sendRRTo sdt;

@@ -9,7 +9,7 @@
 //
 //	GetFullBuffer()							        AddFullBuffer()
 //
-//	   ¡ı                                                  ¡ü	
+//	   â†“                                                  â†‘	
 //
 //	AddEmptyBuffer()					            GetEmptyBuffer()
 //
@@ -18,7 +18,7 @@
 //
 //  Split the VBuffer:
 //
-//	SetData() ¡ú [tail]  ... Buffer Buffer ... [heard]   ¡ú GetData()
+//	SetData() â†’ [tail]  ... Buffer Buffer ... [heard]   â†’ GetData()
 //
 //
 //////////////////////////////////////////////////////////////////////
@@ -323,30 +323,30 @@ public:
 
         Buffer* pBuffer;
         UINT	nGetSize = 0;
-        UINT	nCopyDataSize;		//	»ñÈ¡²¿·Ö³¤¶È
+        UINT	nCopyDataSize;		//	è·å–éƒ¨åˆ†é•¿åº¦
 
-        while(nGetSize < nDataSize)	//	»ñÈ¡ÖÁ×ã¹»µÄÊı¾İºó·µ»Ø
+        while(nGetSize < nDataSize)	//	è·å–è‡³è¶³å¤Ÿçš„æ•°æ®åè¿”å›
         {
             pBuffer = m_FullBuffer.front();
 
             if(nDataSize - nGetSize < pBuffer->m_nDataSize)
             {
-                // Ö»È¡bufferÖĞ²¿·ÖÊı¾İ½øĞĞ¿½±´
-                nCopyDataSize = nDataSize - nGetSize;	//	¿½±´²¿·Ö³¤¶È
+                // åªå–bufferä¸­éƒ¨åˆ†æ•°æ®è¿›è¡Œæ‹·è´
+                nCopyDataSize = nDataSize - nGetSize;	//	æ‹·è´éƒ¨åˆ†é•¿åº¦
 
                 memcpy(pData + nGetSize, pBuffer->m_pData, nCopyDataSize);
 
-                // ĞŞÕı¿ÉÓÃÊı¾İÆ«ÒÆ
+                // ä¿®æ­£å¯ç”¨æ•°æ®åç§»
                 pBuffer->m_pData += nCopyDataSize;
                 pBuffer->m_nDataSize -= nCopyDataSize;
             }
             else
             {
-                nCopyDataSize = pBuffer->m_nDataSize;	//	¿½±´²¿·Ö³¤¶È
+                nCopyDataSize = pBuffer->m_nDataSize;	//	æ‹·è´éƒ¨åˆ†é•¿åº¦
 
                 memcpy(pData + nGetSize, pBuffer->m_pData, nCopyDataSize);
 
-                // ÒÆËÍbufferµ½¿Õ»º³åÇøÖĞ
+                // ç§»é€bufferåˆ°ç©ºç¼“å†²åŒºä¸­
                 m_nFullBufferSize -= pBuffer->m_nBufferSize;
                 m_nEmptyBufferSize += pBuffer->m_nBufferSize;
 
@@ -375,14 +375,14 @@ public:
 
         nFillSize = 0;
 
-        while(nFillSize < nDataSize)	//	Ìî³äÖÁ×ã¹»µÄÊı¾İºó·µ»Ø
+        while(nFillSize < nDataSize)	//	å¡«å……è‡³è¶³å¤Ÿçš„æ•°æ®åè¿”å›
         {
             pBuffer = m_EmptyBuffer.front();
             pBuffer->ClearData();
 
             if(nDataSize - nFillSize < pBuffer->m_nBufferSize)
             {
-                nCopyDataSize = nDataSize - nFillSize;		//	¿½±´²¿·Ö³¤¶È
+                nCopyDataSize = nDataSize - nFillSize;		//	æ‹·è´éƒ¨åˆ†é•¿åº¦
 
                 memcpy(pBuffer->m_pBuffer, pData + nFillSize, nCopyDataSize);
                 pBuffer->m_nDataSize = nCopyDataSize;
@@ -396,7 +396,7 @@ public:
             }
             nFillSize += nCopyDataSize;
 
-            // ÒÆËÍbufferµ½Êı¾İ»º³åÇøÖĞ
+            // ç§»é€bufferåˆ°æ•°æ®ç¼“å†²åŒºä¸­
             m_nDataSize += pBuffer->m_nDataSize;
             m_nFullBufferSize += pBuffer->m_nBufferSize;
             m_nEmptyBufferSize -= pBuffer->m_nBufferSize;

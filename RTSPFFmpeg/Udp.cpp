@@ -29,7 +29,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    i_val = 1;	// ·Ç×èÈû·½Ê½
+    i_val = 1;	// éé˜»å¡æ–¹å¼
     error = ioctlsocket(m_Socket, FIONBIO, (ULONG*)&i_val);
     if(error == SOCKET_ERROR)
     {
@@ -37,7 +37,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    i_val = (int)(1024 * 1024 * 1.25);//2M Byte 1000MbpsµÄnetworkÔÚ0.01ÃëÄÚ×î¸ß¿ÉÒÔ½ÓÊÕµ½1.25MBÊı¾İ
+    i_val = (int)(1024 * 1024 * 1.25);//2M Byte 1000Mbpsçš„networkåœ¨0.01ç§’å†…æœ€é«˜å¯ä»¥æ¥æ”¶åˆ°1.25MBæ•°æ®
     error = setsockopt(m_Socket, SOL_SOCKET, SO_RCVBUF, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
     {
@@ -52,7 +52,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    // ¿ÉÖØÓÃ
+    // å¯é‡ç”¨
     i_val = 1;
     error = setsockopt(m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -61,7 +61,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    // ÉèÖÃttl
+    // è®¾ç½®ttl
     i_val = 5;
     error = setsockopt(m_Socket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -70,7 +70,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    // °ó¶¨Ì×½Ó×Ö
+    // ç»‘å®šå¥—æ¥å­—
     memset((PVOID)&m_BindAddr, 0, sizeof(m_BindAddr));
 
     m_BindAddr.sin_family = AF_INET;
@@ -158,7 +158,7 @@ BOOL Udp::SetMulticast(PCSTR textIP)
     int error = 0;
     int i_val = 0;
 
-    // ÉèÖÃ¶à²¥ºÍ¹ã²¥
+    // è®¾ç½®å¤šæ’­å’Œå¹¿æ’­
     if(IN_MULTICAST(ntohl(inet_addr(textIP))))
     {
         i_val = 1;
@@ -181,7 +181,7 @@ BOOL Udp::SetMulticast(PCSTR textIP)
         }
     }
 
-    //ÉèÖÃ¹ã²¥
+    //è®¾ç½®å¹¿æ’­
     if(inet_addr(textIP) == INADDR_BROADCAST)
     {
         i_val = 1;

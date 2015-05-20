@@ -238,7 +238,7 @@ __declspec(dllexport) int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3
 }
 
 //
-//获取YUV数据
+//鑾峰彇YUV鏁版嵁
 __declspec(dllexport) int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *buffer)
 {
     try
@@ -256,7 +256,7 @@ __declspec(dllexport) int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *b
         return -1;
     }
 }
-//获取H264数据
+//鑾峰彇H264鏁版嵁
 __declspec(dllexport) int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
 {
     try
@@ -273,7 +273,7 @@ __declspec(dllexport) int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
         return -1;
     }
 }
-//设置是否取消硬解
+//璁剧疆鏄惁鍙栨秷纭В
 __declspec(dllexport) int RevoHWAcceleration(int INSTANCE)
 {
     try
