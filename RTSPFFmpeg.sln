@@ -5,7 +5,9 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTSPFFmpeg", "RTSPFFmpeg\RtspClientFfmepg.vcxproj", "{2637B5C5-F5C1-473B-B701-4D9084A68361}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playH264ThreadDLL1", "PlayH264Dll\playH264ThreadDLL.vcxproj", "{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayH264Dll", "PlayH264Dll\playH264ThreadDLL.vcxproj", "{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPlay", "testPlay\testPlay.vcxproj", "{27634038-5606-4B79-9C98-CC1BFE5339A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,12 @@ Global
 		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|Win32.Build.0 = Release|Win32
 		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|x64.ActiveCfg = Release|x64
 		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|x64.Build.0 = Release|x64
+		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Debug|Win32.Build.0 = Debug|Win32
+		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Debug|x64.ActiveCfg = Debug|Win32
+		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Release|Win32.ActiveCfg = Release|Win32
+		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Release|Win32.Build.0 = Release|Win32
+		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -133,7 +133,12 @@ RTSPFFMPEG_API int InitRtspDLL()
     return 0;
 }
 
-RTSPFFMPEG_API int FreeRtspDLL(int INSTANCE)
+RTSPFFMPEG_API int FreeRtspDLL()
+{
+    return 0;
+}
+
+RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE)
 {
 
     try

@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>PlayH264Dll</ProjectName>
+    <ProjectName>PlayH264DLL</ProjectName>
     <ProjectGuid>{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}</ProjectGuid>
     <RootNamespace>playH264ThreadDLL</RootNamespace>
     <Keyword>Win32Proj</Keyword>

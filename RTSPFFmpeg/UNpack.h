@@ -365,7 +365,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
     fDecodeVideo DecodeVideo;
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
+    HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
     if(hDllhandle == NULL)
     {
         MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
@@ -377,7 +377,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
     GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int lenPath = wcslen(path1) - wcslen(L"RtspClientFfmepg.dll");
+    int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, lenPath);
     wcscat_s(path2, L"playH264ThreadDLL1.dll");
     //***********************************************************************************************
@@ -425,7 +425,7 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
 
     fDecodeVideo DecodeVideo;
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
+    HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
     if(hDllhandle == NULL)
     {
         MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
@@ -437,7 +437,7 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
 
     GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int lenPath = wcslen(path1) - wcslen(L"RtspClientFfmepg.dll");
+    int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, lenPath);
     wcscat_s(path2, L"playH264ThreadDLL1.dll");
     //***********************************************************************************************

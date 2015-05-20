@@ -79,10 +79,10 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
     ans = 0;
 
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
+    HMODULE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
+        MessageBox(NULL, L"get DLL HMODULE error", L"", MB_OK);
     }
 
     TCHAR path1[1024], path2[1024];
@@ -91,14 +91,13 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
 
     GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int len = wcslen(path1) - wcslen(L"RtspClientFfmepg.dll");
+    int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, len);
-    wcscat_s(path2, L"playH264ThreadDLL1.dll");
+    wcscat_s(path2, L"PlayH264Dll.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
 
-    //HINSTANCE hdll = LoadLibrary("playH264ThreadDLL1.dll");
     initVideoDLL = (finitVideoDLL)GetProcAddress(hdll, "initVideoDLL");
 
     if(!inited)
@@ -134,7 +133,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
+    HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
     if(hDllhandle == NULL)
     {
         MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
@@ -146,13 +145,12 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int len = wcslen(path1) - wcslen(L"RtspClientFfmepg.dll");
+    int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, len);
-    wcscat_s(path2, L"playH264ThreadDLL1.dll");
+    wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-    //HINSTANCE hdll = LoadLibrary("playH264ThreadDLL1.dll");
     GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hdll, "GetIdlevideoINSTANCE");
     RCC->INSTANCE = GetIdlevideoINSTANCE();
 #ifdef log

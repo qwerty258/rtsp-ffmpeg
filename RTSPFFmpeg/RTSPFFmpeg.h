@@ -16,7 +16,8 @@ extern "C" {
     RTSPFFMPEG_API int PlayRtsp(int INSTANCE, HWND hd);
     RTSPFFMPEG_API int StopRtsp(int INSTANCE);
     RTSPFFMPEG_API int InitRtspDLL(void);
-    RTSPFFMPEG_API int FreeRtspDLL(int INSTANCE);
+    RTSPFFMPEG_API int FreeRtspDLL(void);
+    RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE);
     RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1);
     RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1);
     RTSPFFMPEG_API int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2);
