@@ -453,10 +453,10 @@ static void Release(va_dxva2_t *va, AVFrame *ff)
 static void Close(va_dxva2_t* va)
 {
     DxDestroyVideoConversion(va);
-    DxDestroyVideoDecoder(va);//¼õÉÙÁËÄÚ´æ
+    DxDestroyVideoDecoder(va);//å‡å°‘äº†å†…å­˜
     DxDestroyVideoService(va);//
     D3dDestroyDeviceManager(va);//
-    D3dDestroyDevice(va);//Ó¦¸Ã¼õ
+    D3dDestroyDevice(va);//åº”è¯¥å‡
 
     //if (va->hdxva2_dll)
     //    FreeLibrary(va->hdxva2_dll);
@@ -472,7 +472,7 @@ static int Open(va_dxva2_t** pva, int codec_id)
     char a[10] = "c:\\";
     itoa((int)gPlayWnd,a+3,10);
     FILE *fp = fopen(a,"a+");
-    fputs("½øÈë´´½¨va\n",fp);
+    fputs("è¿›å…¥åˆ›å»ºva\n",fp);
     fclose(fp);
 #endif
     va_dxva2_t *va = (va_dxva2_t *)calloc(1, sizeof(*va));
@@ -565,7 +565,7 @@ static int Open(va_dxva2_t** pva, int codec_id)
     //external->extract = Extract;
 #ifdef log_GPU
     fp = fopen(a,"a+");
-    fputs("´´½¨va³É¹¦\n",fp);
+    fputs("åˆ›å»ºvaæˆåŠŸ\n",fp);
     fclose(fp);
 #endif
 
@@ -636,7 +636,7 @@ static int Extract(va_dxva2_t *va, AVFrame *src, AVFrame *dst, void *p)
 {
 
     LPDIRECT3DSURFACE9 d3d = (LPDIRECT3DSURFACE9)(uintptr_t)src->data[3];
-    //Ö±½ÓÏÔÊ¾
+    //ç›´æ¥æ˜¾ç¤º
 #define drShow
 #ifdef drShow
     if(!p)
@@ -775,14 +775,14 @@ static int D3dCreateDevice(va_dxva2_t *va)
 
     /* */
     d3dai = &va->d3dai;
-    //ËÑË÷¿ÉÓÃGPU
+    //æœç´¢å¯ç”¨GPU
     static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
     static int physGPU = displayCount;
     FILE * fp = fopen("c:\\numGpu.log", "ab+");
     fwrite(&physGPU, 1, 4, fp);
 
 
-    //Ñ°ÕÒ×î¿ÕÏĞµÄGPU
+    //å¯»æ‰¾æœ€ç©ºé—²çš„GPU
     for(int i = 0; i < physGPU; i++)
     {
         if(availableGPU[i] < availableGPU[currentGPU])
@@ -842,7 +842,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     char a[10] = "c:\\";
     itoa((int)d3dpp->hDeviceWindow,a+3,10);
     FILE *fp = fopen(a,"a+");
-    fputs("¿ªÊ¼´´½¨device\n",fp);
+    fputs("å¼€å§‹åˆ›å»ºdevice\n",fp);
     char b[2];
     itoa(currentGPU,b,10);
     fputs(b,fp);
@@ -863,7 +863,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
         char cHr[20];
         itoa(hr,cHr,10);
         fp = fopen(a,"a+");
-        fputs("´´½¨deviceÊ§°Ü£º\n",fp);
+        fputs("åˆ›å»ºdeviceå¤±è´¥ï¼š\n",fp);
         fputs(cHr,fp);
         fputs("\n",fp);
         fclose(fp);
@@ -874,7 +874,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     va->d3ddev = d3ddev;
 #ifdef log_GPU
     FILE *fp1 = fopen(a,"a+");
-    fputs("´´½¨device³É¹¦\n",fp1);
+    fputs("åˆ›å»ºdeviceæˆåŠŸ\n",fp1);
     fclose(fp1);
 #endif
 
