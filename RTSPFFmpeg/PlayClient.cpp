@@ -93,7 +93,7 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
 
     int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, len);
-    wcscat_s(path2, L"PlayH264Dll.dll");
+    wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
