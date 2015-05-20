@@ -91,13 +91,5 @@
     <None Include="RTSPFFmpeg.def">
       <Filter>源文件</Filter>
     </None>
-    <None Include="res\RTSPFFmpeg.rc2">
-      <Filter>资源文件</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="RTSPFFmpeg.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

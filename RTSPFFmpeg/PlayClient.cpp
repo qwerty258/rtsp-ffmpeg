@@ -79,21 +79,21 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
     ans = 0;
 
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle("RtspClientFfmepg.dll");
+    HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, "»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", "", MB_OK);
+        MessageBox(NULL, L"»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", L"", MB_OK);
     }
 
-    char path1[1024], path2[1024];
-    memset(path1, 0, 1024);
-    memset(path2, 0, 1024);
+    TCHAR path1[1024], path2[1024];
+    memset(path1, 0, 1024 * sizeof(TCHAR));
+    memset(path2, 0, 1024 * sizeof(TCHAR));
 
     GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int len = strlen(path1) - strlen("RtspClientFfmepg.dll");
-    strncpy(path2, path1, len);
-    strcat(path2, "playH264ThreadDLL1.dll");
+    int len = wcslen(path1) - wcslen(L"RtspClientFfmepg.dll");
+    wcsncpy_s(path2, path1, len);
+    wcscat_s(path2, L"playH264ThreadDLL1.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
@@ -134,21 +134,21 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle("RtspClientFfmepg.dll");
+    HANDLE hDllhandle = GetModuleHandle(L"RtspClientFfmepg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, "»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", "", MB_OK);
+        MessageBox(NULL, L"»ñÈ¡¶¯Ì¬¿â¾ä±úÊ§°Ü", L"", MB_OK);
     }
 
-    char path1[1024], path2[1024];
-    memset(path1, 0, 1024);
-    memset(path2, 0, 1024);
+    TCHAR path1[1024], path2[1024];
+    memset(path1, 0, 1024 * sizeof(TCHAR));
+    memset(path2, 0, 1024 * sizeof(TCHAR));
 
     GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int len = strlen(path1) - strlen("RtspClientFfmepg.dll");
-    strncpy(path2, path1, len);
-    strcat(path2, "playH264ThreadDLL1.dll");
+    int len = wcslen(path1) - wcslen(L"RtspClientFfmepg.dll");
+    wcsncpy_s(path2, path1, len);
+    wcscat_s(path2, L"playH264ThreadDLL1.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);

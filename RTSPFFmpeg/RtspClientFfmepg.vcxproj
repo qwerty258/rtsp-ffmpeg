@@ -130,11 +130,7 @@
     <ClInclude Include="VBufferT.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\RTSPFFmpeg.rc2" />
     <None Include="RTSPFFmpeg.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="RTSPFFmpeg.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
