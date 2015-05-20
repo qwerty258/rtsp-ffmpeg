@@ -22,6 +22,16 @@
 
 #include "dxva2api.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <libavcodec/avcodec.h>
+#include <libavcodec/dxva2.h>
+#include <libavutil/mem.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include <windows.h>
 #include <windowsx.h>
 #include <ole2.h>

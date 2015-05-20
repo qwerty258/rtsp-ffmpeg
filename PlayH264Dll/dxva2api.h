@@ -33,16 +33,6 @@
 #pragma GCC system_header
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include <libavcodec/avcodec.h>
-#include <libavcodec/dxva2.h>
-#include <libavutil/mem.h>
-#ifdef __cplusplus
-}
-#endif
-
 #include <objbase.h>
 #include <d3d9.h>
 
