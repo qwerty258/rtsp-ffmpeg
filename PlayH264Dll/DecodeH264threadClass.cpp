@@ -6,8 +6,6 @@
 #include <ddraw.h>
 #include "va.h"
 #include <d3d9.h>
-//#include "afx.h"
-//#include "afx.h"
 
 using namespace std;
 #pragma comment(lib,"ddraw.lib")

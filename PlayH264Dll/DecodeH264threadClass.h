@@ -23,8 +23,6 @@ extern "C"
 #pragma comment(lib,"swresample.lib")
 #pragma comment(lib,"swscale.lib")
 
-//#pragma comment(lib,"libx264-120.lib")
-//#pragma comment(lib,"libx264.lib")
 
 #define PLAYVIDEO 0
 #define STOPVIDEO -2
