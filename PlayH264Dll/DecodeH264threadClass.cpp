@@ -76,6 +76,7 @@ int playH264VideoClass::setReadPosize(int index, int readsize)
     //  return 0;
     //}catch(...)
     //{return -1;}
+    return 0;
 }
 int playH264VideoClass::getNextNetBuf(char *buf, int bufsize)
 {
@@ -558,8 +559,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         {
             dxva_Delete((dxva_t *)c->opaque);
         }
-        //av_free(c);
-        avcodec_free_context(&c);
+        av_free(c);
+        //avcodec_free_context(&c);
         delete[] netBuf;
         //delete[] bmpBuf;
         VideoClass->dataQueueClean();
