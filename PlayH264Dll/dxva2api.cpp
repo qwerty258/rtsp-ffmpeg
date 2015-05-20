@@ -7,6 +7,7 @@
  *
  * This file is part of FFmpeg. 
  *****************************************************************************/
+#include "stdafx.h"
 #define inline __inline
 //#define log_GPU
 
@@ -20,16 +21,6 @@
 #define COBJMACROS
 
 #include "dxva2api.h"
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#include <libavcodec/avcodec.h>
-#include <libavcodec/dxva2.h>
-#include <libavutil/mem.h>
-#ifdef __cplusplus
-}
-#endif
 
 #include <windows.h>
 #include <windowsx.h>

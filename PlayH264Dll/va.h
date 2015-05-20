@@ -11,6 +11,16 @@
 #ifndef _TYD_VA_H
 #define _TYD_VA_H 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <libavcodec\avcodec.h>
+#include <libavutil\pixfmt.h>
+#include <libavutil\pixdesc.h>
+#ifdef __cplusplus
+}
+#endif
+
 struct va_sys_t;
 typedef struct dxva_t dxva_t;
 typedef struct va_sys_t va_dxva2_t;

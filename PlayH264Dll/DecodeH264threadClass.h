@@ -1,28 +1,19 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstdint>
 #include <concurrent_queue.h>
 
 extern "C"
 {
-
-#include <avcodec.h>
-#include <avformat.h>
-#include <swscale.h>
-#include <stdint.h>
-
-//#include <swscale.h>
-
+#include <libavcodec\avcodec.h>
+#include <libavformat\avformat.h>
+#include <libswscale\swscale.h>
 }
 
 
-//#ifdef __cplusplus
-//
-//extern "C"
-//{
-//#endif
 #pragma comment (lib, "Ws2_32.lib")  
 #pragma comment (lib, "avcodec.lib")
 #pragma comment (lib, "avdevice.lib")
@@ -31,21 +22,10 @@ extern "C"
 #pragma comment (lib, "avutil.lib")
 #pragma comment (lib, "swresample.lib")
 #pragma comment (lib, "swscale.lib")
-//#ifdef __cplusplus
-//}
-//#endif
-
-//extern "C"
-//{
-//	AVCodecContext * avcodec_alloc_context3(const AVCodec *codec);
-//}
 
 #pragma comment(lib,"avcodec.lib")
 #pragma comment(lib,"avformat.lib")
 #pragma comment(lib,"swscale.lib")
-//#pragma comment(lib,"SDL.lib")
-//#pragma comment(lib,"SDL_image.lib")
-//#pragma comment(lib,"SDLmain.lib")
 #pragma comment(lib,"libx264-120.lib")        
 #pragma comment(lib,"libx264.lib")
 #pragma comment(lib,"avutil.lib")

@@ -7,16 +7,7 @@
  *
  * This file is part of FFmpeg. 
  *****************************************************************************/
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#include <libavutil/pixfmt.h>
-#include <libavutil/pixdesc.h>
-#include <libavcodec/avcodec.h>
-#ifdef __cplusplus
-}
-#endif
+#include "stdafx.h"
 #include "windows.h"
 #include "va.h"
 //#define log_va
