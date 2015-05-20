@@ -11,22 +11,22 @@ class Udp : public Socket
 {
 public:
 
-	Udp(UINT mtu = 1500);
-	virtual ~Udp();
+    Udp(UINT mtu = 1500);
+    virtual ~Udp();
 
-	virtual BOOL Open(string bindIp = "", int bindPort = 0);
+    virtual BOOL Open(string bindIp = "", int bindPort = 0);
 
-	virtual BOOL Connect(string connectIp, int connectPort);
+    virtual BOOL Connect(string connectIp, int connectPort);
 
-	virtual int  Read(BYTE* pBuffer, UINT16 bufferSize, UINT nTimeOut = 500000);
+    virtual int  Read(BYTE* pBuffer, UINT16 bufferSize, UINT nTimeOut = 500000);
 
-	virtual int  Write(PBYTE pBuffer, UINT16 bufferSize, UINT nTimeOut = 500000);
-	//virtual BOOL Close();
+    virtual int  Write(PBYTE pBuffer, UINT16 bufferSize, UINT nTimeOut = 500000);
+    //virtual BOOL Close();
 protected:
 
-	BOOL SetMulticast(PCSTR textIP);
+    BOOL SetMulticast(PCSTR textIP);
 
-	BOOL	m_isConnect;
+    BOOL	m_isConnect;
 };
 
 #endif //__UDP_H__

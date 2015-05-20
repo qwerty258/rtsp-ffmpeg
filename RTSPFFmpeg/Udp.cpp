@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Udp.h"
 
 Udp::Udp(UINT mtu) :Socket(mtu)

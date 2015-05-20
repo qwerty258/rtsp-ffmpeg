@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Rtp.h"
 //#include "Unpack.h"
 #include <sstream>

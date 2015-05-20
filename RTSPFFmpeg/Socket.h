@@ -1,12 +1,12 @@
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
 
-#include <winsock2.h>
-#pragma comment(lib, "ws2_32.lib")
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-#pragma warning(disable : 4786) 
+#include <WinSock2.h>
+#pragma comment(lib,"Ws2_32.lib")
 
-#include <errno.h>
+#include <cerrno>
 #include <vector>
 using namespace std;
 

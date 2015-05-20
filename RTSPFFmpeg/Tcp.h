@@ -10,7 +10,8 @@
 
 /* Argument structure for SIO_KEEPALIVE_VALS */
 
-struct tcp_keepalive {
+struct tcp_keepalive
+{
     u_long  onoff;
     u_long  keepalivetime;
     u_long  keepaliveinterval;
@@ -38,20 +39,20 @@ struct tcp_keepalive {
 class Tcp : public Socket
 {
 public:
-	Tcp();
+    Tcp();
 
-	virtual ~Tcp();
-	
-	virtual BOOL Open(PCSTR bindIp = "", INT bindPort = 0);
+    virtual ~Tcp();
 
-	virtual BOOL Connect(PCSTR connectIp, INT connectPort);
+    virtual BOOL Open(PCSTR bindIp = "", INT bindPort = 0);
 
-	virtual INT ReadLine(string* pStr, UINT strMaxSize, UINT nTimeOut = 500000); //0.5 sec
+    virtual BOOL Connect(PCSTR connectIp, INT connectPort);
 
-	virtual void Close();
+    virtual INT ReadLine(string* pStr, UINT strMaxSize, UINT nTimeOut = 500000); //0.5 sec
+
+    virtual void Close();
 
 protected:
-	BOOL m_isConnect;
+    BOOL m_isConnect;
 };
 
 #endif // __TCP_H__

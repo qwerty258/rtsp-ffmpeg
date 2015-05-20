@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PlayClient.h"
 
 #define CLASSDLL_API __declspec(dllexport)

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 //#pragma comment(lib,"playH264ThreadDLL1.lib")
 
