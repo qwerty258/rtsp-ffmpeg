@@ -15,7 +15,7 @@ struct DecodeList
 {
     playH264VideoClass *pt;
     CRITICAL_SECTION cs;
-    int idle; //1 启用 0 停用 2 锁住
+    int idle; //1 enable 0 disable 2 lock
 };
 
 AVCodecContext* m_pCodecContext[MACPL];
@@ -42,8 +42,7 @@ int checkINSTANCE(int INSTANCE)
     }
 }
 
-PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//不用
-{
+PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//depreated
     try
     {
         if(f1 == NULL) { return -1; };
@@ -75,8 +74,8 @@ PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
     //   playH264VideoClass *DC=(playH264VideoClass *)deList[num].pt;
     do
     {
-        uint8_t *pout;//装完整的一个帧用，如果没完就是NULL
-        int pout_len;//装完整帧的长度，如果没完就是NULL
+        uint8_t *pout;// a complete frame, if incomplete it's NULL
+        int pout_len;// a complete frame's length, if incomplete it's NULL
         int len = av_parser_parse2(m_parser[num], m_pCodecContext[num], &pout, &pout_len,
             pInBuffer + pos, size - pos, pts, dts, AV_NOPTS_VALUE);
 
@@ -119,7 +118,7 @@ PLAYH264DLL_API int initVideoDLL()
     //SDL_putenv(sdl_var);
     /*FILE *fp;
     fp = fopen("c:\\20150205.txt","a+");
-    fputs("初始化成�?,fp);
+    fputs("initial success",fp);
     fclose(fp);*/
 
     if(debug == 1)
@@ -136,7 +135,7 @@ PLAYH264DLL_API int initVideoDLL()
     //         m_pFrame[i]=avcodec_alloc_frame();
     //         m_parser[i]=av_parser_init(CODEC_ID_H264);
     //     }
-    //en还是de?
+    //en or de?
     //for(int i=0;i<MACPL;i++)
     //  {
     //     AVCodec *codec;   
@@ -269,7 +268,7 @@ PLAYH264DLL_API int freeVideos(int INSTANCE)
         int ru = checkINSTANCE(INSTANCE);
         if(ru < 0) return -1;
         if(deList[INSTANCE].idle != 1) return -1;
-        deList[INSTANCE].idle = 2;//保证锁住
+        deList[INSTANCE].idle = 2;//ensure locks
         playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
         DC->freeParam();
         if(debug == 1)
@@ -294,7 +293,7 @@ PLAYH264DLL_API int freeVideos(int INSTANCE)
         if(debug == 1)
                   WriteLog("C:\\1.log", "freeVideos4");
 
-        deList[INSTANCE].idle = 0;// 释放�?
+        deList[INSTANCE].idle = 0;// release lock
 
         //FILE *fp;
         //fp = fopen("c:\\free.txt","a+");
@@ -363,7 +362,7 @@ PLAYH264DLL_API void exitdll()
     }
 }
 
-PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//不用
+PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//depreated
 {
 
     //FILE *fp;
@@ -385,7 +384,7 @@ PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//不
     }
 }
 
-PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//不用
+PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//depreated
 {
     try
     {
@@ -409,7 +408,7 @@ PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//不用
 
 }
 
-PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//不用
+PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//depreated
 {
     try
     {
@@ -478,7 +477,9 @@ PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
         return -1;
     }
 }
-//支持硬件加速，初始默认不硬件加速（支持h264数据和YUV数据回调，但是播放性能高），不使用硬件加速支持所有已知回�?
+
+//support hardware acceleration, default is software decode.
+//hardware acceleration support h264 and YUV callback, software decode support all callback functions
 PLAYH264DLL_API int RevoHWAcceleration(int instance)
 {
     try
