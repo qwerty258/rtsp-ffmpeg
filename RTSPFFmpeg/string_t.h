@@ -1,9 +1,9 @@
 // Author:			Ï²Ö®ÀÇ¤Î¿ã×Ó
 // Contact:			70565912@qq.com
 //////////////////////////////////////////////////////////////////////////
-#pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#include <assert.h>
+#pragma once
+#include <cassert>
 #include <tchar.h>
 #include <string>
 using namespace std;
@@ -89,7 +89,7 @@ static size_t st_sprintf(string_t* pText, LPCTSTR pszFormat, ...)
         sTemp = new TCHAR[iTextBufferLength];
         assert(sTemp);
 
-        nWrit = _vsntprintf(sTemp, iTextBufferLength, pszFormat, argList);
+        nWrit = _vsnwprintf_s(sTemp, iTextBufferLength, pszFormat, argList);
         if(nWrit < 0)
         {
             iTextBufferLength += MAX_PATH;

@@ -289,7 +289,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     // av_register_all();
     int PictureSize;
-    uint8_t *buf;
+    uint8_t *buf=NULL;
     char *netBuf = new char[PICMAX];
     char *bmpBuf = new char[1920 * 1080 * 3];
 
@@ -492,7 +492,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 VideoClass->bmpinfo.biHeight = c->height;
                 avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, c->width, c->height);
             }
-            struct SwsContext *pSwsCtx;
+            struct SwsContext *pSwsCtx=NULL;
             if(!VideoClass->nHWAcceleration&&fir)
             {
                 pSwsCtx = sws_getContext(c->width,

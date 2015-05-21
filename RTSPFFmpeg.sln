@@ -3,40 +3,30 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTSPFFmpeg", "RTSPFFmpeg\RtspClientFfmepg.vcxproj", "{2637B5C5-F5C1-473B-B701-4D9084A68361}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPlay", "testPlay\testPlay.vcxproj", "{83043528-0972-4377-A99F-B18E0655084A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayH264Dll", "PlayH264Dll\playH264ThreadDLL.vcxproj", "{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTSPFFmpeg", "RTSPFFmpeg\RTSPFFmpeg.vcxproj", "{6F345568-E08B-4C88-BFC1-EED64CFB55BF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPlay", "testPlay\testPlay.vcxproj", "{27634038-5606-4B79-9C98-CC1BFE5339A6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayH264DLL", "PlayH264DLL\PlayH264DLL.vcxproj", "{4C40B635-5336-4950-8C1F-17296D0F422D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
-		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
-		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Debug|Win32.Build.0 = Debug|Win32
-		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Debug|x64.ActiveCfg = Debug|Win32
-		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Release|Win32.ActiveCfg = Release|Win32
-		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Release|Win32.Build.0 = Release|Win32
-		{2637B5C5-F5C1-473B-B701-4D9084A68361}.Release|x64.ActiveCfg = Release|Win32
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|Win32.ActiveCfg = Debug|Win32
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|Win32.Build.0 = Debug|Win32
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|x64.ActiveCfg = Debug|x64
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Debug|x64.Build.0 = Debug|x64
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|Win32.ActiveCfg = Release|Win32
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|Win32.Build.0 = Release|Win32
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|x64.ActiveCfg = Release|x64
-		{28AD2AC9-E108-41AD-A5CD-83BA2EEFA655}.Release|x64.Build.0 = Release|x64
-		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Debug|Win32.Build.0 = Debug|Win32
-		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Debug|x64.ActiveCfg = Debug|Win32
-		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Release|Win32.ActiveCfg = Release|Win32
-		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Release|Win32.Build.0 = Release|Win32
-		{27634038-5606-4B79-9C98-CC1BFE5339A6}.Release|x64.ActiveCfg = Release|Win32
+		{83043528-0972-4377-A99F-B18E0655084A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83043528-0972-4377-A99F-B18E0655084A}.Debug|Win32.Build.0 = Debug|Win32
+		{83043528-0972-4377-A99F-B18E0655084A}.Release|Win32.ActiveCfg = Release|Win32
+		{83043528-0972-4377-A99F-B18E0655084A}.Release|Win32.Build.0 = Release|Win32
+		{6F345568-E08B-4C88-BFC1-EED64CFB55BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6F345568-E08B-4C88-BFC1-EED64CFB55BF}.Debug|Win32.Build.0 = Debug|Win32
+		{6F345568-E08B-4C88-BFC1-EED64CFB55BF}.Release|Win32.ActiveCfg = Release|Win32
+		{6F345568-E08B-4C88-BFC1-EED64CFB55BF}.Release|Win32.Build.0 = Release|Win32
+		{4C40B635-5336-4950-8C1F-17296D0F422D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4C40B635-5336-4950-8C1F-17296D0F422D}.Debug|Win32.Build.0 = Debug|Win32
+		{4C40B635-5336-4950-8C1F-17296D0F422D}.Release|Win32.ActiveCfg = Release|Win32
+		{4C40B635-5336-4950-8C1F-17296D0F422D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

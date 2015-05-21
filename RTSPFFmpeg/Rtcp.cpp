@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Rtcp.h"
 
 int Rtcp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以后+1
@@ -120,7 +119,7 @@ int Rtcp::Write(UINT nTimeOut)
 	}	
 }
 
-void copy(recieveSRFrom *des, recieveSRFrom *src)
+void Rtcp::copy(recieveSRFrom *des, recieveSRFrom *src)
 {
 	des->SR.head = src->SR.head;
 	des->SR.PT = src->SR.PT;

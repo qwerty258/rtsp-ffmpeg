@@ -30,54 +30,54 @@
 
 #include "Tcp.h"
 #include <ctime>
-
-typedef struct
-{
-    UINT8 head;
-    UINT8 PT;
-    UINT8 length[2];
-    UINT8 SSRC[4];
-    UINT8 NTP[8];
-    UINT8 RTP[4];
-    UINT8 packetCount[4];
-    UINT8 octetCount[4];
-} RtcpSR;
-
-typedef struct
-{
-    UINT8 head;
-    UINT8 PT;
-    UINT8 length[2];
-    UINT8 SSRC[4];
-    UINT8 SSRC_1[4];//SSRC of first source对应SR的SSRC
-    UINT8 fractionLost;//从上个sr或rr以来的丢包率,表现为接收方此段时间内期待的RTP包与所收到的RTP包数目的差值和他期待的RTP报文的数目的比值，若为负值，置为0
-    UINT8 cumulationLost[3];//累计丢包率
-    UINT8 EHSNR[4];//extended highest sequence number received
-    UINT8 interJitter[4];//到达时间抖动
-    UINT8 LSR[4];//last SR
-    UINT8 DLSR[4];//delay since last SR
-} RtcpRR;
-
-typedef struct
-{
-    UINT8 head;
-    UINT8 PT;
-    UINT8 length[2];
-    UINT8 SSRC[4];//
-    UINT8 user[100];//用户描述
-}RtcpSDES;//这个按协议为扩张，但这里只取单一数据块情况
-
-typedef struct
-{
-    RtcpSR SR;
-    RtcpSDES SDES;
-}recieveSRFrom;
-
-typedef struct
-{
-    RtcpRR RR;
-    RtcpSDES SDES;
-} sendRRTo;
+#include "Decode.h"
+//typedef struct
+//{
+//    UINT8 head;
+//    UINT8 PT;
+//    UINT8 length[2];
+//    UINT8 SSRC[4];
+//    UINT8 NTP[8];
+//    UINT8 RTP[4];
+//    UINT8 packetCount[4];
+//    UINT8 octetCount[4];
+//} RtcpSR;
+//
+//typedef struct
+//{
+//    UINT8 head;
+//    UINT8 PT;
+//    UINT8 length[2];
+//    UINT8 SSRC[4];
+//    UINT8 SSRC_1[4];//SSRC of first source对应SR的SSRC
+//    UINT8 fractionLost;//从上个sr或rr以来的丢包率,表现为接收方此段时间内期待的RTP包与所收到的RTP包数目的差值和他期待的RTP报文的数目的比值，若为负值，置为0
+//    UINT8 cumulationLost[3];//累计丢包率
+//    UINT8 EHSNR[4];//extended highest sequence number received
+//    UINT8 interJitter[4];//到达时间抖动
+//    UINT8 LSR[4];//last SR
+//    UINT8 DLSR[4];//delay since last SR
+//} RtcpRR;
+//
+//typedef struct
+//{
+//    UINT8 head;
+//    UINT8 PT;
+//    UINT8 length[2];
+//    UINT8 SSRC[4];//
+//    UINT8 user[100];//用户描述
+//}RtcpSDES;//这个按协议为扩张，但这里只取单一数据块情况
+//
+//typedef struct
+//{
+//    RtcpSR SR;
+//    RtcpSDES SDES;
+//}recieveSRFrom;
+//
+//typedef struct
+//{
+//    RtcpRR RR;
+//    RtcpSDES SDES;
+//} sendRRTo;
 
 typedef enum serverState
 {
@@ -141,6 +141,7 @@ protected:
     char	m_Session[50];
 
     vector<string> m_Fields;
+    void copy(recieveSRFrom *des, recieveSRFrom *src);
 
 public:
     //以下大端格式

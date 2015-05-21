@@ -119,7 +119,7 @@ PLAYH264DLL_API int initVideoDLL()
     //SDL_putenv(sdl_var);
     /*FILE *fp;
     fp = fopen("c:\\20150205.txt","a+");
-    fputs("初始化成功",fp);
+    fputs("初始化成�?,fp);
     fclose(fp);*/
 
     if(debug == 1)
@@ -294,7 +294,7 @@ PLAYH264DLL_API int freeVideos(int INSTANCE)
         if(debug == 1)
                   WriteLog("C:\\1.log", "freeVideos4");
 
-        deList[INSTANCE].idle = 0;// 释放锁
+        deList[INSTANCE].idle = 0;// 释放�?
 
         //FILE *fp;
         //fp = fopen("c:\\free.txt","a+");
@@ -478,7 +478,7 @@ PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
         return -1;
     }
 }
-//支持硬件加速，初始默认不硬件加速（支持h264数据和YUV数据回调，但是播放性能高），不使用硬件加速支持所有已知回调
+//支持硬件加速，初始默认不硬件加速（支持h264数据和YUV数据回调，但是播放性能高），不使用硬件加速支持所有已知回�?
 PLAYH264DLL_API int RevoHWAcceleration(int instance)
 {
     try

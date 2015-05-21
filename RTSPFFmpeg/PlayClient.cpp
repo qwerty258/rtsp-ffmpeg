@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "PlayClient.h"
 #include <string>
 #include <atlstr.h>

@@ -4,7 +4,7 @@
 
 #include "Rtsp.h"
 #include "UNpack.h"
-#include "string_t.h"
+//#include "string_t.h"
 
 int Rtsp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以后+1
 
@@ -348,7 +348,7 @@ int Rtsp::Write_RTCPVideo(UINT nTimeOut)
     }
 }
 
-void copy(recieveSRFrom *des, recieveSRFrom *src)
+void Rtsp::copy(recieveSRFrom *des, recieveSRFrom *src)
 {
     des->SR.head = src->SR.head;
     des->SR.PT = src->SR.PT;
@@ -456,10 +456,10 @@ int Rtsp::Read(string& str)
     if(str.size())
         printf("<< '%s'\n", str.c_str());
 
-    wstring wide_char = a2w_cp(str, CP_UTF8);
-    string multi_char = w2a(wide_char);
+    //wstring wide_char = a2w_cp(str, CP_UTF8);
+    //string multi_char = w2a(wide_char);
 
-    str = multi_char;
+    //str = multi_char;
 
     return (UINT)str.size();
 }
@@ -470,10 +470,10 @@ int Rtsp::Write(string str)
 
     printf(">> '%s'", str.c_str());
 
-    wstring wide_char = a2w(str);
-    string multi_utf8 = w2a_cp(wide_char, CP_UTF8);
+    //wstring wide_char = a2w(str);
+    //string multi_utf8 = w2a_cp(wide_char, CP_UTF8);
 
-    iWrite = Tcp::Write((PBYTE)multi_utf8.c_str(), multi_utf8.length());
+    iWrite = Tcp::Write((PBYTE)str.c_str(), str.length());
     Tcp::Write((PBYTE)"\r\n", 2);
 
     printf("done.\n");
