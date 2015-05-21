@@ -81,7 +81,7 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* UserName, c
 
     if(NULL == deList[INSTANCE].pt)
     {
-        MessageBox(NULL, L"InitRtspVideoParam: memory problem: new error!", NULL, MB_OK);
+        MessageBox(NULL, L"InitRtspVideoParam: new error!", NULL, MB_OK);
         return -1;
     }
 
