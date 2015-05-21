@@ -1,5 +1,4 @@
-#ifndef __SOCKET_H__
-#define __SOCKET_H__
+#pragma once
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
@@ -34,22 +33,20 @@ public:
     virtual SOCKADDR_IN GetBindAddr();
     virtual SOCKADDR_IN GetConnectAddr();
 
-    virtual	UINT GetMTU();
+    virtual UINT GetMTU();
 
     static BOOL GetLocalIPList(vector<string>& vIPList);
     static BOOL GetAdapterSpeed(vector<int>& vList);
 
 protected:
-    void	ReportError();
-    int		Select(int mode, int timeoutUsec);
+    void ReportError();
+    int Select(int mode, int timeoutUsec);
 
-    BOOL	m_isOpen;
+    BOOL m_isOpen;
 
-    SOCKET		m_Socket;
+    SOCKET m_Socket;
     SOCKADDR_IN m_BindAddr;
     SOCKADDR_IN m_ConnectAddr;
 
-    UINT	m_Mtu;
+    UINT m_Mtu;
 };
-
-#endif //__SOCKET_H__
