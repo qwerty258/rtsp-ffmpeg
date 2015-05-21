@@ -25,12 +25,6 @@ int checkINSTANCE(int INSTANCE)
 
 RTSPFFMPEG_API int GetRtspINSTANCE()
 {
-#ifdef log
-    FILE *fp;
-    fp=fopen("c:\\test.log","ab+");
-    fputs("GetRtspINSTANCE\n",fp);
-    fclose(fp);
-#endif
     for(int i = 0; i < MACPL; i++)
     {
         if(deList[i].idle == 0)
@@ -53,12 +47,6 @@ RTSPFFMPEG_API int GetRtspINSTANCE()
 
 RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URL, char* UserName, char* PWD)
 {
-#ifdef log
-    FILE *fp;
-    fp=fopen("c:\\test.log","ab+");
-    fputs("InitRtspVideo\n",fp);
-    fclose(fp);
-#endif
     try
     {
         int ru = checkINSTANCE(INSTANCE);
@@ -77,12 +65,6 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URL, char* UserName, c
 
 RTSPFFMPEG_API int PlayRtsp(int INSTANCE, HWND hd)
 {
-#ifdef log
-    FILE *fp;
-    fp=fopen("c:\\test.log","ab+");
-    fputs("PlayRtsp\n",fp);
-    fclose(fp);
-#endif
     try
     {
         int ru = checkINSTANCE(INSTANCE);
@@ -119,12 +101,6 @@ RTSPFFMPEG_API int StopRtsp(int INSTANCE)
 
 RTSPFFMPEG_API int InitRtspDLL()
 {
-#ifdef log
-    FILE *fp;
-    fp=fopen("c:\\test.log","ab+");
-    fputs("InitRtspDLL\n",fp);
-    fclose(fp);
-#endif
     for(int i = 0; i < MACPL; i++)
     {
         deList[i].idle = 0;
