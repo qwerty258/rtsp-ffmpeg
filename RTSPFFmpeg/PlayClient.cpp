@@ -209,7 +209,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //fclose(fp);
 
     //获取本地IP
-    CString ip;
+    string ip;
     WORD wVersionRequested;
     WSADATA wsaData;//初始化
     char name[255];
@@ -235,7 +235,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     RtspRequest *RTSPCLient = new RtspRequest;
     //建立rtsp连接 通过tcp传输
 
-    if(!RTSPCLient->Open(RCC->Url, (LPSTR)(LPCTSTR)ip, rtpPort + 5))
+    if(!RTSPCLient->Open(RCC->Url, ip.c_str(), rtpPort + 5))
     {
 
 

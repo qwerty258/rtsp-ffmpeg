@@ -47,13 +47,13 @@ BOOL CtestPlayDlg::OnInitDialog()
 
     // TODO: Add extra initialization here
     m_hDll = LoadLibrary(L"RTSPFFmpeg.dll");
-    if(INVALID_HANDLE_VALUE == m_hDll)
+    if(NULL == m_hDll)
     {
         AfxMessageBox(L"Load RTSPFFmpeg.dll error");
     }
 
     InitRtspDLL = (lpFuncInitRtspDLL)GetProcAddress(m_hDll, "InitRtspDLL");
-    FreeRtspDll = (lpFuncFreeRtspDll)GetProcAddress(m_hDll, "FreeRtspDll");
+    FreeRtspDll = (lpFuncFreeRtspDll)GetProcAddress(m_hDll, "FreeRtspDLL");
     PlayRtsp = (lpFuncPlayRtsp)GetProcAddress(m_hDll, "PlayRtsp");
     StopRtsp = (lpFuncStopRtsp)GetProcAddress(m_hDll, "StopRtsp");
     InitRtspVideoParam = (lpFuncInitRtspVideoParam)GetProcAddress(m_hDll, "InitRtspVideoParam");
