@@ -101,7 +101,7 @@ RTSPFFMPEG_API int StopRtsp(int INSTANCE)
 
 RTSPFFMPEG_API int InitRtspDLL()
 {
-    for(int i = 0; i < MACPL; i++)
+    for(size_t i = 0; i < MACPL; i++)
     {
         deList[i].idle = 0;
         deList[i].pt = NULL;
