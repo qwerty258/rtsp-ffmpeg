@@ -1,4 +1,3 @@
-; RTSPFFmpeg.def : 声明 DLL 的模块参数。
 LIBRARY RTSPFFmpeg
 EXPORTS
 	GetRtspINSTANCE			@1
