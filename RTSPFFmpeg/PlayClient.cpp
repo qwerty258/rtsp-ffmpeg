@@ -28,13 +28,13 @@ fSetBmpCallBack SetBmpCallBack;
 fSetFillBmpCallBack SetFillBmpCallBack;
 revoHW revoHWFunc;
 
-RTSPCLientClass::RTSPCLientClass()
+CRTSPCLient::CRTSPCLient()
 {
     Url = NULL;
     UserName = NULL;
     Pwd = NULL;
 }
-RTSPCLientClass::~RTSPCLientClass()
+CRTSPCLient::~CRTSPCLient()
 {
     if(Url != NULL)
     {
@@ -53,7 +53,7 @@ RTSPCLientClass::~RTSPCLientClass()
     }
 }
 
-int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
+int CRTSPCLient::InputURL(char* URL, char* UserName, char* PWD)
 {
     this->UserName = new char[100];
     this->Pwd = new char[100];
@@ -123,7 +123,7 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
     //解码器准备工�?
-    RTSPCLientClass *RCC = (RTSPCLientClass *)lpParam;
+    CRTSPCLient *RCC = (CRTSPCLient *)lpParam;
     myparamInput *Myparam = new myparamInput();//播放结束需要删�?
     RECT *rect = new RECT;//播放结束需要删�?
     GetWindowRect(RCC->hd, rect);
@@ -626,7 +626,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 //输出参数�?
 //返回值：  1播放成功�?1播放失败
 //**************************************************
-int RTSPCLientClass::PlayURL(HWND hd)
+int CRTSPCLient::PlayURL(HWND hd)
 {
     //进入线程
     this->hd = hd;
@@ -644,7 +644,7 @@ int RTSPCLientClass::PlayURL(HWND hd)
 //输出参数�?
 //返回值：  -1关闭失败�?关闭成功
 //**************************************************
-int RTSPCLientClass::stopURL()
+int CRTSPCLient::stopURL()
 {
     //退循环
     /*FILE *fp;

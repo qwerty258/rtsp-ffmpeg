@@ -1,8 +1,5 @@
 #pragma once
 
-#include <list>
-#include <map>
-
 #include "RtspRequest.h"
 #include "Rtp.h"
 
@@ -10,11 +7,11 @@
 
 #include "Decode.h"
 
-class RTSPCLientClass
+class CRTSPCLient
 {
 public:
-    RTSPCLientClass();
-    ~RTSPCLientClass();
+    CRTSPCLient();
+    ~CRTSPCLient();
 private:
     DWORD threadID;
 public:
@@ -27,7 +24,7 @@ public:
     char* UserName;
     char* Pwd;
     bool circulation;
-    int ans;//0 初始状态，1 进入循环，2 退出线程
+    int ans;//0 初始状态，1 进入循环�? 退出线�?
     HWND hd;
     PFCALLBACK func;
     TDrawLineCallBack funcD;
