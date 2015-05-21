@@ -127,4 +127,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="testPlay.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

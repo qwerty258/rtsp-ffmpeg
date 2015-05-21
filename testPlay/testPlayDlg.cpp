@@ -16,8 +16,7 @@
 
 
 
-CtestPlayDlg::CtestPlayDlg(CWnd* pParent /*=NULL*/)
-    : CDialogEx(CtestPlayDlg::IDD, pParent)
+CtestPlayDlg::CtestPlayDlg(CWnd* pParent /*=NULL*/): CDialogEx(CtestPlayDlg::IDD, pParent), m_INSTANCE(0)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -31,6 +30,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_QUERYDRAGICON()
 ON_BN_CLICKED(IDC_BUTTON_PLAY, &CtestPlayDlg::OnClickedButtonPlay)
+ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CtestPlayDlg::OnClickedButtonPause)
 END_MESSAGE_MAP()
 
 
@@ -109,9 +109,9 @@ void CtestPlayDlg::OnClickedButtonPlay()
         AfxMessageBox(L"InitRtspDLL error");
     }
 
-    int INSTANCE = GetRtspINSTANCE();
-    InitRtspVideoParam(INSTANCE, URI, "admin", "12345");
-    PlayRtsp(INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
+    m_INSTANCE = GetRtspINSTANCE();
+    InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
+    PlayRtsp(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
 }
 
 BOOL CtestPlayDlg::DestroyWindow()
@@ -126,4 +126,14 @@ BOOL CtestPlayDlg::DestroyWindow()
     FreeLibrary(m_hDll);
 
     return CDialogEx::DestroyWindow();
+}
+
+
+void CtestPlayDlg::OnClickedButtonPause()
+{
+    // TODO: Add your control notification handler code here
+    if(0 != StopRtsp(m_INSTANCE))
+    {
+        AfxMessageBox(L"StopRtsp error");
+    }
 }

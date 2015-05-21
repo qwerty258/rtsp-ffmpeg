@@ -38,7 +38,11 @@ private:
     lpFuncInitRtspVideoParam InitRtspVideoParam;
     lpFuncRevoHWAcceleration RevoHWAcceleration;
     lpFuncGetRtspINSTANCE    GetRtspINSTANCE;
+
+    int m_INSTANCE;
+
 public:
     afx_msg void OnClickedButtonPlay();
     virtual BOOL DestroyWindow();
+    afx_msg void OnClickedButtonPause();
 };
