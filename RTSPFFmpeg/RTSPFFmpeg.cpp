@@ -38,6 +38,7 @@ RTSPFFMPEG_API int FreeRtspDLL()
         {
             deList[i].idle = 0;
         }
+
         if(NULL != deList[i].pt)
         {
             (CRTSPCLient*)deList[i].pt->stopURL();
@@ -50,7 +51,7 @@ RTSPFFMPEG_API int FreeRtspDLL()
 
 RTSPFFMPEG_API int GetRtspINSTANCE()
 {
-    for(int i = 0; i < MACPL; i++)
+    for(int i = 0; i < MACPL; ++i)
     {
         if(deList[i].idle == 0)
         {
@@ -67,24 +68,25 @@ RTSPFFMPEG_API int GetRtspINSTANCE()
         }
     }
     return -1;
-
 }
 
 RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* UserName, char* PWD)
 {
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        deList[INSTANCE].pt = new CRTSPCLient;
-        Sleep(5);
-        CRTSPCLient *DC = (CRTSPCLient*)deList[INSTANCE].pt;
-        DC->InputURL(URI, UserName, PWD);
-    }
-    catch(...)
+    if(checkINSTANCE(INSTANCE) < 0)
     {
         return -1;
     }
+
+    deList[INSTANCE].pt = new CRTSPCLient;
+
+    if(NULL == deList[INSTANCE].pt)
+    {
+        MessageBox(NULL, L"InitRtspVideoParam: memory problem: new error!", NULL, MB_OK);
+        return -1;
+    }
+
+    (CRTSPCLient*)deList[INSTANCE].pt->InputURL(URI, UserName, PWD);
+
     return 0;
 }
 
