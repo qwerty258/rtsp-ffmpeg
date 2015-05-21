@@ -27,7 +27,8 @@ extern "C" {
     PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf);
     PLAYH264DLL_API int SetYUVCallBack(int INSTANCE, TYUVCallBack yuvf, void *buffer);
     PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf);
-    //支持硬件加速，初始默认不硬件加速（支持h264数据和YUV数据回调，但是播放性能高），不使用硬件加速支持所有已知回调
+    //support hardware acceleration, default is software decode.
+    //hardware acceleration support h264 and YUV callback, software decode support all callback functions
     PLAYH264DLL_API int RevoHWAcceleration(int instance);
 
 #ifdef __cplusplus
