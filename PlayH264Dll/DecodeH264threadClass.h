@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <winsock2.h>
 #include <string.h>
 #include <cstdlib>
@@ -136,7 +136,7 @@ public:
     unsigned long int getW() { return writeNetBufIndex; }
     unsigned long int getR() { return readNetBufIndex; }
 public:
-    int type;//解码类型 1,h264,2,mpeg,3,FLV
+    int type;//code type: 1,h264,2,mpeg,3,FLV
     void *userBuffer;
     bool nHWAcceleration;
 };
