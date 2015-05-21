@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifdef PLAYH264DLL_EXPORTS
 #define PLAYH264DLL_API __declspec(dllexport)
 #else

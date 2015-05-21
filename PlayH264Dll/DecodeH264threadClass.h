@@ -1,5 +1,4 @@
-﻿#include <windows.h>
-#include <winsock2.h>
+﻿#include <winsock2.h>
 #include <string.h>
 #include <cstdlib>
 #include <cstdio>
@@ -40,16 +39,17 @@ const int ListCount = 100;
 
 typedef int (WINAPI *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, int bufsize, int buftype);//define my CallBack Func
 
-//////////////////////////////////////////////////////////////////////////
-//半透明填充多边形回调函数（bmp图片Buffer，bmp图片wid，bmp图片high）
+/*半透明填充多边形回调函数（bmp图片Buffer，bmp图片wid，bmp图片high）*/
+
 typedef int(WINAPI *TDrawRectCallBack)(char*, int, int);
-//////////////////////////////////////////////////////////////////////////
 typedef int (WINAPI *TDrawLineCallBack)(int, HDC);//define my CallBack Func
-//////////////////////////////////////////////////////////////////////////
-//TBmpCallBack参数说明：char*（BMPbufer）,int(buferSize),bmpWidth,bmpHight,int(帧号),int(通道号),int(数据类型),HWND,句柄
+
+/*TBmpCallBack参数说明：char*（BMPbufer）,int(buferSize),bmpWidth,bmpHight,int(帧号),int(通道号),int(数据类型),HWND,句柄*/
+
 typedef int (WINAPI *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
-//////////////////////////////////////////////////////////////////////////
-//TYUVCallBack参数说明: yuvbuffer流，图片长和宽
+
+/*TYUVCallBack参数说明: yuvbuffer流，图片长和宽*/
+
 typedef int (WINAPI *TYUVCallBack)(unsigned char *buffer, int width, int length, void *);
 
 typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);

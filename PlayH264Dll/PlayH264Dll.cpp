@@ -43,6 +43,7 @@ int checkINSTANCE(int INSTANCE)
 }
 
 PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//depreated
+{
     try
     {
         if(f1 == NULL) { return -1; };
@@ -290,8 +291,8 @@ PLAYH264DLL_API int freeVideos(int INSTANCE)
         m_pCodecContext[INSTANCE] = NULL;
         m_pFrame[INSTANCE] = NULL;
         m_parser[INSTANCE] = NULL;
-        if(debug == 1)
-                  WriteLog("C:\\1.log", "freeVideos4");
+        //if(debug == 1)
+        //          WriteLog("C:\\1.log", "freeVideos4");
 
         deList[INSTANCE].idle = 0;// release lock
 

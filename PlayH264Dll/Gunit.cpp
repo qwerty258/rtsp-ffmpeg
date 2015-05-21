@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include <fstream>
+#include "Gunit.h"
+#include <cstdio>
 
 void WriteLog(const char* filename, const char * str)
 {

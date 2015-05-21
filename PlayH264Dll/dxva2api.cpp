@@ -453,10 +453,10 @@ static void Release(va_dxva2_t *va, AVFrame *ff)
 static void Close(va_dxva2_t* va)
 {
     DxDestroyVideoConversion(va);
-    DxDestroyVideoDecoder(va);//减少了内存
+    DxDestroyVideoDecoder(va);//减少了内�?
     DxDestroyVideoService(va);//
     D3dDestroyDeviceManager(va);//
-    D3dDestroyDevice(va);//应该减
+    D3dDestroyDevice(va);//应该�?
 
     //if (va->hdxva2_dll)
     //    FreeLibrary(va->hdxva2_dll);
