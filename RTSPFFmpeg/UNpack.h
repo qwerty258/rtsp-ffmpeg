@@ -1,12 +1,12 @@
 //#include "stdafx.h"
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
-#include <cstdio>  
-#include <cstdlib>  
-#include <cstring>   
-#include <cerrno>  
-#include <sys/types.h>  
-#include <fcntl.h>  
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cerrno>
+#include <sys/types.h>
+#include <fcntl.h>
 #include "Decode.h"
 
 typedef struct
@@ -365,26 +365,31 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
     fDecodeVideo DecodeVideo;
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
-    if(hDllhandle == NULL)
-    {
-        MessageBox(NULL, L"GetModuleHandle of RTSPFFmpeg.dll error", L"", MB_OK);
-        return;
-    }
+    //HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
+    //if(hDllhandle == NULL)
+    //{
+    //    MessageBox(NULL, L"GetModuleHandle of RTSPFFmpeg.dll error", L"", MB_OK);
+    //    return;
+    //}
 
-    TCHAR path1[1024], path2[1024];
-    memset(path1, 0, 1024 * sizeof(TCHAR));
-    memset(path2, 0, 1024 * sizeof(TCHAR));
+    //TCHAR path1[1024], path2[1024];
+    //memset(path1, 0, 1024 * sizeof(TCHAR));
+    //memset(path2, 0, 1024 * sizeof(TCHAR));
 
-    GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
+    //GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
-    wcsncpy_s(path2, path1, lenPath);
-    wcscat_s(path2, L"PlayH264DLL.dll");
+    //int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
+    //wcsncpy_s(path2, path1, lenPath);
+    //wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
-    HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-    //HINSTANCE hdll = LoadLibrary("playH264ThreadDLL1.dll");
+    //HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+    HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
+    if(NULL == hdll)
+    {
+        MessageBox(NULL, L"LoadLibrary PlayH264DLL.dll error", L"", MB_OK);
+        return;
+    }
     DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
     DecodeVideo(ID, poutfile, total_bytes);
 
@@ -404,7 +409,7 @@ int ftyp = 0;
 int moov = 0;
 
 
-void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
+void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
 {
 
 
@@ -426,25 +431,30 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
 
     fDecodeVideo DecodeVideo;
     // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
-    if(hDllhandle == NULL)
-    {
-        MessageBox(NULL, L"GetModuleHandle RTSPFFmpeg.dll error", L"", MB_OK);
-    }
+    //HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
+    //if(hDllhandle == NULL)
+    //{
+    //    MessageBox(NULL, L"GetModuleHandle RTSPFFmpeg.dll error", L"", MB_OK);
+    //}
 
-    TCHAR path1[1024], path2[1024];
-    memset(path1, 0, 1024 * sizeof(TCHAR));
-    memset(path2, 0, 1024 * sizeof(TCHAR));
+    //TCHAR path1[1024], path2[1024];
+    //memset(path1, 0, 1024 * sizeof(TCHAR));
+    //memset(path2, 0, 1024 * sizeof(TCHAR));
 
-    GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
+    //GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
-    wcsncpy_s(path2, path1, lenPath);
-    wcscat_s(path2, L"PlayH264DLL.dll");
+    //int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
+    //wcsncpy_s(path2, path1, lenPath);
+    //wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
-    HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-    //HINSTANCE hdll = LoadLibrary("playH264ThreadDLL1.dll");
+    //HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+    HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
+    if(NULL == hdll)
+    {
+        MessageBox(NULL, L"LoadLibrary PlayH264DLL.dll error", L"", MB_OK);
+        return;
+    }
     DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
     DecodeVideo(ID, recvbuf + 12, len - 12);
 }

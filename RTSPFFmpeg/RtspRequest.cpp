@@ -313,7 +313,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
 
     if(tip < 0) return false;
 
-    //在video码流中寻找解码格式
+    //在video码流中寻找解码格�?
     int deTip = pDescribe->find("a=rtpmap:96 MP4V-ES", tip + 1);
     if(deTip >= 0)
         Decode = 2;
@@ -327,7 +327,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
     }
 
     //
-    //寻找是否有给定帧率
+    //寻找是否有给定帧�?
     frame = -1;
     int frameTip = pDescribe->find("a=framerate:", tip + 1);
     if(frameTip >= 0)
@@ -449,7 +449,7 @@ void RtspRequest::SendRequest(string requestType)
 
     if(m_Session[0] > 0)
         Write(session);
-    Write("User-Agent: LibVLC/2.1.3 (LIVE555 Streaming Media v2014.01.21)");//infito摄像头必须加？
+    Write("User-Agent: LibVLC/2.1.3 (LIVE555 Streaming Media v2014.01.21)");//infito摄像头必须加�?
     WriteFields();
     //Write("Authorization: Basic YWRtaW46MTIzNDU=");
     Write("");
@@ -471,7 +471,7 @@ unsigned char DecodeIndex[] = {
     0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x40, 0x40, 0x40, 0x40, 0x40};
 
 //baseh264解码函数
-inline char GetCharIndex(char c) //内联函数可以省去函数调用过程，提速  
+inline char GetCharIndex(char c) //内联函数可以省去函数调用过程，提�? 
 {
     if((c >= 'A') && (c <= 'Z'))
     {
@@ -503,12 +503,12 @@ int fnBase64Decode(char *lpString, char *lpSrc, int sLen)   //解码函数
 {
     static char lpCode[4];
     register int vLen = 0;
-    if(sLen % 4)        //Base64编码长度必定是4的倍数，包括'='  
+    if(sLen % 4)        //Base64编码长度必定�?的倍数，包�?='  
     {
         lpString[0] = '\0';
         return -1;
     }
-    while(sLen > 2)      //不足三个字符，忽略  
+    while(sLen > 2)      //不足三个字符，忽�? 
     {
         lpCode[0] = GetCharIndex(lpSrc[0]);
         lpCode[1] = GetCharIndex(lpSrc[1]);
@@ -641,7 +641,7 @@ BOOL RtspRequest::GetResponses()
     {
         iRead = Read(str);
 
-        //中心力维的相机会立马发送rtcp包，在这份代码里要去除这个干扰,只有当24 ** 00 **的模式时才有效，不然要重新设计代码
+        //中心力维的相机会立马发送rtcp包，在这份代码里要去除这个干�?只有�?4 ** 00 **的模式时才有效，不然要重新设计代�?
         /*if(*((char *)str.c_str()) == 0x24)
         {
         int size;
