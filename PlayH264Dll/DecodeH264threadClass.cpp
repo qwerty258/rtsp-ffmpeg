@@ -11,7 +11,7 @@ using namespace std;
 #pragma comment(lib,"ddraw.lib")
 #pragma warning(disable: 4996)
 
-#define PICMAX (500000) //æ¯ä¸€å¸§å›¾ç‰‡æ•°æ®æœ€å¤§å€¼
+#define PICMAX (500000) //Ã¿Ò»Ö¡Í¼Æ¬Êý¾Ý×î´óÖµ
 int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
 {
     bufptr = BMPbuf;
@@ -46,9 +46,9 @@ int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, in
 
 
 //////////////////////////////////////////////////////////////////
-//åŠŸèƒ½ï¼šå°†bufå†™å…¥netbufé“¾è¡¨ï¼Œç­‰å¾…è§£ç 
-//è¾“å…¥ï¼šbuf 
-//è¾“å‡ºï¼šå†™å…¥netbufé“¾è¡¨
+//¹¦ÄÜ£º½«bufÐ´ÈënetbufÁ´±í£¬µÈ´ý½âÂë
+//ÊäÈë£ºbuf 
+//Êä³ö£ºÐ´ÈënetbufÁ´±í
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::writeNetBuf(int num, unsigned char *buf, int bufsize)
 {
@@ -149,9 +149,9 @@ int playH264VideoClass::InputParam(myparamInput *p1)
 }
 
 //////////////////////////////////////////////////////////////////
-//åŠŸèƒ½ï¼šå°†bufå†™å…¥netbufé“¾è¡¨ï¼Œç­‰å¾…è§£ç 
-//è¾“å…¥ï¼šbuf 
-//è¾“å‡ºï¼šå†™å…¥é“¾è¡¨
+//¹¦ÄÜ£º½«bufÐ´ÈënetbufÁ´±í£¬µÈ´ý½âÂë
+//ÊäÈë£ºbuf 
+//Êä³ö£ºÐ´ÈëÁ´±í
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::freeParam(void)
 {
@@ -170,9 +170,9 @@ int playH264VideoClass::freeParam(void)
 }
 
 //////////////////////////////////////////////////////////////////
-//åŠŸèƒ½ï¼šå°†bufå†™å…¥netbufé“¾è¡¨ï¼Œç­‰å¾…è§£ç 
-//è¾“å…¥ï¼šbuf 
-//è¾“å‡ºï¼šå†™å…¥é“¾è¡¨
+//¹¦ÄÜ£º½«bufÐ´ÈënetbufÁ´±í£¬µÈ´ý½âÂë
+//ÊäÈë£ºbuf 
+//Êä³ö£ºÐ´ÈëÁ´±í
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::playVideo()
 {
@@ -180,9 +180,9 @@ int playH264VideoClass::playVideo()
     return 0;
 }
 //////////////////////////////////////////////////////////////////
-//åŠŸèƒ½ï¼šå°†bufå†™å…¥netbufé“¾è¡¨ï¼Œç­‰å¾…è§£ç 
-//è¾“å…¥ï¼šbuf 
-//è¾“å‡ºï¼šå†™å…¥é“¾è¡¨
+//¹¦ÄÜ£º½«bufÐ´ÈënetbufÁ´±í£¬µÈ´ý½âÂë
+//ÊäÈë£ºbuf 
+//Êä³ö£ºÐ´ÈëÁ´±í
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::pauseVideo()
 {
@@ -206,7 +206,7 @@ playH264VideoClass::playH264VideoClass()
     //}
     readNetBufIndex = 0;
     writeNetBufIndex = 0;
-    bpp = 24;//24è‰²
+    bpp = 24;//24É«
     //writewait=CreateEvent(NULL,TRUE,FALSE,NULL);
 }
 
@@ -232,13 +232,13 @@ playH264VideoClass::~playH264VideoClass()
 
 //int id = 0;
 
-//å…³äºŽGPUçš„å…¨å±€å˜é‡
+//¹ØÓÚGPUµÄÈ«¾Ö±äÁ¿
 bool init = false;
-LPDIRECTDRAW lpDD = NULL;// DirectDraw å¯¹è±¡æŒ‡é’ˆ
-DDSURFACEDESC ddsd; // DirectDraw è¡¨é¢æè¿°
-LPDIRECTDRAWSURFACE lpPrimary = NULL;// DirectDraw ä¸»è¡¨é¢æŒ‡é’ˆ
+LPDIRECTDRAW lpDD = NULL;// DirectDraw ¶ÔÏóÖ¸Õë
+DDSURFACEDESC ddsd; // DirectDraw ±íÃæÃèÊö
+LPDIRECTDRAWSURFACE lpPrimary = NULL;// DirectDraw Ö÷±íÃæÖ¸Õë
 
-//ç¡¬ä»¶åŠ é€Ÿæ¨¡å—
+//Ó²¼þ¼ÓËÙÄ£¿é
 extern enum PixelFormat DxGetFormat(AVCodecContext *avctx, const enum PixelFormat *pi_fmt);
 extern int DxGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
 extern int  DxReGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
@@ -251,7 +251,7 @@ int mAVCodecContextInit(AVCodecContext *avct)
     avct->reget_buffer = DxReGetFrameBuf;
     avct->release_buffer = DxReleaseFrameBuf;
     avct->opaque = NULL;
-    //èƒ½å¦ç¡¬è§£
+    //ÄÜ·ñÓ²½â
     if(avct->codec_id == CODEC_ID_MPEG1VIDEO || avct->codec_id == CODEC_ID_MPEG2VIDEO ||
             //avctx->codec_id == CODEC_ID_MPEG4 ||
             avct->codec_id == CODEC_ID_H264 ||
@@ -269,14 +269,14 @@ int mAVCodecContextInit(AVCodecContext *avct)
 //
 
 
-//æ•ˆçŽ‡GDIç‰ˆæœ¬
+//Ð§ÂÊGDI°æ±¾
 HWND gPlayWnd = NULL;
 int bGPlayWnd = 0;
 DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 {
     bool fir = TRUE;
     int height, width;
-    //å¯ç”¨ç¼–ç å™¨ 
+    //ÆôÓÃ±àÂëÆ÷ 
     AVPacket  avp;
     playH264VideoClass *VideoClass = (playH264VideoClass *)lpParam;
 
@@ -349,7 +349,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         avp.data = (uint8_t *)netBuf;
         avp.size = bufsize;
 
-        //h264è¾“å‡º
+        //h264Êä³ö
         int nWH = 0;
         if(VideoClass->H264Func&&nWH)
         {
@@ -379,11 +379,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
             if(fir&&VideoClass->nHWAcceleration)
             {
-                //GT620æ€»å€¼1000
-                //1080,GPUæ¶ˆè€—300
+                //GT620×ÜÖµ1000
+                //1080,GPUÏûºÄ300
                 //960,GPU 250
                 //720,GPU 140
-                //D1ï¼ŒGPU 60
+                //D1£¬GPU 60
 
                 if(picture->height >= 1080)
                     availableGPU[currentGPU] += 300;
@@ -404,16 +404,16 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                     int numBytes = avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height);
                     avpicture_fill((AVPicture *)pFrameYUV, (uint8_t *)av_malloc(numBytes*sizeof(uint8_t)), PIX_FMT_YUV420P, picture->width, picture->height);
                 }
-                bGPlayWnd = 0;//æ‰“å¼€å¼€å…³
+                bGPlayWnd = 0;//´ò¿ª¿ª¹Ø
                 fir = false;
             }
-            if(!c->opaque&&VideoClass->nHWAcceleration)//p_vaå¤±è´¥
+            if(!c->opaque&&VideoClass->nHWAcceleration)//p_vaÊ§°Ü
             {
 
                 Sleep(1);
                 continue;
             }
-            //h264è¾“å‡º
+            //h264Êä³ö
             if(VideoClass->H264Func)
             {
                 VideoClass->H264Func(VideoClass->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
@@ -421,7 +421,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 continue;
             }
             if(VideoClass->nHWAcceleration)
-                DxPictureCopy(c, picture, pFrameYUV, VideoClass->yuvFunc);//å†…éƒ¨ä»£ç æ”¹ä¸ºç›´æŽ¥æ˜¾ç¤º
+                DxPictureCopy(c, picture, pFrameYUV, VideoClass->yuvFunc);//ÄÚ²¿´úÂë¸ÄÎªÖ±½ÓÏÔÊ¾
 
 
 
@@ -515,9 +515,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 picture->data[2] += picture->linesize[2] * (c->height / 2 - 1);
                 picture->linesize[2] *= -1;
 
-                sws_scale(pSwsCtx, picture->data, picture->linesize, 0, c->height, picRGB->data, picRGB->linesize);//æ•ˆçŽ‡ï¼Ÿ
+                sws_scale(pSwsCtx, picture->data, picture->linesize, 0, c->height, picRGB->data, picRGB->linesize);//Ð§ÂÊ£¿
 
-                SetStretchBltMode(m_hdc, COLORONCOLOR);//è¿™ç§æ¨¡å¼ä¾ç„¶ä¸è¡Œ
+                SetStretchBltMode(m_hdc, COLORONCOLOR);//ÕâÖÖÄ£Ê½ÒÀÈ»²»ÐÐ
                 RECT rect;
                 GetWindowRect(VideoClass->paramUser.playHandle, &rect);
                 VideoClass->paramUser.playHeight = rect.bottom - rect.top;
