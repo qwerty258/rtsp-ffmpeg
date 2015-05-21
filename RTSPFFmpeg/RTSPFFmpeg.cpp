@@ -22,7 +22,7 @@ int checkINSTANCE(int INSTANCE)
 
 RTSPFFMPEG_API int InitRtspDLL()
 {
-    for(size_t i = 0; i < MACPL; ++i)
+    for(int i = 0; i < MACPL; ++i)
     {
         deList[i].idle = 0;
         deList[i].pt = NULL;
@@ -32,7 +32,7 @@ RTSPFFMPEG_API int InitRtspDLL()
 
 RTSPFFMPEG_API int FreeRtspDLL()
 {
-    for(size_t i = 0; i < MACPL; ++i)
+    for(int i = 0; i < MACPL; ++i)
     {
         if(0 != deList[i].idle)
         {
@@ -53,10 +53,9 @@ RTSPFFMPEG_API int GetRtspINSTANCE()
 {
     for(int i = 0; i < MACPL; ++i)
     {
-        if(deList[i].idle == 0)
+        if(0 == deList[i].idle)
         {
-            int ru = checkINSTANCE(i);
-            if(ru == 0)
+            if(0 == checkINSTANCE(i))
             {
                 deList[i].idle = 1;
                 //deList[i].pt->fillbmp = NULL;
