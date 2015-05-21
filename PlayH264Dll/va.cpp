@@ -122,7 +122,7 @@ int DxGetFrameBuf(struct AVCodecContext *avctx,
         }
 
         /* */
-        pic->type = FF_BUFFER_TYPE_USER;
+        pic->type = FF_BUFFER_TYPE_USER; // !!!header file changed to make this source code work!!!
 
 #if LIBAVCODEC_VERSION_MAJOR < 54
         pic->age = 256*256*256*64;
@@ -135,7 +135,7 @@ int DxGetFrameBuf(struct AVCodecContext *avctx,
         }
         return 0;
     }
-    return avcodec_default_get_buffer(avctx, pic);
+    return avcodec_default_get_buffer(avctx, pic); // !!!header file changed to make this source code work!!!
 }
 int  DxReGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic)
 {
