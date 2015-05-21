@@ -60,6 +60,11 @@ BOOL CtestPlayDlg::OnInitDialog()
     RevoHWAcceleration = (lpFuncRevoHWAcceleration)GetProcAddress(m_hDll, "RevoHWAcceleration");
     GetRtspINSTANCE = (lpFuncGetRtspINSTANCE)GetProcAddress(m_hDll, "GetRtspINSTANCE");
 
+    if(0 != InitRtspDLL())
+    {
+        AfxMessageBox(L"InitRtspDLL error");
+    }
+
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -104,11 +109,6 @@ void CtestPlayDlg::OnClickedButtonPlay()
     // TODO: Add your control notification handler code here
     char URI[] = "rtsp://192.168.10.141:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
 
-    if(-1 == InitRtspDLL())
-    {
-        AfxMessageBox(L"InitRtspDLL error");
-    }
-
     m_INSTANCE = GetRtspINSTANCE();
     InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
     PlayRtsp(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
@@ -118,7 +118,7 @@ BOOL CtestPlayDlg::DestroyWindow()
 {
     // TODO: Add your specialized code here and/or call the base class
 
-    if(-1 == FreeRtspDll())
+    if(0 != FreeRtspDll())
     {
         AfxMessageBox(L"FreeRtspDll error");
     }
