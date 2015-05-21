@@ -41,7 +41,7 @@ RTSPFFMPEG_API int FreeRtspDLL()
 
         if(NULL != deList[i].pt)
         {
-            (CRTSPCLient*)deList[i].pt->stopURL();
+            ((CRTSPCLient*)deList[i].pt)->stopURL();
             delete deList[i].pt;
             deList[i].pt = NULL;
         }
@@ -85,44 +85,37 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* UserName, c
         return -1;
     }
 
-    (CRTSPCLient*)deList[INSTANCE].pt->InputURL(URI, UserName, PWD);
+    ((CRTSPCLient*)deList[INSTANCE].pt)->InputURL(URI, UserName, PWD);
 
     return 0;
 }
 
 RTSPFFMPEG_API int PlayRtsp(int INSTANCE, HWND hd)
 {
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient* DC = (CRTSPCLient*)deList[INSTANCE].pt;
-        DC->PlayURL(hd);
-    }
-    catch(...)
+    if(checkINSTANCE(INSTANCE) < 0)
     {
         return -1;
     }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->PlayURL(hd);
+
     return 0;
 }
 
 RTSPFFMPEG_API int StopRtsp(int INSTANCE)
 {
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient*DC = (CRTSPCLient*)deList[INSTANCE].pt;
-        DC->stopURL();
-        Sleep(20);
-        deList[INSTANCE].idle = 0;
-        delete DC;
-        deList[INSTANCE].pt = NULL;
-    }
-    catch(...)
+    if(checkINSTANCE(INSTANCE) < 0)
     {
         return -1;
     }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->stopURL();
+
+    deList[INSTANCE].idle = 0;
+
+    delete deList[INSTANCE].pt;
+    deList[INSTANCE].pt = NULL;
+
     return 0;
 }
 
@@ -168,123 +161,117 @@ RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE)
 
 RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)
 {
-
-    try
-    {
-        if(f1 == NULL) { return -1; };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->funcD = f1;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f1)
     {
         return -1;
     }
+
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->funcD = f1;
+
+    return 0;
 }
 
 RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1)
 {
-
-    try
-    {
-        if(f1 == NULL) { return -1; };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->func = f1;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f1)
     {
         return -1;
     }
+
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->func = f1;
+
+    return 0;
 }
 
 RTSPFFMPEG_API int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2)
 {
-    try
-    {
-        if(f2 == NULL) { return -1; };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->bmpFunc = f2;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f2)
     {
         return -1;
     }
+
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->bmpFunc = f2;
+
+    return 0;
 }
 
 RTSPFFMPEG_API int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3)
 {
-    try
-    {
-        if(f3 == NULL) { return -1; };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->fillbmp = f3;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f3)
     {
         return -1;
     }
+
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->fillbmp = f3;
+
+    return 0;
 }
 
 //
 //获取YUV数据
 RTSPFFMPEG_API int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *buffer)
 {
-    try
-    {
-        if(f3 == NULL) { return -1; };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->YUVFunc = f3;
-        DC->YUVEx = buffer;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f3)
     {
         return -1;
     }
+
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->YUVFunc = f3;
+    ((CRTSPCLient*)deList[INSTANCE].pt)->YUVEx = buffer;
+
+    return 0;
 }
 //获取H264数据
 RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
 {
-    try
-    {
-        if(f3 == NULL) { return -1; };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->H264Func = f3;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f3)
     {
         return -1;
     }
+
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->H264Func = f3;
+
+    return 0;
 }
 //设置是否取消硬解
 RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE)
 {
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-        DC->nHWAcceleration = false;
-        return 0;
-    }
-    catch(...)
+    if(checkINSTANCE(INSTANCE) < 0)
     {
         return -1;
     }
+
+    ((CRTSPCLient *)deList[INSTANCE].pt)->nHWAcceleration = false;
+
+    return 0;
 }
