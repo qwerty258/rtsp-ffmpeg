@@ -39,22 +39,22 @@ typedef struct
     |                             ....                              |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     */
-    //intel 的cpu 是intel为小端字节序（低端存到底地址） 而网络流为大端字节序（高端存到低地址）  
-    /*intel 的cpu ： 高端->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->低端
-     在内存中存储 ：
-     低->4001（内存地址）version:2
+    //intel 的cpu 是intel为小端字节序（低端存到底地址�?而网络流为大端字节序（高端存到低地址�? 
+    /*intel 的cpu �?高端->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->低端
+     在内存中存储 �?
+     �?>4001（内存地址）version:2
      4002（内存地址）padding:1
      4003（内存地址）extension:1
-     高->4004（内存地址）csrc_len:4
+     �?>4004（内存地址）csrc_len:4
 
-     网络传输解析 ： 高端->version:2->padding:1->extension:1->csrc_len:4->低端  (为正确的文档描述格式)
+     网络传输解析 �?高端->version:2->padding:1->extension:1->csrc_len:4->低端  (为正确的文档描述格式)
 
-     存入接收内存 ：
-     低->4001（内存地址）version:2
+     存入接收内存 �?
+     �?>4001（内存地址）version:2
      4002（内存地址）padding:1
      4003（内存地址）extension:1
-     高->4004（内存地址）csrc_len:4
-     本地内存解析 ：高端->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->低端 ，
+     �?>4004（内存地址）csrc_len:4
+     本地内存解析 ：高�?>csrc_len:4 -> extension:1-> padding:1 -> version:2 ->低端 �?
      即：
      unsigned char csrc_len:4;        // expect 0
      unsigned char extension:1;       // expect 1
@@ -83,9 +83,9 @@ typedef struct
     unsigned char forbidden_bit;           //! Should always be FALSE  
     unsigned char nal_reference_idc;       //! NALU_PRIORITY_xxxx  
     unsigned char nal_unit_type;           //! NALU_TYPE_xxxx    
-    unsigned int startcodeprefix_len;      //! 前缀字节数  
-    unsigned int len;                      //! 包含nal 头的nal 长度，从第一个00000001到下一个000000001的长度  
-    unsigned int max_size;                 //! 做多一个nal 的长度  
+    unsigned int startcodeprefix_len;      //! 前缀字节�? 
+    unsigned int len;                      //! 包含nal 头的nal 长度，从第一�?0000001到下一�?00000001的长�? 
+    unsigned int max_size;                 //! 做多一个nal 的长�? 
     unsigned char * buf;                   //! 包含nal 头的nal 数据  
     unsigned int lost_packets;             //! 预留  
 } NALU_t;
@@ -176,11 +176,11 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     FU_HEADER       *fu_hdr = NULL;
     int total_bytes = 0;                 //当前包传出的数据  
     static int total_recved = 0;         //一共传输的数据  
-    int fwrite_number = 0;               //存入文件的数据长度  
+    int fwrite_number = 0;               //存入文件的数据长�? 
 
-    //memcpy(recvbuf,bufIn, len);          //复制rtp包  
+    //memcpy(recvbuf,bufIn, len);          //复制rtp�? 
 
-    //printf("包长度+ rtp头：   = %d\n",len);  
+    //printf("包长�? rtp头：   = %d\n",len);  
 
     //////////////////////////////////////////////////////////////////////////  
     //begin rtp_payload and rtp_header  
@@ -196,18 +196,18 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     }
 
     rtp_hdr = (RTP_FIXED_HEADER*)&bufIn[0];
-    // printf("版本号     : %d\n",rtp_hdr->version);  
+    // printf("版本�?    : %d\n",rtp_hdr->version);  
     p->version = rtp_hdr->version;
     p->padding = rtp_hdr->padding;
     p->extension = rtp_hdr->extension;
     p->cc = rtp_hdr->csrc_len;
-    //printf("标志位     : %d\n",rtp_hdr->marker);  
+    //printf("标志�?    : %d\n",rtp_hdr->marker);  
     p->marker = rtp_hdr->marker;
     //printf("负载类型    :%d\n",rtp_hdr->payloadtype);  
     p->pt = rtp_hdr->payloadtype;
     // printf("包号      : %d \n",rtp_hdr->seq_no);  
     p->seq_no = rtp_hdr->seq_no;
-    //printf("时间戳     : %d\n",rtp_hdr->timestamp);  
+    //printf("时间�?    : %d\n",rtp_hdr->timestamp);  
     p->timestamp = rtp_hdr->timestamp;
     //printf("帧号      : %d\n",rtp_hdr->ssrc);  
     p->ssrc = rtp_hdr->ssrc;
@@ -215,7 +215,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     //end rtp_payload and rtp_header  
     //////////////////////////////////////////////////////////////////////////  
     //begin nal_hdr  
-    if(!(n = AllocNALU(4096)))          //为结构体nalu_t及其成员buf分配空间。返回值为指向nalu_t存储空间的指针  
+    if(!(n = AllocNALU(4096)))          //为结构体nalu_t及其成员buf分配空间。返回值为指向nalu_t存储空间的指�? 
     {
         //printf("NALU_t MMEMORY ERROR\n");  
     }
@@ -224,9 +224,9 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     //       //printf("NALU_HEADER MEMORY ERROR\n");  
     //   }  
 
-    nalu_hdr = (NALU_HEADER*)&bufIn[12];                        //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确。  
-    //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //网络传输中的方式为：F->NRI->TYPE.. 内存中存储方式为 TYPE->NRI->F (和nal头匹配)。  
-    n->forbidden_bit = nalu_hdr->F << 7;                          //内存中的字节序。  
+    nalu_hdr = (NALU_HEADER*)&bufIn[12];                        //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确�? 
+    //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //网络传输中的方式为：F->NRI->TYPE.. 内存中存储方式为 TYPE->NRI->F (和nal头匹�?�? 
+    n->forbidden_bit = nalu_hdr->F << 7;                          //内存中的字节序�? 
     // printf("nal_reference_idc:  %d\n",nalu_hdr->NRI);  
     n->nal_reference_idc = nalu_hdr->NRI << 5;
     //printf("nal 负载类型:       %d\n",nalu_hdr->TYPE);  
@@ -234,10 +234,10 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
     //end nal_hdr  
     //////////////////////////////////////////////////////////////////////////  
-    //开始解包  
+    //开始解�? 
     if(nalu_hdr->TYPE != 7 && (*nfirst))  //不是67开头的包，并且还是第一个包
     {
-        // printf("这个包有错误，0无定义\n"); 
+        // printf("这个包有错误�?无定义\n"); 
         return;
     }
     *nfirst = false;
@@ -257,10 +257,10 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
         memcpy(poutfile + 5, p->payload, p->paylen);//写NAL数据
         total_bytes += p->paylen;
         poutfile[total_bytes] = '\0';
-        //printf("包长度 + nal= %d\n",total_bytes);  
+        //printf("包长�?+ nal= %d\n",total_bytes);  
     }
 
-    else if(nalu_hdr->TYPE == 28)                    //FU-A分片包，解码顺序和传输顺序相同  
+    else if(nalu_hdr->TYPE == 28)                    //FU-A分片包，解码顺序和传输顺序相�? 
     {
         /*if ((fu_ind = (FU_INDICATOR *)malloc(sizeof(FU_INDICATOR))) == NULL)
         {
@@ -279,7 +279,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
         n->nal_unit_type = fu_ind->TYPE;
 
-        fu_hdr = (FU_HEADER*)&bufIn[13];        //FU_HEADER赋值  
+        fu_hdr = (FU_HEADER*)&bufIn[13];        //FU_HEADER赋�? 
         //printf("FU_HEADER->S        :%d\n",fu_hdr->S);  
         //printf("FU_HEADER->E        :%d\n",fu_hdr->E);  
         //printf("FU_HEADER->R        :%d\n",fu_hdr->R);  
@@ -294,9 +294,9 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
             memcpy(poutfile, p->payload, p->paylen);  //写NAL数据  
             total_bytes = p->paylen;
             poutfile[total_bytes] = '\0';
-            //printf("包长度 + FU = %d\n",total_bytes);    
+            //printf("包长�?+ FU = %d\n",total_bytes);    
         }
-        else if(rtp_hdr->marker == 0)                 //分片包 但不是最后一个包  
+        else if(rtp_hdr->marker == 0)                 //分片�?但不是最后一个包  
         {
             if(fu_hdr->S == 1)                        //分片的第一个包  
             {
@@ -325,7 +325,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
                 memcpy(poutfile + 5, p->payload, p->paylen);  //写NAL数据  
                 total_bytes += p->paylen;
                 poutfile[total_bytes] = '\0';
-                //printf("包长度 + FU_First = %d\n",total_bytes);      
+                //printf("包长�?+ FU_First = %d\n",total_bytes);      
             }
             else                                      //如果不是第一个包  
             {
@@ -335,25 +335,25 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
                 memcpy(poutfile, p->payload, p->paylen);  //写NAL数据  
                 total_bytes = p->paylen;
                 poutfile[total_bytes] = '\0';
-                //printf("包长度 + FU = %d\n",total_bytes);    
+                //printf("包长�?+ FU = %d\n",total_bytes);    
             }
         }
     }
-    else if(nalu_hdr->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相同  
+    else if(nalu_hdr->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相�? 
     {
         if(rtp_hdr->marker == 1)                  //分片包最后一个包  
         {
             //printf("当前包为FU-B分片包最后一个包\n");  
 
         }
-        else if(rtp_hdr->marker == 0)             //分片包 但不是最后一个包  
+        else if(rtp_hdr->marker == 0)             //分片�?但不是最后一个包  
         {
             //printf("当前包为FU-B分片包\n");  
         }
     }
     else
     {
-        //printf("这个包有错误，30-31 没有定义\n");  
+        //printf("这个包有错误�?0-31 没有定义\n");  
     }
     /*total_recved += total_bytes;
     printf("total_recved = %d\n",total_recved);  */
@@ -368,7 +368,8 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
+        MessageBox(NULL, L"GetModuleHandle of RTSPFFmpeg.dll error", L"", MB_OK);
+        return;
     }
 
     TCHAR path1[1024], path2[1024];
@@ -379,7 +380,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
     int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, lenPath);
-    wcscat_s(path2, L"playH264ThreadDLL1.dll");
+    wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
@@ -387,7 +388,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
     DecodeVideo(ID, poutfile, total_bytes);
 
-    //char a[10] = "c:\\包";
+    //char a[10] = "c:\\�?;
     //itoa(ID,a+5,10);
     //FILE *fp;
     //fp = fopen(a,"ab+");
@@ -428,7 +429,7 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
     HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
     if(hDllhandle == NULL)
     {
-        MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
+        MessageBox(NULL, L"GetModuleHandle RTSPFFmpeg.dll error", L"", MB_OK);
     }
 
     TCHAR path1[1024], path2[1024];
@@ -439,7 +440,7 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool  *nfirst)
 
     int lenPath = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
     wcsncpy_s(path2, path1, lenPath);
-    wcscat_s(path2, L"playH264ThreadDLL1.dll");
+    wcscat_s(path2, L"PlayH264DLL.dll");
     //***********************************************************************************************
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);

@@ -122,12 +122,12 @@ int RTSPCLientClass::InputURL(char* URL, char* UserName, char* PWD)
 //线程函数
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
-    //解码器准备工作
+    //解码器准备工�?
     RTSPCLientClass *RCC = (RTSPCLientClass *)lpParam;
-    myparamInput *Myparam = new myparamInput();//播放结束需要删除
-    RECT *rect = new RECT;//播放结束需要删除
+    myparamInput *Myparam = new myparamInput();//播放结束需要删�?
+    RECT *rect = new RECT;//播放结束需要删�?
     GetWindowRect(RCC->hd, rect);
-    Myparam->playHandle = RCC->hd;  // 取得控件的句柄
+    Myparam->playHandle = RCC->hd;  // 取得控件的句�?
     Myparam->stopPlay = 0;
     Myparam->playChannle = 1;
     Myparam->fps = 25;
@@ -211,7 +211,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //获取本地IP
     string ip;
     WORD wVersionRequested;
-    WSADATA wsaData;//初始化
+    WSADATA wsaData;//初始�?
     char name[255];
     memset(name, '\0', 255);
 
@@ -247,7 +247,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         fclose(fp);
 #endif
 
-        //失败了也需要清理
+        //失败了也需要清�?
         /*int ret = freeVideos(RCC->INSTANCE);
             if(ret <0)
             return -1;*/
@@ -273,7 +273,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             fclose(fp);
 #endif
 
-            //失败了也需要清理
+            //失败了也需要清�?
             /*int ret = freeVideos(RCC->INSTANCE);
                 if(ret <0)
                 return -1;*/
@@ -287,7 +287,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             RCC->ans = 4; return -1;
         }
 
-    if(!RTSPCLient->RequestDescribe(&sdp))//有时候会连不上
+    if(!RTSPCLient->RequestDescribe(&sdp))//有时候会连不�?
         if(!RTSPCLient->RequestDescribe_test(&sdp, RCC->UserName, RCC->Pwd))
         {
 
@@ -300,7 +300,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             fclose(fp);
 #endif
 
-            //失败了也需要清理
+            //失败了也需要清�?
             /*int ret = freeVideos(RCC->INSTANCE);
                 if(ret <0)
                 return -1;*/
@@ -333,7 +333,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 fclose(fp);
 #endif
 
-                //失败了也需要清理
+                //失败了也需要清�?
                 /*int ret = freeVideos(RCC->INSTANCE);
                     if(ret <0)
                     return -1;*/
@@ -363,7 +363,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 fclose(fp);
 #endif
 
-                //失败了也需要清理
+                //失败了也需要清�?
                 /*int ret = freeVideos(RCC->INSTANCE);
                     if(ret <0)
                     return -1;*/
@@ -394,7 +394,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         fclose(fp);
 #endif
 
-        //失败了也需要清理
+        //失败了也需要清�?
         /*int ret = freeVideos(RCC->INSTANCE);
             if(ret <0)
             return -1;*/
@@ -483,7 +483,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         }
 
 
-        //RTCP模块,每隔大约5s，发送一次数据，间隔时间可根据实际带宽进行调整
+        //RTCP模块,每隔大约5s，发送一次数据，间隔时间可根据实际带宽进行调�?
         time2 = GetTickCount();
         if(time2 - time1 > 5000)
         {
@@ -555,7 +555,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     //FILE *fp;
     //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("关闭退出循环",fp);
+    //fputs("关闭退出循�?,fp);
     //fclose(fp);
 
     //关通信
@@ -578,7 +578,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //pRtp->Close();
     //pRtcp->Close();
 
-    //关解码
+    //关解�?
     freeVideos = (ffreeVideos)GetProcAddress(hdll, "freeVideos");
     int ret = freeVideos(RCC->INSTANCE);
     if(ret < 0)
@@ -588,7 +588,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //fputs("关闭过程3",fp);
     //fclose(fp);
 
-    //清空间
+    //清空�?
     //if(pRtp!=NULL)
     //{delete pRtp;pRtp = NULL;}
     if(Myparam != NULL)
@@ -621,10 +621,10 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 //
 //typedef DWORD WINAPI (* beginrecv)(LPVOID lpParam);
 //**************************************************
-//函数功能：实时播放
-//输入参数：
-//输出参数： 
-//返回值：  1播放成功，-1播放失败
+//函数功能：实时播�?
+//输入参数�?
+//输出参数�?
+//返回值：  1播放成功�?1播放失败
 //**************************************************
 int RTSPCLientClass::PlayURL(HWND hd)
 {
@@ -639,17 +639,17 @@ int RTSPCLientClass::PlayURL(HWND hd)
 }
 
 //**************************************************
-//函数功能：关闭实时播放
-//输入参数：
-//输出参数： 
-//返回值：  -1关闭失败，1关闭成功
+//函数功能：关闭实时播�?
+//输入参数�?
+//输出参数�?
+//返回值：  -1关闭失败�?关闭成功
 //**************************************************
 int RTSPCLientClass::stopURL()
 {
     //退循环
     /*FILE *fp;
     fp =fopen("c:\\20150206.txt","a+");
-    fputs("关闭开始",fp);
+    fputs("关闭开�?,fp);
     fclose(fp);*/
 
     circulation = false;
