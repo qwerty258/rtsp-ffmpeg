@@ -101,10 +101,9 @@ CRTSPCLient::~CRTSPCLient()
 
 int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
 {
-
-    strcpy(m_userName, userName);
-    strcpy(m_password, password);
-    strcpy(m_URI, URI);
+    strncpy(m_userName, userName, 256);
+    strncpy(m_password, password, 256);
+    strncpy(m_URI, URI, 256);
 
     if(!inited)
     {
