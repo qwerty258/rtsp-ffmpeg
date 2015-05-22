@@ -118,6 +118,17 @@ RTSPFFMPEG_API int Stop(int INSTANCE)
     return 0;
 }
 
+RTSPFFMPEG_API int DisConnect(int INSTANCE)
+{
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    //((CRTSPCLient*)deList[INSTANCE].pt)->
+
+    return 0;
+}
 
 RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE)
 {

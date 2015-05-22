@@ -28,45 +28,18 @@ fSetBmpCallBack SetBmpCallBack;
 fSetFillBmpCallBack SetFillBmpCallBack;
 revoHW revoHWFunc;
 
-CRTSPCLient::CRTSPCLient()
+CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
 {
-    Url = NULL;
-    UserName = NULL;
-    Pwd = NULL;
-}
-CRTSPCLient::~CRTSPCLient()
-{
-    if(Url != NULL)
-    {
-        delete Url;
-        Url = NULL;
-    }
-    if(UserName != NULL)
-    {
-        delete UserName;
-        UserName = NULL;
-    }
-    if(Pwd != NULL)
-    {
-        delete Pwd;
-        Pwd = NULL;
-    }
-}
+    m_URI = new char[256];
+    m_userName = new char[256];
+    m_password = new char[256];
 
-int CRTSPCLient::InputURL(char* URL, char* UserName, char* PWD)
-{
-    this->UserName = new char[100];
-    this->Pwd = new char[100];
-    this->Url = new char[100];
+    m_threadID = -1;
+    m_circulation = false;
+    m_INSTANCE = -1;
+    m_hWnd = NULL;
+    m_ans = 0;
 
-    strcpy(this->UserName, UserName);
-    strcpy(this->Pwd, PWD);
-    strcpy(this->Url, URL);
-
-    threadID = -1;
-    circulation = false;
-
-    hd = NULL;
     func = NULL;
     funcD = NULL;
     bmpFunc = NULL;
@@ -74,28 +47,36 @@ int CRTSPCLient::InputURL(char* URL, char* UserName, char* PWD)
     YUVFunc = NULL;
     H264Func = NULL;
     YUVEx = NULL;
-    INSTANCE = -1;
-    nHWAcceleration = true;
+    nHWAcceleration = false;
+}
 
-    ans = 0;
+CRTSPCLient::~CRTSPCLient()
+{
+    if(NULL != m_URI)
+    {
+        delete[] m_URI;
+        m_URI = NULL;
+    }
+    if(NULL != m_userName)
+    {
+        delete[] m_userName;
+        m_userName = NULL;
+    }
+    if(NULL != m_password)
+    {
+        delete[] m_password;
+        m_password = NULL;
+    }
+}
 
-    // *****************************************************************************************
-    //HMODULE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
-    //if(hDllhandle == NULL)
-    //{
-    //    MessageBox(NULL, L"get DLL HMODULE error", L"", MB_OK);
-    //}
+int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
+{
 
-    //TCHAR path1[1024], path2[1024];
-    //memset(path1, 0, 1024 * sizeof(TCHAR));
-    //memset(path2, 0, 1024 * sizeof(TCHAR));
+    strcpy(m_userName, userName);
+    strcpy(m_password, password);
+    strcpy(m_URI, URI);
 
-    //GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
 
-    //int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
-    //wcsncpy_s(path2, path1, len);
-    //wcscat_s(path2, L"PlayH264DLL.dll");
-    //***********************************************************************************************
 
     HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
     if(NULL == hdll)
@@ -108,13 +89,20 @@ int CRTSPCLient::InputURL(char* URL, char* UserName, char* PWD)
     }
 
     initVideoDLL = (finitVideoDLL)GetProcAddress(hdll, "initVideoDLL");
+    if(NULL == initVideoDLL)
+    {
+        TCHAR* temp = new TCHAR[2048];
+        wsprintfW(temp, L"GetProcAddress initVideoDLL error, error code: %d", GetLastError());
+        MessageBox(0, temp, NULL, MB_OK);
+        delete[] temp;
+        return -1;
+    }
 
     if(!inited)
     {
         initVideoDLL();
         inited = true;
     }
-
 
     return 1;
 }
@@ -126,8 +114,8 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     CRTSPCLient *RCC = (CRTSPCLient *)lpParam;
     myparamInput *Myparam = new myparamInput();//播放结束需要删�?
     RECT *rect = new RECT;//播放结束需要删�?
-    GetWindowRect(RCC->hd, rect);
-    Myparam->playHandle = RCC->hd;  // 取得控件的句�?
+    GetWindowRect(RCC->m_hWnd, rect);
+    Myparam->playHandle = RCC->m_hWnd;  // 取得控件的句�?
     Myparam->stopPlay = 0;
     Myparam->playChannle = 1;
     Myparam->fps = 25;
@@ -161,7 +149,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
     GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hdll, "GetIdlevideoINSTANCE");
-    RCC->INSTANCE = GetIdlevideoINSTANCE();
+    RCC->m_INSTANCE = GetIdlevideoINSTANCE();
 #ifdef log
     char a[10];
     itoa(RCC->INSTANCE, a, 10);
@@ -183,7 +171,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //char a[10];
     //itoa(initPort,a,10);
     FILE *fp;
-    fp=fopen("c:\\test.log","ab+");
+    fp = fopen("c:\\test.log", "ab+");
     fputs(a, fp);
     fputs(" ", fp);
     fputs("enter rtsp ", fp);
@@ -235,12 +223,12 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     RtspRequest *RTSPCLient = new RtspRequest;
     //建立rtsp连接 通过tcp传输
 
-    if(!RTSPCLient->Open(RCC->Url, ip.c_str(), rtpPort + 5))
+    if(!RTSPCLient->Open(RCC->m_URI, ip.c_str(), rtpPort + 5))
     {
 
 
 #ifdef log
-        fp=fopen("c:\\test.log","ab+");
+        fp = fopen("c:\\test.log", "ab+");
         fputs(a, fp);
         fputs(" ", fp);
         fputs("open error!", fp);
@@ -258,15 +246,15 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         if(RTSPCLient != NULL)
         { delete RTSPCLient; RTSPCLient = NULL; }
 
-        RCC->ans = 4; return -1;
-}
+        RCC->m_ans = 4; return -1;
+    }
 
     if(!RTSPCLient->RequestOptions())
-        if(!RTSPCLient->RequestOptions_test(RCC->UserName, RCC->Pwd))
+        if(!RTSPCLient->RequestOptions_test(RCC->m_userName, RCC->m_password))
         {
 
 #ifdef log
-            fp=fopen("c:\\test.log","ab+");
+            fp = fopen("c:\\test.log", "ab+");
             fputs(a, fp);
             fputs(" ", fp);
             fputs("option error!", fp);
@@ -284,16 +272,16 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             if(RTSPCLient != NULL)
             { delete RTSPCLient; RTSPCLient = NULL; }
 
-            RCC->ans = 4; return -1;
+            RCC->m_ans = 4; return -1;
         }
 
     if(!RTSPCLient->RequestDescribe(&sdp))//有时候会连不�?
-        if(!RTSPCLient->RequestDescribe_test(&sdp, RCC->UserName, RCC->Pwd))
+        if(!RTSPCLient->RequestDescribe_test(&sdp, RCC->m_userName, RCC->m_password))
         {
 
 
 #ifdef log
-            fp=fopen("c:\\test.log","ab+");
+            fp = fopen("c:\\test.log", "ab+");
             fputs(a, fp);
             fputs(" ", fp);
             fputs("sdp error! ", fp);
@@ -311,7 +299,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             if(RTSPCLient != NULL)
             { delete RTSPCLient; RTSPCLient = NULL; }
 
-            RCC->ans = 4; return -1;
+            RCC->m_ans = 4; return -1;
         }
 
     //FILE *fp;
@@ -323,10 +311,10 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     {
         RTSPCLient->m_SetupName = RTSPCLient->m_SetupName_video;
         if(!RTSPCLient->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess))
-            if(!RTSPCLient->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, RCC->UserName, RCC->Pwd))
+            if(!RTSPCLient->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, RCC->m_userName, RCC->m_password))
             {
 #ifdef log
-                fp=fopen("c:\\test.log","ab+");
+                fp = fopen("c:\\test.log", "ab+");
                 fputs(a, fp);
                 fputs(" ", fp);
                 fputs("setup error! ", fp);
@@ -344,8 +332,8 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 if(RTSPCLient != NULL)
                 { delete RTSPCLient; RTSPCLient = NULL; }
 
-                RCC->ans = 4; return -1;
-    }
+                RCC->m_ans = 4; return -1;
+            }
     }
 
     //audio
@@ -353,10 +341,10 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     {
         RTSPCLient->m_SetupName = RTSPCLient->m_SetupName_audio;
         if(!RTSPCLient->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess))
-            if(!RTSPCLient->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, RCC->UserName, RCC->Pwd))
+            if(!RTSPCLient->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, RCC->m_userName, RCC->m_password))
             {
 #ifdef log
-                fp=fopen("c:\\test.log","ab+");
+                fp = fopen("c:\\test.log", "ab+");
                 fputs(a, fp);
                 fputs(" ", fp);
                 fputs("setup error! ", fp);
@@ -374,8 +362,8 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 if(RTSPCLient != NULL)
                 { delete RTSPCLient; RTSPCLient = NULL; }
 
-                RCC->ans = 4; return -1;
-    }
+                RCC->m_ans = 4; return -1;
+            }
     }
 
     RTSPCLient->m_SetupName = "";
@@ -387,7 +375,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
 
 #ifdef log
-        fp=fopen("c:\\test.log","ab+");
+        fp = fopen("c:\\test.log", "ab+");
         fputs(a, fp);
         fputs(" ", fp);
         fputs("play error! ", fp);
@@ -405,7 +393,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         if(RTSPCLient != NULL)
         { delete RTSPCLient; RTSPCLient = NULL; }
 
-        RCC->ans = 4; return -1;
+        RCC->m_ans = 4; return -1;
     }
 
 
@@ -416,7 +404,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     Sleep(10);
     InitVideoParam = (fInitVideoParam)GetProcAddress(hdll, "InitVideoParam");
     //InitVideoParamNew = (fInitVideoParamNew)GetProcAddress(hdll,"InitVideoParamNew");
-    InitVideoParam(RCC->INSTANCE, Myparam, RTSPCLient->Decode);
+    InitVideoParam(RCC->m_INSTANCE, Myparam, RTSPCLient->Decode);
     //InitVideoParamNew(RCC->INSTANCE,Myparam,RTSPCLient->Decode,2);
     //设置回调
     SetCallBack = (fSetCallBack)GetProcAddress(hdll, "SetCallBack");
@@ -426,23 +414,23 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     setYUVCallBackFunc = (setYUVCallBack)GetProcAddress(hdll, "SetYUVCallBack");
     setH264CallBackFunc = (setH264CallBack)GetProcAddress(hdll, "SetH264CallBack");
     revoHWFunc = (revoHW)GetProcAddress(hdll, "RevoHWAcceleration");
-    SetCallBack(RCC->INSTANCE, RCC->func);
-    SetDrawLineCallBack(RCC->INSTANCE, RCC->funcD);
-    SetBmpCallBack(RCC->INSTANCE, RCC->bmpFunc);
-    SetFillBmpCallBack(RCC->INSTANCE, RCC->fillbmp);
-    setYUVCallBackFunc(RCC->INSTANCE, RCC->YUVFunc, RCC->YUVEx);
-    setH264CallBackFunc(RCC->INSTANCE, RCC->H264Func);
+    SetCallBack(RCC->m_INSTANCE, RCC->func);
+    SetDrawLineCallBack(RCC->m_INSTANCE, RCC->funcD);
+    SetBmpCallBack(RCC->m_INSTANCE, RCC->bmpFunc);
+    SetFillBmpCallBack(RCC->m_INSTANCE, RCC->fillbmp);
+    setYUVCallBackFunc(RCC->m_INSTANCE, RCC->YUVFunc, RCC->YUVEx);
+    setH264CallBackFunc(RCC->m_INSTANCE, RCC->H264Func);
     if(!RCC->nHWAcceleration)
-        revoHWFunc(RCC->INSTANCE);
+        revoHWFunc(RCC->m_INSTANCE);
 
-    RTSPCLient->ID = RCC->INSTANCE;
+    RTSPCLient->ID = RCC->m_INSTANCE;
     RTSPCLient->nfirst = true;
     RTSPCLient->initS = 0;
 
-    if(RCC->circulation)
+    if(RCC->m_circulation)
         return -1;//已经在播放了
 
-    RCC->circulation = true;
+    RCC->m_circulation = true;
     DWORD time1 = GetTickCount();
     DWORD time2 = GetTickCount();
 
@@ -452,9 +440,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //}
     RTSPCLient->initSdt();
 
-    while(RCC->circulation)
+    while(RCC->m_circulation)
     {
-        RCC->ans = 1;
+        RCC->m_ans = 1;
 
         int type = 0;
         short int size = 0;
@@ -546,7 +534,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
 #ifdef log
-    fp=fopen("c:\\test.log","ab+");
+    fp = fopen("c:\\test.log", "ab+");
     fputs(a, fp);
     fputs(" ", fp);
     fputs("out cir ", fp);
@@ -580,43 +568,30 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     //关解�?
     freeVideos = (ffreeVideos)GetProcAddress(hdll, "freeVideos");
-    int ret = freeVideos(RCC->INSTANCE);
+    int ret = freeVideos(RCC->m_INSTANCE);
     if(ret < 0)
         return -1;
 
-    //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("关闭过程3",fp);
-    //fclose(fp);
-
-    //清空�?
-    //if(pRtp!=NULL)
-    //{delete pRtp;pRtp = NULL;}
     if(Myparam != NULL)
-    { delete Myparam; Myparam = NULL; }
+    {
+        delete Myparam;
+        Myparam = NULL;
+    }
     if(rect != NULL)
-    { delete rect; rect = NULL; }
+    {
+        delete rect;
+        rect = NULL;
+    }
     if(RTSPCLient != NULL)
-    { delete RTSPCLient; RTSPCLient = NULL; }
+    {
+        delete RTSPCLient;
+        RTSPCLient = NULL;
+    }
 
-    //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("关闭过程4",fp);
-    //fclose(fp);
-
-    //buff.FreeBuffer();
-
-    RCC->ans = 2;
-
-#ifdef log
-    fp=fopen("c:\\test.log","ab+");
-    fputs(a, fp);
-    fputs(" ", fp);
-    fputs("end play ", fp);
-    fclose(fp);
-#endif
-
+    RCC->m_ans = 2;
 
     return 1;
-        }
+}
 
 //
 //typedef DWORD WINAPI (* beginrecv)(LPVOID lpParam);
@@ -629,11 +604,11 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 int CRTSPCLient::PlayURL(HWND hd)
 {
     //进入线程
-    this->hd = hd;
-    CreateThread(NULL, 0, RTSPVideo, this, 0, &threadID);
-    while(ans != 1 && ans != 4)
+    this->m_hWnd = hd;
+    CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
+    while(m_ans != 1 && m_ans != 4)
         Sleep(1);
-    if(threadID == -1 || ans == 4)
+    if(m_threadID == -1 || m_ans == 4)
         return -1;//进入线程失败
     return 1;
 }
@@ -646,20 +621,9 @@ int CRTSPCLient::PlayURL(HWND hd)
 //**************************************************
 int CRTSPCLient::stopURL()
 {
-    //退循环
-    /*FILE *fp;
-    fp =fopen("c:\\20150206.txt","a+");
-    fputs("关闭开�?,fp);
-    fclose(fp);*/
-
-    circulation = false;
-    while(ans != 2 && ans != 4)
+    m_circulation = false;
+    while(m_ans != 2 && m_ans != 4)
         Sleep(1);
-
-
-    /*fp =fopen("c:\\20150206.txt","a+");
-    fputs("关闭成功",fp);
-    fclose(fp);*/
 
     return 1;
 }

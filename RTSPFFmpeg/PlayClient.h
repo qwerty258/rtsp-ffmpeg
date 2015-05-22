@@ -12,20 +12,21 @@ class CRTSPCLient
 public:
     CRTSPCLient();
     ~CRTSPCLient();
-private:
-    DWORD threadID;
-public:
     int InputURL(char* URL, char* UserName, char* PWD);
-    int PlayURL(HWND hd);
+    int PlayURL(HWND hWnd);
     int stopURL();
+
 public:
-    char * Url;
-    int INSTANCE;
-    char* UserName;
-    char* Pwd;
-    bool circulation;
-    int ans;//0 初始状态，1 进入循环�? 退出线�?
-    HWND hd;
+    HWND m_hWnd;
+    int m_INSTANCE;
+    int m_ans; // 0: initial state    1: in the cycle    2: exit thread
+    bool m_circulation;
+    DWORD m_threadID;
+
+    char* m_URI;
+    char* m_userName;
+    char* m_password;
+
     PFCALLBACK func;
     TDrawLineCallBack funcD;
     TBmpCallBack bmpFunc;
