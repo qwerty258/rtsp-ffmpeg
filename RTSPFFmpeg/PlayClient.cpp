@@ -40,7 +40,7 @@ CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
     m_hWnd = NULL;
     m_ans = 0;
 
-    m_RTSPRequest = new RtspRequest;
+    m_RTSPRequest = new CRTSPRequest;
 
     func = NULL;
     funcD = NULL;

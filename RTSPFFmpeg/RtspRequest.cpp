@@ -2,17 +2,17 @@
 
 #include <algorithm>
 
-RtspRequest::RtspRequest()
+CRTSPRequest::CRTSPRequest()
 {
     m_State = stateInit;
 }
 
-RtspRequest::~RtspRequest()
+CRTSPRequest::~CRTSPRequest()
 {
     Close();
 }
 
-BOOL RtspRequest::Open(PCSTR mrl, PCSTR bindIp, INT bindPort)
+BOOL CRTSPRequest::Open(PCSTR mrl, PCSTR bindIp, INT bindPort)
 {
     if(m_State > stateInit)
         return FALSE;
@@ -42,7 +42,7 @@ BOOL RtspRequest::Open(PCSTR mrl, PCSTR bindIp, INT bindPort)
     return TRUE;
 }
 
-BOOL RtspRequest::RequestOptions()
+BOOL CRTSPRequest::RequestOptions()
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -56,7 +56,7 @@ BOOL RtspRequest::RequestOptions()
 
     return TRUE;
 }
-BOOL RtspRequest::RequestOptions_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestOptions_test(char *name, char *pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -71,7 +71,7 @@ BOOL RtspRequest::RequestOptions_test(char *name, char *pwd)
     return TRUE;
 }
 
-BOOL RtspRequest::RequestDescribe(string* pDescribe)
+BOOL CRTSPRequest::RequestDescribe(string* pDescribe)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -88,7 +88,7 @@ BOOL RtspRequest::RequestDescribe(string* pDescribe)
 
     return TRUE;
 }
-BOOL RtspRequest::RequestDescribe_test(string* pDescribe, char *name, char *pwd)
+BOOL CRTSPRequest::RequestDescribe_test(string* pDescribe, char *name, char *pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -114,7 +114,7 @@ BOOL RtspRequest::RequestDescribe_test(string* pDescribe, char *name, char *pwd)
     return TRUE;
 }
 
-BOOL RtspRequest::RequestSetup(PCSTR setupName, INT transportMode, INT clientPort, INT clientRtcpPort, char* pSession)
+BOOL CRTSPRequest::RequestSetup(PCSTR setupName, INT transportMode, INT clientPort, INT clientRtcpPort, char* pSession)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -142,7 +142,7 @@ BOOL RtspRequest::RequestSetup(PCSTR setupName, INT transportMode, INT clientPor
 
     return TRUE;
 }
-BOOL RtspRequest::RequestSetup_test(PCSTR setupName, INT transportMode, INT clientPort, INT clientRtcpPort, char* pSession, char *name, char *pwd)
+BOOL CRTSPRequest::RequestSetup_test(PCSTR setupName, INT transportMode, INT clientPort, INT clientRtcpPort, char* pSession, char *name, char *pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -171,7 +171,7 @@ BOOL RtspRequest::RequestSetup_test(PCSTR setupName, INT transportMode, INT clie
     return TRUE;
 }
 
-BOOL RtspRequest::RequestPlay()
+BOOL CRTSPRequest::RequestPlay()
 {
     if(m_State < stateReady)
         return FALSE;
@@ -188,7 +188,7 @@ BOOL RtspRequest::RequestPlay()
     return TRUE;
 }
 
-BOOL RtspRequest::RequestPlay_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestPlay_test(char *name, char *pwd)
 {
     if(m_State < stateReady)
         return FALSE;
@@ -205,7 +205,7 @@ BOOL RtspRequest::RequestPlay_test(char *name, char *pwd)
     return TRUE;
 }
 
-BOOL RtspRequest::RequestPause()
+BOOL CRTSPRequest::RequestPause()
 {
     if(m_State < statePlaying)
         return FALSE;
@@ -221,7 +221,7 @@ BOOL RtspRequest::RequestPause()
 
     return TRUE;
 }
-BOOL RtspRequest::RequestPause_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestPause_test(char *name, char *pwd)
 {
     if(m_State < statePlaying)
         return FALSE;
@@ -238,7 +238,7 @@ BOOL RtspRequest::RequestPause_test(char *name, char *pwd)
     return TRUE;
 }
 
-BOOL RtspRequest::RequestTeardown()
+BOOL CRTSPRequest::RequestTeardown()
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -254,7 +254,7 @@ BOOL RtspRequest::RequestTeardown()
 
     return TRUE;
 }
-BOOL RtspRequest::RequestTeardown_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestTeardown_test(char *name, char *pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -271,7 +271,7 @@ BOOL RtspRequest::RequestTeardown_test(char *name, char *pwd)
     return TRUE;
 }
 
-void RtspRequest::Close()
+void CRTSPRequest::Close()
 {
     Tcp::Close();
 
@@ -281,7 +281,7 @@ void RtspRequest::Close()
 }
 
 
-BOOL RtspRequest::GetDescribe(string* pDescribe)
+BOOL CRTSPRequest::GetDescribe(string* pDescribe)
 {
     BYTE* pDescribeBuffer = NULL;
     int describeSize;
@@ -408,7 +408,7 @@ BOOL RtspRequest::GetDescribe(string* pDescribe)
     return TRUE;
 }
 
-void RtspRequest::SendRequest(string requestType)
+void CRTSPRequest::SendRequest(string requestType)
 {
     string requestCmd;
     char cseq[256];
@@ -564,7 +564,7 @@ void Base64_Encode(unsigned char* src, unsigned char* dest, int srclen)
     }
 }
 
-void RtspRequest::SendRequest_test(string requestType, char *name, char *pwd)
+void CRTSPRequest::SendRequest_test(string requestType, char *name, char *pwd)
 {
     string requestCmd;
     char cseq[256];
@@ -626,7 +626,7 @@ void RtspRequest::SendRequest_test(string requestType, char *name, char *pwd)
     WriteFields();
     Write("");
 }
-BOOL RtspRequest::GetResponses()
+BOOL CRTSPRequest::GetResponses()
 {
     string str;
     string::size_type iFind;
@@ -701,7 +701,7 @@ BOOL RtspRequest::GetResponses()
     return TRUE;
 }
 
-BOOL RtspRequest::SearchResponses(string* pStr, string field)
+BOOL CRTSPRequest::SearchResponses(string* pStr, string field)
 {
     UINT iResponse;
     string::size_type iFind;
@@ -736,7 +736,7 @@ BOOL RtspRequest::SearchResponses(string* pStr, string field)
     return FALSE;
 }
 
-BOOL RtspRequest::GenerateTransportField(string *pTransport, int streamingMode, int clientRtpPort, int clientRtcpPort)
+BOOL CRTSPRequest::GenerateTransportField(string *pTransport, int streamingMode, int clientRtpPort, int clientRtcpPort)
 {
     char temp[10];
 

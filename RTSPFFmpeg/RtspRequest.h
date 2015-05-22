@@ -1,13 +1,12 @@
-#ifndef __RTSP_REQUEST_H__
-#define __RTSP_REQUEST_H__
+#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include "Rtsp.h"
 
-class RtspRequest : public Rtsp
+class CRTSPRequest : public Rtsp
 {
 public:
-    RtspRequest();
-    virtual ~RtspRequest();
+    CRTSPRequest();
+    virtual ~CRTSPRequest();
 
     virtual BOOL Open(PCSTR mrl, PCSTR bindIp = "", INT bindPort = 0);
 
@@ -49,5 +48,3 @@ public:
 
     int frame;//帧率
 };
-
-#endif //__RTSP_REQUEST_H__
