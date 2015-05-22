@@ -101,7 +101,7 @@ RTSPFFMPEG_API int Play(int INSTANCE, HWND hd)
     return 0;
 }
 
-RTSPFFMPEG_API int StopRtsp(int INSTANCE)
+RTSPFFMPEG_API int Stop(int INSTANCE)
 {
     if(checkINSTANCE(INSTANCE) < 0)
     {

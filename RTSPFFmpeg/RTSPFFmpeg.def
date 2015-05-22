@@ -3,7 +3,7 @@ EXPORTS
 	GetRtspINSTANCE			@1
 	InitRtspVideoParam		@2
 	Play					@3
-	StopRtsp				@4
+	Stop					@4
 	InitRtspDLL				@5
 	FreeRtspDLL				@6
 	pSetDrawLineCallBack	@7
