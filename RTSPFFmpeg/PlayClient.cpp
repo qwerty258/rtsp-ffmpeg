@@ -119,11 +119,10 @@ int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
     //解码器准备工�?
-    CRTSPCLient *RCC = (CRTSPCLient *)lpParam;
     myparamInput *Myparam = new myparamInput();//播放结束需要删�?
     RECT *rect = new RECT;//播放结束需要删�?
-    GetWindowRect(RCC->m_hWnd, rect);
-    Myparam->playHandle = RCC->m_hWnd;  // 取得控件的句�?
+    GetWindowRect(((CRTSPCLient*)lpParam)->m_hWnd, rect);
+    Myparam->playHandle = ((CRTSPCLient*)lpParam)->m_hWnd;  // 取得控件的句�?
     Myparam->stopPlay = 0;
     Myparam->playChannle = 1;
     Myparam->fps = 25;
@@ -145,13 +144,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         return -1;
     }
 
-    RCC->m_INSTANCE = GetIdlevideoINSTANCE();
-
-
-    /*Sleep(10);
-    InitVideoParam = (fInitVideoParam)GetProcAddress(hdll,"InitVideoParam");
-    InitVideoParam(RCC->INSTANCE,Myparam,);*/
-
+    ((CRTSPCLient*)lpParam)->m_INSTANCE = GetIdlevideoINSTANCE();
 
     //建立通信
     string setupName = "";
@@ -161,7 +154,6 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     initPort++;
     INT rtcpPort = rtpPort + 1;
     string sdp = "";
-    //INT64 sess;
     char * sess = 0;
 
     //获取本地IP
@@ -188,7 +180,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         WSACleanup();
     }
 
-    if(!RCC->m_RTSPRequest->Open(RCC->m_URI, ip.c_str(), rtpPort + 5))
+    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->Open(((CRTSPCLient*)lpParam)->m_URI, ip.c_str(), rtpPort + 5))
     {
         //clean up on failure
         if(NULL != Myparam)
@@ -203,18 +195,15 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             rect = NULL;
         }
 
-        RCC->m_ans = 4;
+        ((CRTSPCLient*)lpParam)->m_ans = 4;
         return -1;
     }
 
-    if(!RCC->m_RTSPRequest->RequestOptions())
+    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions())
     {
-        if(!RCC->m_RTSPRequest->RequestOptions_test(RCC->m_userName, RCC->m_password))
+        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions_test(((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
         {
             //失败了也需要清�?
-            /*int ret = freeVideos(RCC->INSTANCE);
-                if(ret <0)
-                return -1;*/
             if(Myparam != NULL)
             {
                 delete Myparam;
@@ -226,19 +215,16 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 rect = NULL;
             }
 
-            RCC->m_ans = 4; return -1;
+            ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
         }
     }
 
-    if(!RCC->m_RTSPRequest->RequestDescribe(&sdp))//有时候会连不�?
+    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe(&sdp))//有时候会连不�?
     {
-        if(!RCC->m_RTSPRequest->RequestDescribe_test(&sdp, RCC->m_userName, RCC->m_password))
+        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe_test(&sdp, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
         {
 
             //失败了也需要清�?
-            /*int ret = freeVideos(RCC->INSTANCE);
-                if(ret <0)
-                return -1;*/
             if(Myparam != NULL)
             {
                 delete Myparam;
@@ -250,27 +236,19 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 rect = NULL;
             }
 
-            RCC->m_ans = 4; return -1;
+            ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
         }
     }
 
-    //FILE *fp;
-    //fp=fopen("c:\\sdp.log","ab+");
-    //fputs(sdp.c_str(),fp);
-    //fclose(fp);
-    //video
-    if(RCC->m_RTSPRequest->m_SetupName_video.length())
+    if(((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_video.length())
     {
-        RCC->m_RTSPRequest->m_SetupName = RCC->m_RTSPRequest->m_SetupName_video;
-        if(!RCC->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess))
+        ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_video;
+        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess))
         {
-            if(!RCC->m_RTSPRequest->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, RCC->m_userName, RCC->m_password))
+            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
             {
 
                 //失败了也需要清�?
-                /*int ret = freeVideos(RCC->INSTANCE);
-                    if(ret <0)
-                    return -1;*/
                 if(Myparam != NULL)
                 {
                     delete Myparam;
@@ -282,24 +260,21 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     rect = NULL;
                 }
 
-                RCC->m_ans = 4; return -1;
+                ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
             }
         }
     }
 
     //audio
-    if(RCC->m_RTSPRequest->m_SetupName_audio.length())
+    if(((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_audio.length())
     {
-        RCC->m_RTSPRequest->m_SetupName = RCC->m_RTSPRequest->m_SetupName_audio;
-        if(!RCC->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess))
+        ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_audio;
+        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess))
         {
-            if(!RCC->m_RTSPRequest->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, RCC->m_userName, RCC->m_password))
+            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
             {
 
                 //失败了也需要清�?
-                /*int ret = freeVideos(RCC->INSTANCE);
-                    if(ret <0)
-                    return -1;*/
                 if(Myparam != NULL)
                 {
                     delete Myparam;
@@ -311,23 +286,17 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     rect = NULL;
                 }
 
-                RCC->m_ans = 4; return -1;
+                ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
             }
         }
     }
 
-    RCC->m_RTSPRequest->m_SetupName = "";
+    ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = "";
     //RTSPCLient->m_SetupName_audio = "";
     //RTSPCLient->m_SetupName_video = "";
-    if(!RCC->m_RTSPRequest->RequestPlay())
-        /*if(!RTSPCLient->RequestPlay_test(RCC->UserName,RCC->Pwd))*/
+    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestPlay())
     {
-
-
         //失败了也需要清�?
-        /*int ret = freeVideos(RCC->INSTANCE);
-            if(ret <0)
-            return -1;*/
         if(Myparam != NULL)
         {
             delete Myparam;
@@ -339,19 +308,19 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             rect = NULL;
         }
 
-        RCC->m_ans = 4; return -1;
+        ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
     }
 
 
     //初始化解码器dll
-    if(RCC->m_RTSPRequest->frame != -1)
+    if(((CRTSPCLient*)lpParam)->m_RTSPRequest->frame != -1)
     {
-        Myparam->fps = RCC->m_RTSPRequest->frame;
+        Myparam->fps = ((CRTSPCLient*)lpParam)->m_RTSPRequest->frame;
     }
 
     Sleep(10);
     InitVideoParam = (fInitVideoParam)GetProcAddress(hdll, "InitVideoParam");
-    InitVideoParam(RCC->m_INSTANCE, Myparam, RCC->m_RTSPRequest->Decode);
+    InitVideoParam(((CRTSPCLient*)lpParam)->m_INSTANCE, Myparam, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
     //设置回调
     SetCallBack = (fSetCallBack)GetProcAddress(hdll, "SetCallBack");
     SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hdll, "SetDrawLineCallBack");
@@ -360,40 +329,36 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     setYUVCallBackFunc = (setYUVCallBack)GetProcAddress(hdll, "SetYUVCallBack");
     setH264CallBackFunc = (setH264CallBack)GetProcAddress(hdll, "SetH264CallBack");
     revoHWFunc = (revoHW)GetProcAddress(hdll, "RevoHWAcceleration");
-    SetCallBack(RCC->m_INSTANCE, RCC->func);
-    SetDrawLineCallBack(RCC->m_INSTANCE, RCC->funcD);
-    SetBmpCallBack(RCC->m_INSTANCE, RCC->bmpFunc);
-    SetFillBmpCallBack(RCC->m_INSTANCE, RCC->fillbmp);
-    setYUVCallBackFunc(RCC->m_INSTANCE, RCC->YUVFunc, RCC->YUVEx);
-    setH264CallBackFunc(RCC->m_INSTANCE, RCC->H264Func);
-    if(!RCC->nHWAcceleration)
-        revoHWFunc(RCC->m_INSTANCE);
+    SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
+    SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
+    SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
+    SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
+    setYUVCallBackFunc(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
+    setH264CallBackFunc(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
+    if(!((CRTSPCLient*)lpParam)->nHWAcceleration)
+        revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
 
-    RCC->m_RTSPRequest->ID = RCC->m_INSTANCE;
-    RCC->m_RTSPRequest->nfirst = true;
-    RCC->m_RTSPRequest->initS = 0;
+    ((CRTSPCLient*)lpParam)->m_RTSPRequest->ID = ((CRTSPCLient*)lpParam)->m_INSTANCE;
+    ((CRTSPCLient*)lpParam)->m_RTSPRequest->nfirst = true;
+    ((CRTSPCLient*)lpParam)->m_RTSPRequest->initS = 0;
 
-    if(RCC->m_circulation)
+    if(((CRTSPCLient*)lpParam)->m_circulation)
         return -1;//已经在播放了
 
-    RCC->m_circulation = true;
+    ((CRTSPCLient*)lpParam)->m_circulation = true;
     DWORD time1 = GetTickCount();
     DWORD time2 = GetTickCount();
 
-    //while(1)
-    //{
-    //	RTSPCLient->Read_Test();
-    //}
-    RCC->m_RTSPRequest->initSdt();
+    ((CRTSPCLient*)lpParam)->m_RTSPRequest->initSdt();
 
-    while(RCC->m_circulation)
+    while(((CRTSPCLient*)lpParam)->m_circulation)
     {
-        RCC->m_ans = 1;
+        ((CRTSPCLient*)lpParam)->m_ans = 1;
 
         int type = 0;
         short int size = 0;
 
-        int rs = RCC->m_RTSPRequest->Read_Start(type, &size);
+        int rs = ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_Start(type, &size);
 
 
         if(rs == -1)
@@ -405,15 +370,15 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             continue;
         if(type == 0)
         {
-            int i = RCC->m_RTSPRequest->Read_PlayLoad(size);
+            int i = ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
         }
         else if(type == 2 || type == 3)//其余2-3的流全部丢弃
         {
-            RCC->m_RTSPRequest->Read_Leave(size);
+            ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_Leave(size);
         }
         else if(type == 1)
         {
-            RCC->m_RTSPRequest->Read_RTCPVideo(size);
+            ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_RTCPVideo(size);
         }
 
 
@@ -424,46 +389,46 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             time1 = time2;
             //fraction lost
             char eTmp[2];
-            eTmp[0] = RCC->m_RTSPRequest->eSeNum[1];
-            eTmp[1] = RCC->m_RTSPRequest->eSeNum[0];
+            eTmp[0] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->eSeNum[1];
+            eTmp[1] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->eSeNum[0];
 
             char lTmp[2];
-            lTmp[0] = RCC->m_RTSPRequest->lSeNum[1];
-            lTmp[1] = RCC->m_RTSPRequest->lSeNum[0];
+            lTmp[0] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->lSeNum[1];
+            lTmp[1] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->lSeNum[0];
 
-            RCC->m_RTSPRequest->sdt.RR.fractionLost = (UINT)((float)(((UINT16)eTmp - (UINT16)lTmp) - RCC->m_RTSPRequest->perGet) / (float)((UINT16)eTmp - (UINT16)lTmp) * 256);
+            ((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.fractionLost = (UINT)((float)(((UINT16)eTmp - (UINT16)lTmp) - ((CRTSPCLient*)lpParam)->m_RTSPRequest->perGet) / (float)((UINT16)eTmp - (UINT16)lTmp) * 256);
 
-            RCC->m_RTSPRequest->perGet = 0;
-            memcpy(RCC->m_RTSPRequest->lSeNum, RCC->m_RTSPRequest->eSeNum, 2);
+            ((CRTSPCLient*)lpParam)->m_RTSPRequest->perGet = 0;
+            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->lSeNum, ((CRTSPCLient*)lpParam)->m_RTSPRequest->eSeNum, 2);
             //cumulation lost
             char sTmp[2];
-            sTmp[0] = RCC->m_RTSPRequest->sSeNum[1];
-            sTmp[1] = RCC->m_RTSPRequest->sSeNum[0];
+            sTmp[0] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->sSeNum[1];
+            sTmp[1] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->sSeNum[0];
 
-            UINT16 lost = (UINT16)eTmp - (UINT16)sTmp - RCC->m_RTSPRequest->allGet;
+            UINT16 lost = (UINT16)eTmp - (UINT16)sTmp - ((CRTSPCLient*)lpParam)->m_RTSPRequest->allGet;
 
             char l[2];
 
             memcpy(l + 1, &lost, 1);
             memcpy(l, &lost + 1, 1);
 
-            memcpy(RCC->m_RTSPRequest->sdt.RR.cumulationLost + 1, l, 2);
+            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.cumulationLost + 1, l, 2);
             //interarrival jitter
             char jit[4];
-            memcpy(jit, &RCC->m_RTSPRequest->jitter + 3, 1);
-            memcpy(jit + 1, &RCC->m_RTSPRequest->jitter + 2, 1);
-            memcpy(jit + 2, &RCC->m_RTSPRequest->jitter + 1, 1);
-            memcpy(jit + 3, &RCC->m_RTSPRequest->jitter + 0, 1);
+            memcpy(jit, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 3, 1);
+            memcpy(jit + 1, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 2, 1);
+            memcpy(jit + 2, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 1, 1);
+            memcpy(jit + 3, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 0, 1);
 
-            memcpy(RCC->m_RTSPRequest->sdt.RR.interJitter, jit, 4);
+            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.interJitter, jit, 4);
             //last SR
-            memcpy(RCC->m_RTSPRequest->sdt.RR.LSR, RCC->m_RTSPRequest->LSR, 4);
+            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.LSR, ((CRTSPCLient*)lpParam)->m_RTSPRequest->LSR, 4);
 
             //DLSR
             time_t nowTime;
             time(&nowTime);
 
-            DWORD delayTime = nowTime - RCC->m_RTSPRequest->lTime;
+            DWORD delayTime = nowTime - ((CRTSPCLient*)lpParam)->m_RTSPRequest->lTime;
 
             char dTime[4];
             memcpy(dTime, &delayTime + 3, 1);
@@ -471,50 +436,17 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             memcpy(dTime + 2, &delayTime + 1, 1);
             memcpy(dTime + 3, &delayTime, 1);
 
-            memcpy(RCC->m_RTSPRequest->sdt.RR.DLSR, dTime, 4);
+            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.DLSR, dTime, 4);
 
-            memcpy(RCC->m_RTSPRequest->sdt.RR.SSRC_1, RCC->m_RTSPRequest->rcvf.SR.SSRC, 4);
+            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.SSRC_1, ((CRTSPCLient*)lpParam)->m_RTSPRequest->rcvf.SR.SSRC, 4);
 
-            RCC->m_RTSPRequest->Write_RTCPVideo(0);
+            ((CRTSPCLient*)lpParam)->m_RTSPRequest->Write_RTCPVideo(0);
         }
     }
 
-#ifdef log
-    fp = fopen("c:\\test.log", "ab+");
-    fputs(a, fp);
-    fputs(" ", fp);
-    fputs("out cir ", fp);
-    fclose(fp);
-#endif
-
-    //FILE *fp;
-    //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("关闭退出循�?,fp);
-    //fclose(fp);
-
-    //关通信
-    //if(!RTSPCLient->RequestPause())
-    //	RTSPCLient->RequestPause_test(RCC->UserName,RCC->Pwd);
-
-
-    //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("关闭过程1",fp);
-    //fclose(fp);
-
-    //if(!RTSPCLient->RequestTeardown())
-    //	RTSPCLient->RequestTeardown_test(RCC->UserName,RCC->Pwd);
-
-
-    //fp =fopen("c:\\20150206.txt","a+");
-    //fputs("关闭过程2",fp);
-    //fclose(fp);
-
-    //pRtp->Close();
-    //pRtcp->Close();
-
     //关解�?
     freeVideos = (ffreeVideos)GetProcAddress(hdll, "freeVideos");
-    int ret = freeVideos(RCC->m_INSTANCE);
+    int ret = freeVideos(((CRTSPCLient*)lpParam)->m_INSTANCE);
     if(ret < 0)
         return -1;
 
@@ -529,7 +461,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         rect = NULL;
     }
 
-    RCC->m_ans = 2;
+    ((CRTSPCLient*)lpParam)->m_ans = 2;
 
     return 1;
 }
@@ -542,10 +474,10 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 //输出参数�?
 //返回值：  1播放成功�?1播放失败
 //**************************************************
-int CRTSPCLient::PlayURL(HWND hd)
+int CRTSPCLient::PlayURL(HWND hWnd)
 {
     //进入线程
-    this->m_hWnd = hd;
+    this->m_hWnd = hWnd;
     CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
     while(m_ans != 1 && m_ans != 4)
         Sleep(1);
