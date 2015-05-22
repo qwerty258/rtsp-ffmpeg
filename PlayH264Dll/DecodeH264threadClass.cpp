@@ -275,7 +275,8 @@ int bGPlayWnd = 0;
 DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 {
     bool fir = TRUE;
-    int height, width;
+    int height = 0;
+    int width = 0;
     //∆Ù”√±‡¬Î∆˜ 
     AVPacket  avp;
     playH264VideoClass *VideoClass = (playH264VideoClass *)lpParam;
