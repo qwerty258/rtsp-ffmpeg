@@ -89,7 +89,7 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, c
     return 0;
 }
 
-RTSPFFMPEG_API int PlayRtsp(int INSTANCE, HWND hd)
+RTSPFFMPEG_API int Play(int INSTANCE, HWND hd)
 {
     if(checkINSTANCE(INSTANCE) < 0)
     {

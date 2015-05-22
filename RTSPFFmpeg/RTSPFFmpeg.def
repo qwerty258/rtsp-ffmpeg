@@ -2,7 +2,7 @@ LIBRARY RTSPFFmpeg
 EXPORTS
 	GetRtspINSTANCE			@1
 	InitRtspVideoParam		@2
-	PlayRtsp				@3
+	Play					@3
 	StopRtsp				@4
 	InitRtspDLL				@5
 	FreeRtspDLL				@6
