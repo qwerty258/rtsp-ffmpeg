@@ -12,7 +12,7 @@ CRTSPRequest::~CRTSPRequest()
     Close();
 }
 
-BOOL CRTSPRequest::Open(PCSTR mrl, PCSTR bindIp, INT bindPort)
+BOOL CRTSPRequest::Open(char* mrl, PCSTR bindIp, INT bindPort)
 {
     if(m_State > stateInit)
         return FALSE;
@@ -56,12 +56,12 @@ BOOL CRTSPRequest::RequestOptions()
 
     return TRUE;
 }
-BOOL CRTSPRequest::RequestOptions_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestOptions(char* name, char* pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
 
-    SendRequest_test("OPTIONS", name, pwd);
+    SendRequest("OPTIONS", name, pwd);
 
     printf("\n");
 
@@ -88,12 +88,12 @@ BOOL CRTSPRequest::RequestDescribe(string* pDescribe)
 
     return TRUE;
 }
-BOOL CRTSPRequest::RequestDescribe_test(string* pDescribe, char *name, char *pwd)
+BOOL CRTSPRequest::RequestDescribe(string* pDescribe, char* name, char* pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
 
-    SendRequest_test("DESCRIBE", name, pwd);
+    SendRequest("DESCRIBE", name, pwd);
 
     //printf("\n");
 
@@ -142,7 +142,7 @@ BOOL CRTSPRequest::RequestSetup(PCSTR setupName, INT transportMode, INT clientPo
 
     return TRUE;
 }
-BOOL CRTSPRequest::RequestSetup_test(PCSTR setupName, INT transportMode, INT clientPort, INT clientRtcpPort, char* pSession, char *name, char *pwd)
+BOOL CRTSPRequest::RequestSetup(PCSTR setupName, INT transportMode, INT clientPort, INT clientRtcpPort, char* pSession, char *name, char *pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
@@ -156,7 +156,7 @@ BOOL CRTSPRequest::RequestSetup_test(PCSTR setupName, INT transportMode, INT cli
         return FALSE;
 
     AddField(transportField);
-    SendRequest_test("SETUP", name, pwd);
+    SendRequest("SETUP", name, pwd);
 
     printf("\n");
 
@@ -188,12 +188,12 @@ BOOL CRTSPRequest::RequestPlay()
     return TRUE;
 }
 
-BOOL CRTSPRequest::RequestPlay_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestPlay(char *name, char *pwd)
 {
     if(m_State < stateReady)
         return FALSE;
 
-    SendRequest_test("PLAY", name, pwd);
+    SendRequest("PLAY", name, pwd);
 
     printf("\n");
 
@@ -221,12 +221,12 @@ BOOL CRTSPRequest::RequestPause()
 
     return TRUE;
 }
-BOOL CRTSPRequest::RequestPause_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestPause(char *name, char *pwd)
 {
     if(m_State < statePlaying)
         return FALSE;
 
-    SendRequest_test("PAUSE", name, pwd);
+    SendRequest("PAUSE", name, pwd);
 
     printf("\n");
 
@@ -254,12 +254,12 @@ BOOL CRTSPRequest::RequestTeardown()
 
     return TRUE;
 }
-BOOL CRTSPRequest::RequestTeardown_test(char *name, char *pwd)
+BOOL CRTSPRequest::RequestTeardown(char *name, char *pwd)
 {
     if(m_State < stateConnected)
         return FALSE;
 
-    SendRequest_test("TEARDOWN", name, pwd);
+    SendRequest("TEARDOWN", name, pwd);
 
     printf("\n");
 
@@ -564,7 +564,7 @@ void Base64_Encode(unsigned char* src, unsigned char* dest, int srclen)
     }
 }
 
-void CRTSPRequest::SendRequest_test(string requestType, char *name, char *pwd)
+void CRTSPRequest::SendRequest(string requestType, char *name, char *pwd)
 {
     string requestCmd;
     char cseq[256];

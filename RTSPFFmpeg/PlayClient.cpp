@@ -201,7 +201,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions())
     {
-        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions_test(((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
+        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions(((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
         {
             //失败了也需要清�?
             if(Myparam != NULL)
@@ -221,7 +221,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe(&sdp))//有时候会连不�?
     {
-        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe_test(&sdp, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
+        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe(&sdp, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
         {
 
             //失败了也需要清�?
@@ -245,7 +245,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_video;
         if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess))
         {
-            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
+            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
             {
 
                 //失败了也需要清�?
@@ -271,7 +271,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_audio;
         if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess))
         {
-            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup_test(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
+            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
             {
 
                 //失败了也需要清�?
