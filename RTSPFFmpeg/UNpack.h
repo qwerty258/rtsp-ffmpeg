@@ -1,12 +1,9 @@
-//#include "stdafx.h"
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
-#include <sys/types.h>
-#include <fcntl.h>
 #include "Decode.h"
 
 typedef struct
@@ -185,31 +182,34 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     //////////////////////////////////////////////////////////////////////////  
     //begin rtp_payload and rtp_header  
 
-    //p = (RTPpacket_t*)&recvbuf[0];  
-    if((p = (RTPpacket_t *)malloc(sizeof(RTPpacket_t))) == NULL)
+    //p = (RTPpacket_t*)&recvbuf[0];
+    p = (RTPpacket_t*)malloc(sizeof(RTPpacket_t));
+    if(NULL == p)
     {
-        //printf ("RTPpacket_t MMEMORY ERROR\n");  
+        MessageBox(NULL, L"malloc error", NULL, MB_OK);
     }
-    if((p->payload = (unsigned char *)malloc(MAXDATASIZE)) == NULL)
+
+    p->payload = (unsigned char*)malloc(MAXDATASIZE);
+    if(NULL == p)
     {
-        //printf ("RTPpacket_t payload MMEMORY ERROR\n");  
+        MessageBox(NULL, L"malloc error", NULL, MB_OK);
     }
 
     rtp_hdr = (RTP_FIXED_HEADER*)&bufIn[0];
-    // printf("版本�?    : %d\n",rtp_hdr->version);  
+
     p->version = rtp_hdr->version;
     p->padding = rtp_hdr->padding;
     p->extension = rtp_hdr->extension;
     p->cc = rtp_hdr->csrc_len;
-    //printf("标志�?    : %d\n",rtp_hdr->marker);  
+
     p->marker = rtp_hdr->marker;
-    //printf("负载类型    :%d\n",rtp_hdr->payloadtype);  
+
     p->pt = rtp_hdr->payloadtype;
-    // printf("包号      : %d \n",rtp_hdr->seq_no);  
+
     p->seq_no = rtp_hdr->seq_no;
-    //printf("时间�?    : %d\n",rtp_hdr->timestamp);  
+
     p->timestamp = rtp_hdr->timestamp;
-    //printf("帧号      : %d\n",rtp_hdr->ssrc);  
+
     p->ssrc = rtp_hdr->ssrc;
 
     //end rtp_payload and rtp_header  

@@ -10,7 +10,7 @@ const UINT16 RTP_H263_HEADER_SIZE = 2;
 class Rtp : public Udp
 {
 public:
-    //保存解码器类型
+    //保存解码器类�?
     int Decode;
     //保存解码器id
     int ID;

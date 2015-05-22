@@ -9,7 +9,7 @@
 //
 //	GetFullBuffer()							        AddFullBuffer()
 //
-//	   ↓                                                  ↑	
+//	   �?                                                 �?
 //
 //	AddEmptyBuffer()					            GetEmptyBuffer()
 //
@@ -18,7 +18,7 @@
 //
 //  Split the VBuffer:
 //
-//	SetData() → [tail]  ... Buffer Buffer ... [heard]   → GetData()
+//	SetData() �?[tail]  ... Buffer Buffer ... [heard]   �?GetData()
 //
 //
 //////////////////////////////////////////////////////////////////////
@@ -325,13 +325,13 @@ public:
         UINT	nGetSize = 0;
         UINT	nCopyDataSize;		//	获取部分长度
 
-        while(nGetSize < nDataSize)	//	获取至足够的数据后返回
+        while(nGetSize < nDataSize)	//	获取至足够的数据后返�?
         {
             pBuffer = m_FullBuffer.front();
 
             if(nDataSize - nGetSize < pBuffer->m_nDataSize)
             {
-                // 只取buffer中部分数据进行拷贝
+                // 只取buffer中部分数据进行拷�?
                 nCopyDataSize = nDataSize - nGetSize;	//	拷贝部分长度
 
                 memcpy(pData + nGetSize, pBuffer->m_pData, nCopyDataSize);
@@ -375,7 +375,7 @@ public:
 
         nFillSize = 0;
 
-        while(nFillSize < nDataSize)	//	填充至足够的数据后返回
+        while(nFillSize < nDataSize)	//	填充至足够的数据后返�?
         {
             pBuffer = m_EmptyBuffer.front();
             pBuffer->ClearData();
@@ -396,7 +396,7 @@ public:
             }
             nFillSize += nCopyDataSize;
 
-            // 移送buffer到数据缓冲区中
+            // 移送buffer到数据缓冲区�?
             m_nDataSize += pBuffer->m_nDataSize;
             m_nFullBufferSize += pBuffer->m_nBufferSize;
             m_nEmptyBufferSize -= pBuffer->m_nBufferSize;
