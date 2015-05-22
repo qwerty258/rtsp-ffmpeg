@@ -1,5 +1,5 @@
 #pragma once
-
+#include <ctime>
 #include "RtspRequest.h"
 #include "Rtp.h"
 
@@ -23,6 +23,7 @@ public:
     int m_ans; // 0: initial state    1: in the cycle    2: exit thread
     bool m_circulation;
     DWORD m_threadID;
+    RtspRequest* m_RTSPRequest;
 
     char* m_URI;
     char* m_userName;

@@ -42,7 +42,7 @@ protected:
     BOOL GenerateTransportField(string *pTransport, int streamingMode, int clientRtpPort, int clientRtcpPort);
 
     string  m_RequestsMrl;
-    string  m_AuUserAPSD;//存用户名密码，暂时不写
+    string  m_AuUserAPSD;//存用户名密码，暂时不�?
     vector<string> m_Responses;
 
 public:
