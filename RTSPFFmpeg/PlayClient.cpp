@@ -245,15 +245,18 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 return -1;*/
             if(Myparam != NULL)
             {
-                delete Myparam; Myparam = NULL;
+                delete Myparam;
+                Myparam = NULL;
             }
             if(rect != NULL)
             {
-                delete rect; rect = NULL;
+                delete rect;
+                rect = NULL;
             }
             if(RTSPCLient != NULL)
             {
-                delete RTSPCLient; RTSPCLient = NULL;
+                delete RTSPCLient;
+                RTSPCLient = NULL;
             }
 
             RCC->m_ans = 4; return -1;
@@ -279,15 +282,18 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     return -1;*/
                 if(Myparam != NULL)
                 {
-                    delete Myparam; Myparam = NULL;
+                    delete Myparam;
+                    Myparam = NULL;
                 }
                 if(rect != NULL)
                 {
-                    delete rect; rect = NULL;
+                    delete rect;
+                    rect = NULL;
                 }
                 if(RTSPCLient != NULL)
                 {
-                    delete RTSPCLient; RTSPCLient = NULL;
+                    delete RTSPCLient;
+                    RTSPCLient = NULL;
                 }
 
                 RCC->m_ans = 4; return -1;
@@ -310,15 +316,18 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     return -1;*/
                 if(Myparam != NULL)
                 {
-                    delete Myparam; Myparam = NULL;
+                    delete Myparam;
+                    Myparam = NULL;
                 }
                 if(rect != NULL)
                 {
-                    delete rect; rect = NULL;
+                    delete rect;
+                    rect = NULL;
                 }
                 if(RTSPCLient != NULL)
                 {
-                    delete RTSPCLient; RTSPCLient = NULL;
+                    delete RTSPCLient;
+                    RTSPCLient = NULL;
                 }
 
                 RCC->m_ans = 4; return -1;
@@ -340,15 +349,18 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             return -1;*/
         if(Myparam != NULL)
         {
-            delete Myparam; Myparam = NULL;
+            delete Myparam;
+            Myparam = NULL;
         }
         if(rect != NULL)
         {
-            delete rect; rect = NULL;
+            delete rect;
+            rect = NULL;
         }
         if(RTSPCLient != NULL)
         {
-            delete RTSPCLient; RTSPCLient = NULL;
+            delete RTSPCLient;
+            RTSPCLient = NULL;
         }
 
         RCC->m_ans = 4; return -1;
@@ -363,9 +375,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     Sleep(10);
     InitVideoParam = (fInitVideoParam)GetProcAddress(hdll, "InitVideoParam");
-    //InitVideoParamNew = (fInitVideoParamNew)GetProcAddress(hdll,"InitVideoParamNew");
     InitVideoParam(RCC->m_INSTANCE, Myparam, RTSPCLient->Decode);
-    //InitVideoParamNew(RCC->INSTANCE,Myparam,RTSPCLient->Decode,2);
     //设置回调
     SetCallBack = (fSetCallBack)GetProcAddress(hdll, "SetCallBack");
     SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hdll, "SetDrawLineCallBack");

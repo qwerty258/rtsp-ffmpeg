@@ -125,7 +125,12 @@ RTSPFFMPEG_API int DisConnect(int INSTANCE)
         return -1;
     }
 
-    //((CRTSPCLient*)deList[INSTANCE].pt)->
+    ((CRTSPCLient*)deList[INSTANCE].pt)->stopURL();
+
+    deList[INSTANCE].idle = 0;
+
+    delete deList[INSTANCE].pt;
+    deList[INSTANCE].pt = NULL;
 
     return 0;
 }
