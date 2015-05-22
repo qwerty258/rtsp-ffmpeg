@@ -69,7 +69,7 @@ RTSPFFMPEG_API int GetRtspINSTANCE()
     return -1;
 }
 
-RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* UserName, char* PWD)
+RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, char* password)
 {
     if(checkINSTANCE(INSTANCE) < 0)
     {
@@ -84,7 +84,7 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* UserName, c
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->InputURL(URI, UserName, PWD);
+    ((CRTSPCLient*)deList[INSTANCE].pt)->InputURL(URI, userName, password);
 
     return 0;
 }
