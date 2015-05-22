@@ -304,7 +304,8 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             rect = NULL;
         }
 
-        ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
+        ((CRTSPCLient*)lpParam)->m_ans = 4;
+        return -1;
     }
 
 

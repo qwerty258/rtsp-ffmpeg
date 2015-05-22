@@ -29,8 +29,8 @@ void CtestPlayDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_QUERYDRAGICON()
-ON_BN_CLICKED(IDC_BUTTON_PLAY, &CtestPlayDlg::OnClickedButtonPlay)
-ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CtestPlayDlg::OnClickedButtonPause)
+    ON_BN_CLICKED(IDC_BUTTON_PLAY, &CtestPlayDlg::OnClickedButtonPlay)
+    ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CtestPlayDlg::OnClickedButtonPause)
 END_MESSAGE_MAP()
 
 
@@ -50,6 +50,7 @@ BOOL CtestPlayDlg::OnInitDialog()
     if(NULL == m_hDll)
     {
         AfxMessageBox(L"Load RTSPFFmpeg.dll error");
+        return FALSE;
     }
 
     InitRtspDLL = (lpFuncInitRtspDLL)GetProcAddress(m_hDll, "InitRtspDLL");
