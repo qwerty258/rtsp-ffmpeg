@@ -214,15 +214,12 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
 
     //end rtp_payload and rtp_header  
     //////////////////////////////////////////////////////////////////////////  
-    //begin nal_hdr  
-    if(!(n = AllocNALU(4096)))          //为结构体nalu_t及其成员buf分配空间。返回值为指向nalu_t存储空间的指�? 
+    //begin nal_hdr
+    n = AllocNALU(4096);
+    if(NULL == n)          //为结构体nalu_t及其成员buf分配空间。返回值为指向nalu_t存储空间的指�? 
     {
-        //printf("NALU_t MMEMORY ERROR\n");  
+        MessageBox(NULL, L"AllocNALU error", NULL, MB_OK);
     }
-    //if ((nalu_hdr = (NALU_HEADER *)malloc(sizeof(NALU_HEADER))) == NULL)  
-    //   {  
-    //       //printf("NALU_HEADER MEMORY ERROR\n");  
-    //   }  
 
     nalu_hdr = (NALU_HEADER*)&bufIn[12];                        //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确�? 
     //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //网络传输中的方式为：F->NRI->TYPE.. 内存中存储方式为 TYPE->NRI->F (和nal头匹�?�? 
@@ -237,13 +234,11 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     //开始解�? 
     if(nalu_hdr->TYPE != 7 && (*nfirst))  //不是67开头的包，并且还是第一个包
     {
-        // printf("这个包有错误�?无定义\n"); 
         return;
     }
     *nfirst = false;
     if(nalu_hdr->TYPE > 0 && nalu_hdr->TYPE < 24)  //单包  
     {
-        //printf("当前包为单包\n");  
         poutfile[0] = 0x00;
         poutfile[1] = 0x00;
         poutfile[2] = 0x00;
@@ -257,44 +252,27 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
         memcpy(poutfile + 5, p->payload, p->paylen);//写NAL数据
         total_bytes += p->paylen;
         poutfile[total_bytes] = '\0';
-        //printf("包长�?+ nal= %d\n",total_bytes);  
     }
 
     else if(nalu_hdr->TYPE == 28)                    //FU-A分片包，解码顺序和传输顺序相�? 
     {
-        /*if ((fu_ind = (FU_INDICATOR *)malloc(sizeof(FU_INDICATOR))) == NULL)
-        {
-        printf("FU_INDICATOR MEMORY ERROR\n");
-        }
-        if ((fu_hdr = (FU_HEADER *)malloc(sizeof(FU_HEADER))) == NULL)
-        {
-        printf("FU_HEADER MEMORY ERROR\n");
-        }  */
 
         fu_ind = (FU_INDICATOR*)&bufIn[12];     //分片包用的是FU_INDICATOR而不是NALU_HEADER  
-        //printf("FU_INDICATOR->F     :%d\n",fu_ind->F);  
         n->forbidden_bit = fu_ind->F << 7;
-        //printf("FU_INDICATOR->NRI   :%d\n",fu_ind->NRI);  
         n->nal_reference_idc = fu_ind->NRI << 5;
 
         n->nal_unit_type = fu_ind->TYPE;
 
         fu_hdr = (FU_HEADER*)&bufIn[13];        //FU_HEADER赋�? 
-        //printf("FU_HEADER->S        :%d\n",fu_hdr->S);  
-        //printf("FU_HEADER->E        :%d\n",fu_hdr->E);  
-        //printf("FU_HEADER->R        :%d\n",fu_hdr->R);  
-        //printf("FU_HEADER->TYPE     :%d\n",fu_hdr->TYPE);  
         n->nal_unit_type = fu_hdr->TYPE;               //应用的是FU_HEADER的TYPE  
 
         if(rtp_hdr->marker == 1)                      //分片包最后一个包  
         {
-            //printf("当前包为FU-A分片包最后一个包\n");  
             memcpy(p->payload, &bufIn[14], len - 14);
             p->paylen = len - 14;
             memcpy(poutfile, p->payload, p->paylen);  //写NAL数据  
             total_bytes = p->paylen;
             poutfile[total_bytes] = '\0';
-            //printf("包长�?+ FU = %d\n",total_bytes);    
         }
         else if(rtp_hdr->marker == 0)                 //分片�?但不是最后一个包  
         {
@@ -325,17 +303,14 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
                 memcpy(poutfile + 5, p->payload, p->paylen);  //写NAL数据  
                 total_bytes += p->paylen;
                 poutfile[total_bytes] = '\0';
-                //printf("包长�?+ FU_First = %d\n",total_bytes);      
             }
             else                                      //如果不是第一个包  
             {
-                //printf("当前包为FU-A分片包\n");  
                 memcpy(p->payload, &bufIn[14], len - 14);
                 p->paylen = len - 14;
                 memcpy(poutfile, p->payload, p->paylen);  //写NAL数据  
                 total_bytes = p->paylen;
                 poutfile[total_bytes] = '\0';
-                //printf("包长�?+ FU = %d\n",total_bytes);    
             }
         }
     }
@@ -343,17 +318,13 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     {
         if(rtp_hdr->marker == 1)                  //分片包最后一个包  
         {
-            //printf("当前包为FU-B分片包最后一个包\n");  
-
         }
         else if(rtp_hdr->marker == 0)             //分片�?但不是最后一个包  
         {
-            //printf("当前包为FU-B分片包\n");  
         }
     }
     else
     {
-        //printf("这个包有错误�?0-31 没有定义\n");  
     }
     /*total_recved += total_bytes;
     printf("total_recved = %d\n",total_recved);  */
@@ -374,16 +345,6 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
     DecodeVideo(ID, poutfile, total_bytes);
 
-    //char a[10] = "c:\\�?;
-    //itoa(ID,a+5,10);
-    //FILE *fp;
-    //fp = fopen(a,"ab+");
-    //fwrite(poutfile,1,total_bytes,fp);
-    //fclose(fp);
-
-
-    //结束解包  
-    //////////////////////////////////////////////////////////////////////////  
     return;
 }
 int ftyp = 0;
@@ -404,11 +365,6 @@ void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
             return;
         *nfirst = false;
     }
-
-    //FILE *fp;
-    //fp = fopen("c:\\20150209.m4v","ab+");
-    //fwrite(recvbuf+12,1,len-12,fp);
-    //fclose(fp);
 
     fDecodeVideo DecodeVideo;
 
