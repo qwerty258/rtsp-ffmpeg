@@ -145,6 +145,7 @@ void CtestPlayDlg::OnClickedButtonPlay()
 
     m_INSTANCE = GetRtspINSTANCE();
     InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
+    //RevoHWAcceleration(m_INSTANCE);
     Play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
 }
 
