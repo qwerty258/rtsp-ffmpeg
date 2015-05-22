@@ -33,8 +33,8 @@ private:
 
     lpFuncInitRtspDLL        InitRtspDLL;
     lpFuncFreeRtspDll        FreeRtspDll;
-    lpFuncPlayRtsp           PlayRtsp;
-    lpFuncStopRtsp           StopRtsp;
+    lpFuncPlayRtsp           Play;
+    lpFuncStopRtsp           Stop;
     lpFuncInitRtspVideoParam InitRtspVideoParam;
     lpFuncRevoHWAcceleration RevoHWAcceleration;
     lpFuncGetRtspINSTANCE    GetRtspINSTANCE;

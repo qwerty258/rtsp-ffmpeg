@@ -53,12 +53,46 @@ BOOL CtestPlayDlg::OnInitDialog()
     }
 
     InitRtspDLL = (lpFuncInitRtspDLL)GetProcAddress(m_hDll, "InitRtspDLL");
+    if(NULL == InitRtspDLL)
+    {
+        AfxMessageBox(L"GetProcAddress InitRtspDLL error");
+    }
+
     FreeRtspDll = (lpFuncFreeRtspDll)GetProcAddress(m_hDll, "FreeRtspDLL");
-    PlayRtsp = (lpFuncPlayRtsp)GetProcAddress(m_hDll, "PlayRtsp");
-    StopRtsp = (lpFuncStopRtsp)GetProcAddress(m_hDll, "StopRtsp");
+    if(NULL == FreeRtspDll)
+    {
+        AfxMessageBox(L"GetProcAddress FreeRtspDLL error");
+    }
+
+    Play = (lpFuncPlayRtsp)GetProcAddress(m_hDll, "Play");
+    if(NULL == Play)
+    {
+        AfxMessageBox(L"GetProcAddress Play error");
+    }
+
+    Stop = (lpFuncStopRtsp)GetProcAddress(m_hDll, "Stop");
+    if(NULL == Stop)
+    {
+        AfxMessageBox(L"GetProcAddress Stop error");
+    }
+
     InitRtspVideoParam = (lpFuncInitRtspVideoParam)GetProcAddress(m_hDll, "InitRtspVideoParam");
+    if(NULL == InitRtspVideoParam)
+    {
+        AfxMessageBox(L"GetProcAddress InitRtspVideoParam error");
+    }
+
     RevoHWAcceleration = (lpFuncRevoHWAcceleration)GetProcAddress(m_hDll, "RevoHWAcceleration");
+    if(NULL == RevoHWAcceleration)
+    {
+        AfxMessageBox(L"GetProcAddress RevoHWAcceleration error");
+    }
+
     GetRtspINSTANCE = (lpFuncGetRtspINSTANCE)GetProcAddress(m_hDll, "GetRtspINSTANCE");
+    if(NULL == GetRtspINSTANCE)
+    {
+        AfxMessageBox(L"GetProcAddress GetRtspINSTANCE error");
+    }
 
     if(0 != InitRtspDLL())
     {
@@ -111,7 +145,7 @@ void CtestPlayDlg::OnClickedButtonPlay()
 
     m_INSTANCE = GetRtspINSTANCE();
     InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
-    PlayRtsp(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
+    Play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
 }
 
 BOOL CtestPlayDlg::DestroyWindow()
@@ -132,7 +166,7 @@ BOOL CtestPlayDlg::DestroyWindow()
 void CtestPlayDlg::OnClickedButtonPause()
 {
     // TODO: Add your control notification handler code here
-    if(0 != StopRtsp(m_INSTANCE))
+    if(0 != Stop(m_INSTANCE))
     {
         AfxMessageBox(L"StopRtsp error");
     }
