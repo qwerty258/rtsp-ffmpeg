@@ -142,7 +142,7 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
-    char URI[] = "rtsp://192.168.10.141:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
+    char URI[] = "rtsp://192.168.10.195:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
 
     m_INSTANCE = GetRtspINSTANCE();
     InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");

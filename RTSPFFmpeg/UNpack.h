@@ -1,5 +1,4 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -14,7 +13,7 @@ typedef struct
     unsigned char cc;                   //!< CSRC count, normally 0 in the absence of RTP mixers           
     unsigned char marker;               //!< Marker bit  
     unsigned char pt;                   //!< 7 bits, Payload Type, dynamically established  
-    unsigned int seq_no;                //!< RTP sequence number, incremented by one for each sent packet   
+    unsigned short seq_no;                //!< RTP sequence number, incremented by one for each sent packet   
     unsigned int timestamp;        //!< timestamp, 27 MHz for H.264  
     unsigned int ssrc;             //!< Synchronization Source, chosen randomly  
     unsigned char * payload;      //!< the payload including payload headers  
@@ -23,7 +22,8 @@ typedef struct
 
 typedef struct
 {
-    /*  0                   1                   2                   3
+    /*
+    0                 1                   2                   3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |V=2|P|X|  CC   |M|     PT      |       sequence number         |
@@ -35,43 +35,46 @@ typedef struct
     |            contributing source (CSRC) identifiers             |
     |                             ....                              |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    Be careful with the endianness
+
+    intel cpu is little endian, but network byte order is big endian
+
+    intel cpu: high -> csrc_len:4 -> extension:1-> padding:1 -> version:2 -> low
+    in memory:
+    low  -> 4001(memory address) version:2
+    |       4002(memory address) padding:1
+    |       4003(memory address) extension:1
+    high -> 4004(memory address) csrc_len:4
+
+    network byte order: high ->version:2 -> padding:1 -> extension:1 -> csrc_len:4-> low
+    when saved into memroy:
+    low  -> 4001(memory address) version:2
+    |       4002(memory address) padding:1
+    |       4003(memory address) extension:1
+    high -> 4004(memory address) csrc_len:4
+
+    local memory: high -> csrc_len:4 -> extension:1 -> padding:1 -> version:2 -> low
     */
-    //intel 的cpu 是intel为小端字节序（低端存到底地址�?而网络流为大端字节序（高端存到低地址�? 
-    /*intel 的cpu �?高端->csrc_len:4 -> extension:1-> padding:1 -> version:2 ->低端
-     在内存中存储 �?
-     �?>4001（内存地址）version:2
-     4002（内存地址）padding:1
-     4003（内存地址）extension:1
-     �?>4004（内存地址）csrc_len:4
 
-     网络传输解析 �?高端->version:2->padding:1->extension:1->csrc_len:4->低端  (为正确的文档描述格式)
-
-     存入接收内存 �?
-     �?>4001（内存地址）version:2
-     4002（内存地址）padding:1
-     4003（内存地址）extension:1
-     �?>4004（内存地址）csrc_len:4
-     本地内存解析 ：高�?>csrc_len:4 -> extension:1-> padding:1 -> version:2 ->低端 �?
-     即：
-     unsigned char csrc_len:4;        // expect 0
-     unsigned char extension:1;       // expect 1
-     unsigned char padding:1;         // expect 0
-     unsigned char version:2;         // expect 2
-     */
-    /* byte 0 */
+    // byte 0
     unsigned char csrc_len : 4;        /* expect 0 */
     unsigned char extension : 1;       /* expect 1, see RTP_OP below */
     unsigned char padding : 1;         /* expect 0 */
     unsigned char version : 2;         /* expect 2 */
-    /* byte 1 */
+
+    // byte 1
     unsigned char payloadtype : 7;     /* RTP_PAYLOAD_RTSP */
     unsigned char marker : 1;          /* expect 1 */
-    /* bytes 2,3 */
+
+    // bytes 2-3
     unsigned int seq_no;
-    /* bytes 4-7 */
+
+    // bytes 4-7
     unsigned int timestamp;
-    /* bytes 8-11 */
-    unsigned int ssrc;              /* stream number is used here. */
+
+    // bytes 8-11
+    unsigned int ssrc;                  /* stream number is used here. */
 } RTP_FIXED_HEADER;
 
 
@@ -161,12 +164,11 @@ void FreeNALU(NALU_t *n)
 *bufIn:rtppackage
 *len: the lengthe of rtppackage
 */
-void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
+void rtp_unpackage(char* bufIn, int len, int ID, bool* nfirst)
 {
 
     unsigned char poutfile[1600];
     RTPpacket_t *p = NULL;
-    RTP_FIXED_HEADER * rtp_hdr = NULL;
     NALU_HEADER * nalu_hdr = NULL;
     NALU_t * n = NULL;
     FU_INDICATOR    *fu_ind = NULL;
@@ -195,22 +197,63 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
         MessageBox(NULL, L"malloc error", NULL, MB_OK);
     }
 
-    rtp_hdr = (RTP_FIXED_HEADER*)&bufIn[0];
+    /*
+    0                 1                   2                   3
+    0 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8 1 2 3 4 5 6 7 8
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |V=2|P|X|  CC   |M|     PT      |       sequence number         |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                           timestamp                           |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |           synchronization source (SSRC) identifier            |
+    +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+    |            contributing source (CSRC) identifiers             |
+    |                             ....                              |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    */
 
-    p->version = rtp_hdr->version;
-    p->padding = rtp_hdr->padding;
-    p->extension = rtp_hdr->extension;
-    p->cc = rtp_hdr->csrc_len;
+    p->version = ((unsigned char)bufIn[0]) >> 6;
 
-    p->marker = rtp_hdr->marker;
+    p->padding = ((unsigned char)bufIn[0]) << 2 >> 7;
 
-    p->pt = rtp_hdr->payloadtype;
+    p->extension = ((unsigned char)bufIn[0]) << 3 >> 7;
 
-    p->seq_no = rtp_hdr->seq_no;
+    p->cc = ((unsigned char)bufIn[0]) << 4 >> 4;
 
-    p->timestamp = rtp_hdr->timestamp;
+    p->marker = ((unsigned char)bufIn[1]) >> 7;
 
-    p->ssrc = rtp_hdr->ssrc;
+    p->pt = ((unsigned char)bufIn[1]) << 1 >> 1;
+
+    ((unsigned char*)&(p->seq_no))[0] = bufIn[3];
+    ((unsigned char*)&(p->seq_no))[1] = bufIn[2];
+
+    ((unsigned char*)&(p->timestamp))[0] = bufIn[11];
+    ((unsigned char*)&(p->timestamp))[1] = bufIn[10];
+    ((unsigned char*)&(p->timestamp))[2] = bufIn[9];
+    ((unsigned char*)&(p->timestamp))[3] = bufIn[8];
+    ((unsigned char*)&(p->timestamp))[4] = bufIn[7];
+    ((unsigned char*)&(p->timestamp))[5] = bufIn[6];
+    ((unsigned char*)&(p->timestamp))[6] = bufIn[5];
+    ((unsigned char*)&(p->timestamp))[7] = bufIn[4];
+
+    p->ssrc = ((RTP_FIXED_HEADER*)&bufIn[0])->ssrc;
+
+#ifdef _DEBUG
+    FILE* pFileseq_no = fopen("seq_no.txt", "ab");
+    FILE* pFiletime = fopen("timestamp.txt", "ab");
+    char* strBuffer = new char[256];
+
+    sprintf(strBuffer, "seq_no: %u\n", p->seq_no);
+    fwrite(strBuffer, strlen(strBuffer), 1, pFileseq_no);
+
+    sprintf(strBuffer, "timestamp: %u\n", p->timestamp);
+    fwrite(strBuffer, strlen(strBuffer), 1, pFiletime);
+
+    fclose(pFileseq_no);
+    fclose(pFiletime);
+    delete[] strBuffer;
+#endif // !_DEBUG
+
 
     //end rtp_payload and rtp_header  
     //////////////////////////////////////////////////////////////////////////  
@@ -266,7 +309,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
         fu_hdr = (FU_HEADER*)&bufIn[13];        //FU_HEADER赋�? 
         n->nal_unit_type = fu_hdr->TYPE;               //应用的是FU_HEADER的TYPE  
 
-        if(rtp_hdr->marker == 1)                      //分片包最后一个包  
+        if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 1)                      //分片包最后一个包  
         {
             memcpy(p->payload, &bufIn[14], len - 14);
             p->paylen = len - 14;
@@ -274,7 +317,7 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
             total_bytes = p->paylen;
             poutfile[total_bytes] = '\0';
         }
-        else if(rtp_hdr->marker == 0)                 //分片�?但不是最后一个包  
+        else if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 0)                 //分片�?但不是最后一个包  
         {
             if(fu_hdr->S == 1)                        //分片的第一个包  
             {
@@ -316,10 +359,10 @@ void rtp_unpackage(char *bufIn, int len, int ID, bool  *nfirst)
     }
     else if(nalu_hdr->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相�? 
     {
-        if(rtp_hdr->marker == 1)                  //分片包最后一个包  
+        if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 1)                  //分片包最后一个包  
         {
         }
-        else if(rtp_hdr->marker == 0)             //分片�?但不是最后一个包  
+        else if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 0)             //分片�?但不是最后一个包  
         {
         }
     }

@@ -31,11 +31,11 @@ using namespace std;
 
 struct Buffer
 {
-    BYTE*	 m_pBuffer;
-    UINT	 m_nBufferSize;
+    BYTE* m_pBuffer;
+    UINT  m_nBufferSize;
 
-    BYTE*	 m_pData;
-    UINT	 m_nDataSize;
+    BYTE* m_pData;
+    UINT  m_nDataSize;
 
     Buffer()
     {
@@ -154,6 +154,15 @@ struct Buffer
 
 class VBuffer
 {
+protected:
+
+    list<Buffer*> m_FullBuffer;
+    list<Buffer*> m_EmptyBuffer;
+
+    ULONG	m_nDataSize;
+    ULONG	m_nEmptyBufferSize;
+    ULONG	m_nFullBufferSize;
+
 public:
     VBuffer()
     {
@@ -408,14 +417,6 @@ public:
         return TRUE;
     }
 
-protected:
-
-    list<Buffer*> m_FullBuffer;
-    list<Buffer*> m_EmptyBuffer;
-
-    ULONG	m_nDataSize;
-    ULONG	m_nEmptyBufferSize;
-    ULONG	m_nFullBufferSize;
 };
 
 #endif // !__V_BUFFER_H__
