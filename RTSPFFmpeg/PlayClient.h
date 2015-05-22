@@ -17,6 +17,7 @@ public:
     int stopURL();
 
 public:
+    HMODULE m_hDLL;
     HWND m_hWnd;
     int m_INSTANCE;
     int m_ans; // 0: initial state    1: in the cycle    2: exit thread

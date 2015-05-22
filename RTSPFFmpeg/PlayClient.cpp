@@ -48,6 +48,24 @@ CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
     H264Func = NULL;
     YUVEx = NULL;
     nHWAcceleration = false;
+
+    m_hDLL = LoadLibrary(L"PlayH264DLL.dll");
+    if(NULL == m_hDLL)
+    {
+        TCHAR* temp = new TCHAR[2048];
+        wsprintfW(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
+        MessageBox(0, temp, NULL, MB_OK);
+        delete[] temp;
+    }
+
+    initVideoDLL = (finitVideoDLL)GetProcAddress(m_hDLL, "initVideoDLL");
+    if(NULL == initVideoDLL)
+    {
+        TCHAR* temp = new TCHAR[2048];
+        wsprintfW(temp, L"GetProcAddress initVideoDLL error, error code: %d", GetLastError());
+        MessageBox(0, temp, NULL, MB_OK);
+        delete[] temp;
+    }
 }
 
 CRTSPCLient::~CRTSPCLient()
@@ -67,6 +85,8 @@ CRTSPCLient::~CRTSPCLient()
         delete[] m_password;
         m_password = NULL;
     }
+
+    FreeLibrary(m_hDLL);
 }
 
 int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
@@ -75,28 +95,6 @@ int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
     strcpy(m_userName, userName);
     strcpy(m_password, password);
     strcpy(m_URI, URI);
-
-
-
-    HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
-    if(NULL == hdll)
-    {
-        TCHAR* temp = new TCHAR[2048];
-        wsprintfW(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
-        MessageBox(0, temp, NULL, MB_OK);
-        delete[] temp;
-        return -1;
-    }
-
-    initVideoDLL = (finitVideoDLL)GetProcAddress(hdll, "initVideoDLL");
-    if(NULL == initVideoDLL)
-    {
-        TCHAR* temp = new TCHAR[2048];
-        wsprintfW(temp, L"GetProcAddress initVideoDLL error, error code: %d", GetLastError());
-        MessageBox(0, temp, NULL, MB_OK);
-        delete[] temp;
-        return -1;
-    }
 
     if(!inited)
     {
@@ -128,32 +126,10 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     fputc('\n',fp);*/
     Sleep(10);
 
-
-    // *****************************************************************************************
-    HANDLE hDllhandle = GetModuleHandle(L"RTSPFFmpeg.dll");
-    if(hDllhandle == NULL)
-    {
-        MessageBox(NULL, L"获取动态库句柄失败", L"", MB_OK);
-    }
-
-    TCHAR path1[1024], path2[1024];
-    memset(path1, 0, 1024 * sizeof(TCHAR));
-    memset(path2, 0, 1024 * sizeof(TCHAR));
-
-    GetModuleFileName((HMODULE)hDllhandle, path1, 1000);
-
-    int len = wcslen(path1) - wcslen(L"RTSPFFmpeg.dll");
-    wcsncpy_s(path2, path1, len);
-    wcscat_s(path2, L"PlayH264DLL.dll");
-    //***********************************************************************************************
-
-    HINSTANCE hdll = LoadLibraryEx(path2, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+    HINSTANCE hdll = LoadLibrary(L"PlayH264DLL.dll");
     GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hdll, "GetIdlevideoINSTANCE");
     RCC->m_INSTANCE = GetIdlevideoINSTANCE();
-#ifdef log
-    char a[10];
-    itoa(RCC->INSTANCE, a, 10);
-#endif
+
     /*FILE *fp1;
     fp1 = fopen("c:\\instance1.log","a+");
     char a[10];
@@ -167,16 +143,6 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     InitVideoParam(RCC->INSTANCE,Myparam,);*/
 
 
-#ifdef	log
-    //char a[10];
-    //itoa(initPort,a,10);
-    FILE *fp;
-    fp = fopen("c:\\test.log", "ab+");
-    fputs(a, fp);
-    fputs(" ", fp);
-    fputs("enter rtsp ", fp);
-    fclose(fp);
-#endif
     //建立通信
     string setupName = "";
     srand((unsigned int)time(0));
@@ -201,7 +167,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     WORD wVersionRequested;
     WSADATA wsaData;//初始�?
     char name[255];
-    memset(name, '\0', 255);
+    memset(name, 0x0, 255);
 
     PHOSTENT hostinfo = NULL;
     wVersionRequested = MAKEWORD(2, 0);
@@ -240,11 +206,20 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             if(ret <0)
             return -1;*/
         if(Myparam != NULL)
-        { delete Myparam; Myparam = NULL; }
+        {
+            delete Myparam;
+            Myparam = NULL;
+        }
         if(rect != NULL)
-        { delete rect; rect = NULL; }
+        {
+            delete rect;
+            rect = NULL;
+        }
         if(RTSPCLient != NULL)
-        { delete RTSPCLient; RTSPCLient = NULL; }
+        {
+            delete RTSPCLient;
+            RTSPCLient = NULL;
+        }
 
         RCC->m_ans = 4; return -1;
     }
@@ -364,7 +339,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
                 RCC->m_ans = 4; return -1;
             }
-    }
+        }
 
     RTSPCLient->m_SetupName = "";
     //RTSPCLient->m_SetupName_audio = "";
@@ -591,7 +566,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     RCC->m_ans = 2;
 
     return 1;
-}
+        }
 
 //
 //typedef DWORD WINAPI (* beginrecv)(LPVOID lpParam);
