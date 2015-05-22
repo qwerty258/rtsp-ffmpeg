@@ -149,11 +149,11 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     string setupName = "";
     srand((unsigned int)time(0));
     static int initPort = rand() % 8000;
-    INT rtpPort = 2000 + 6 * initPort;
+    int rtpPort = 2000 + 6 * initPort;
     initPort++;
-    INT rtcpPort = rtpPort + 1;
+    int rtcpPort = rtpPort + 1;
     string sdp = "";
-    char * sess = 0;
+    char* sess = 0;
 
     //获取本地IP
     string ip;
@@ -202,7 +202,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     {
         if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions(((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
         {
-            //失败了也需要清�?
+            //clean up on failure
             if(Myparam != NULL)
             {
                 delete Myparam;
@@ -222,8 +222,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     {
         if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe(&sdp, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
         {
-
-            //失败了也需要清�?
+            //clean up on failure
             if(Myparam != NULL)
             {
                 delete Myparam;
@@ -246,8 +245,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         {
             if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
             {
-
-                //失败了也需要清�?
+                //clean up on failure
                 if(Myparam != NULL)
                 {
                     delete Myparam;
@@ -272,8 +270,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         {
             if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
             {
-
-                //失败了也需要清�?
+                //clean up on failure
                 if(Myparam != NULL)
                 {
                     delete Myparam;
@@ -295,7 +292,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     //RTSPCLient->m_SetupName_video = "";
     if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestPlay())
     {
-        //失败了也需要清�?
+        //clean up on failure
         if(Myparam != NULL)
         {
             delete Myparam;
