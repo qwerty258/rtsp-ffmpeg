@@ -6,9 +6,8 @@
 #include "Rtcp.h"
 #include <Windows.h>
 
-//#define log
 
-bool inited = false;
+static bool inited = false;
 setYUVCallBack setYUVCallBackFunc;
 setH264CallBack setH264CallBackFunc;
 fSetCallBack SetCallBack;
@@ -54,7 +53,7 @@ CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
     if(NULL == m_hDLL)
     {
         TCHAR* temp = new TCHAR[2048];
-        wsprintfW(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
+        wsprintf(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
         MessageBox(0, temp, NULL, MB_OK);
         delete[] temp;
     }
@@ -63,9 +62,15 @@ CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
     if(NULL == initVideoDLL)
     {
         TCHAR* temp = new TCHAR[2048];
-        wsprintfW(temp, L"GetProcAddress initVideoDLL error, error code: %d", GetLastError());
+        wsprintf(temp, L"GetProcAddress initVideoDLL error, error code: %d", GetLastError());
         MessageBox(0, temp, NULL, MB_OK);
         delete[] temp;
+    }
+
+    if(!inited)
+    {
+        initVideoDLL();
+        inited = true;
     }
 }
 
@@ -104,12 +109,6 @@ int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
     strncpy(m_password, password, 256);
     strncpy(m_URI, URI, 256);
 
-    if(!inited)
-    {
-        initVideoDLL();
-        inited = true;
-    }
-
     return 1;
 }
 
@@ -146,7 +145,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     //建立通信
     string setupName = "";
-    srand((unsigned int)time(0));
+    srand(time(NULL));
     static int initPort = rand() % 8000;
     int rtpPort = 2000 + 6 * initPort;
     initPort++;
