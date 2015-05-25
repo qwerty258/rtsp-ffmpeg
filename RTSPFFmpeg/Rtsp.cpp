@@ -6,7 +6,7 @@
 #include "UNpack.h"
 //#include "string_t.h"
 
-int Rtsp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以后+1
+int Rtsp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以�?1
 
 Rtsp::Rtsp()
 {
@@ -73,7 +73,7 @@ int Rtsp::Read_Start(int& type, short int* size)
 
     int tmpLen = 4 - iRead;
 
-    int countT = 0;//连接20次
+    int countT = 0;//连接20�?
 
     while(tmpLen > 0 && countT < 20)
     {
@@ -145,7 +145,7 @@ int Rtsp::Read_Head()
     char head[12];
     int iRead = Socket::Read((BYTE *)head, 12);
 
-    // 套接字读取错误
+    // 套接字读取错�?
     if(iRead == -1)
         return -1;
 
@@ -160,7 +160,7 @@ int Rtsp::Read_PlayLoad(short int len)
 
     int tmpLen = len - iRead;
 
-    int countT = 0;//连接20次
+    int countT = 0;//连接20�?
 
     while(tmpLen > 0 && countT < 20)
     {
@@ -182,7 +182,7 @@ int Rtsp::Read_PlayLoad(short int len)
     //fclose(fp);
 
     /*FILE *fp;
-    fp = fopen("c:\\包.txt","ab+");
+    fp = fopen("c:\\�?txt","ab+");
     fwrite(buffer+2,1,2,fp);
     fclose(fp);
 
@@ -200,7 +200,7 @@ int Rtsp::Read_PlayLoad(short int len)
     senum++;*/
 
     /*FILE * fp;
-    fp = fopen("c:\\检测.log","ab+");
+    fp = fopen("c:\\检�?log","ab+");
     fputs("SIZE:",fp);
 
     char s[10];
@@ -224,7 +224,7 @@ int Rtsp::Read_PlayLoad(short int len)
     if(iRead < 0)
         return -1;
     if(Decode == 1)
-        rtp_unpackage(buffer, len, ID, &nfirst);
+        rtp_unpackage(&buffer[0], len, ID, &nfirst);
     if(Decode == 2)
         rtp_unpackage_mpeg(buffer, len, ID, &nfirst);
 
@@ -414,7 +414,7 @@ int Rtsp::Read(string& str)
         iRead = Socket::Read((BYTE*)&c, 1);
         if(iRead == 1)
         {
-            //中心力维的相机会立马发送rtcp包，在这份代码里要去除这个干扰
+            //中心力维的相机会立马发送rtcp包，在这份代码里要去除这个干�?
             if(c == 0x24)
             {
                 char size[2];
@@ -440,7 +440,7 @@ int Rtsp::Read(string& str)
     if(c == '\r')
         iRead = Socket::Read((BYTE*)&c, 1);
 
-    // 套接字读取错误
+    // 套接字读取错�?
     if(iRead == -1)
         return -1;
 

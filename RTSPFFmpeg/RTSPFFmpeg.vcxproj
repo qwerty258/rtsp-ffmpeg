@@ -105,6 +105,7 @@
     <ClCompile Include="Socket.cpp" />
     <ClCompile Include="Tcp.cpp" />
     <ClCompile Include="Udp.cpp" />
+    <ClCompile Include="UNpack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="RTSPFFmpeg.def" />

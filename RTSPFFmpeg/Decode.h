@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Windows.h>
 //data struct for decode and play
 typedef struct
 {
