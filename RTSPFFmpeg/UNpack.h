@@ -20,63 +20,40 @@ typedef struct
     unsigned int paylen;           //!< length of payload in bytes  
 } RTPpacket_t;
 
-typedef struct
-{
-    /*
-    0                 1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |V=2|P|X|  CC   |M|     PT      |       sequence number         |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                           timestamp                           |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |           synchronization source (SSRC) identifier            |
-    +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-    |            contributing source (CSRC) identifiers             |
-    |                             ....                              |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/*
+0                 1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|V=2|P|X|  CC   |M|     PT      |       sequence number         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                           timestamp                           |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|           synchronization source (SSRC) identifier            |
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+|            contributing source (CSRC) identifiers             |
+|                             ....                              |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-    Be careful with the endianness
+Be careful with the endianness
 
-    intel cpu is little endian, but network byte order is big endian
+intel cpu is little endian, but network byte order is big endian
 
-    intel cpu: high -> csrc_len:4 -> extension:1-> padding:1 -> version:2 -> low
-    in memory:
-    low  -> 4001(memory address) version:2
-    |       4002(memory address) padding:1
-    |       4003(memory address) extension:1
-    high -> 4004(memory address) csrc_len:4
+intel cpu: high -> csrc_len:4 -> extension:1-> padding:1 -> version:2 -> low
+in memory:
+low  -> 4001(memory address) version:2
+|       4002(memory address) padding:1
+|       4003(memory address) extension:1
+high -> 4004(memory address) csrc_len:4
 
-    network byte order: high ->version:2 -> padding:1 -> extension:1 -> csrc_len:4-> low
-    when saved into memroy:
-    low  -> 4001(memory address) version:2
-    |       4002(memory address) padding:1
-    |       4003(memory address) extension:1
-    high -> 4004(memory address) csrc_len:4
+network byte order: high ->version:2 -> padding:1 -> extension:1 -> csrc_len:4-> low
+when saved into memroy:
+low  -> 4001(memory address) version:2
+|       4002(memory address) padding:1
+|       4003(memory address) extension:1
+high -> 4004(memory address) csrc_len:4
 
-    local memory: high -> csrc_len:4 -> extension:1 -> padding:1 -> version:2 -> low
-    */
-
-    // byte 0
-    unsigned char csrc_len : 4;        /* expect 0 */
-    unsigned char extension : 1;       /* expect 1, see RTP_OP below */
-    unsigned char padding : 1;         /* expect 0 */
-    unsigned char version : 2;         /* expect 2 */
-
-    // byte 1
-    unsigned char payloadtype : 7;     /* RTP_PAYLOAD_RTSP */
-    unsigned char marker : 1;          /* expect 1 */
-
-    // bytes 2-3
-    unsigned int seq_no;
-
-    // bytes 4-7
-    unsigned int timestamp;
-
-    // bytes 8-11
-    unsigned int ssrc;                  /* stream number is used here. */
-} RTP_FIXED_HEADER;
-
+local memory: high -> csrc_len:4 -> extension:1 -> padding:1 -> version:2 -> low
+*/
 
 typedef struct
 {
