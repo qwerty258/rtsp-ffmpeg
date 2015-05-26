@@ -9,14 +9,17 @@
 
 class CRTSPCLient
 {
+private:
+    void load_PlayH264DLL();
 public:
     CRTSPCLient();
     ~CRTSPCLient();
-    int InputURL(char* URL, char* UserName, char* PWD);
-    int PlayURL(HWND hWnd);
-    int stopURL();
+    int input_URI(char* URI, char* username, char* password);
+    int connect();
+    int play(HWND hWnd);
+    int pause();
+    int stop();
 
-public:
     HMODULE m_hDLL;
     HWND m_hWnd;
     int m_INSTANCE;
@@ -28,6 +31,7 @@ public:
     char* m_URI;
     char* m_userName;
     char* m_password;
+    myparamInput* m_myparamInput;
 
     PFCALLBACK func;
     TDrawLineCallBack funcD;

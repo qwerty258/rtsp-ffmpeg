@@ -14,3 +14,4 @@ EXPORTS
 	pSetH264CallBack		@12
 	RevoHWAcceleration		@13
 	FreeRtspDLL0000			@14
+	Connect					@15

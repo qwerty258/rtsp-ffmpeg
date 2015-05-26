@@ -33,6 +33,7 @@ private:
 
     lpFuncInitRtspDLL        InitRtspDLL;
     lpFuncFreeRtspDll        FreeRtspDll;
+    lpFuncconnect            Connect;
     lpFuncPlayRtsp           Play;
     lpFuncStopRtsp           Stop;
     lpFuncInitRtspVideoParam InitRtspVideoParam;
@@ -45,4 +46,5 @@ public:
     afx_msg void OnClickedButtonPlay();
     virtual BOOL DestroyWindow();
     afx_msg void OnClickedButtonPause();
+    afx_msg void OnClickedButtonConnect();
 };

@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_WM_QUERYDRAGICON()
     ON_BN_CLICKED(IDC_BUTTON_PLAY, &CtestPlayDlg::OnClickedButtonPlay)
     ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CtestPlayDlg::OnClickedButtonPause)
+    ON_BN_CLICKED(IDC_BUTTON_CONNECT, &CtestPlayDlg::OnClickedButtonConnect)
 END_MESSAGE_MAP()
 
 
@@ -63,6 +64,12 @@ BOOL CtestPlayDlg::OnInitDialog()
     if(NULL == FreeRtspDll)
     {
         AfxMessageBox(L"GetProcAddress FreeRtspDLL error");
+    }
+
+    Connect = (lpFuncconnect)GetProcAddress(m_hDll, "Connect");
+    if(NULL == Connect)
+    {
+        AfxMessageBox(L"GetProcAddress Connect error");
     }
 
     Play = (lpFuncPlayRtsp)GetProcAddress(m_hDll, "Play");
@@ -99,6 +106,16 @@ BOOL CtestPlayDlg::OnInitDialog()
     {
         AfxMessageBox(L"InitRtspDLL error");
     }
+
+    char URI[] = "rtsp://192.168.10.195:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
+
+    m_INSTANCE = GetRtspINSTANCE();
+    if(0 > m_INSTANCE)
+    {
+        return FALSE;
+    }
+
+    InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
 
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -142,10 +159,6 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
-    char URI[] = "rtsp://192.168.10.195:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
-
-    m_INSTANCE = GetRtspINSTANCE();
-    InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
     //RevoHWAcceleration(m_INSTANCE);
     Play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
 }
@@ -171,5 +184,15 @@ void CtestPlayDlg::OnClickedButtonPause()
     if(0 != Stop(m_INSTANCE))
     {
         AfxMessageBox(L"StopRtsp error");
+    }
+}
+
+
+void CtestPlayDlg::OnClickedButtonConnect()
+{
+    // TODO: Add your control notification handler code here
+    if(0 > Connect(m_INSTANCE))
+    {
+        AfxMessageBox(L"Connect error");
     }
 }

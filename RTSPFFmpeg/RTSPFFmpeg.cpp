@@ -41,7 +41,7 @@ RTSPFFMPEG_API int FreeRtspDLL()
 
         if(NULL != deList[i].pt)
         {
-            ((CRTSPCLient*)deList[i].pt)->stopURL();
+            ((CRTSPCLient*)deList[i].pt)->stop();
             delete deList[i].pt;
             deList[i].pt = NULL;
         }
@@ -84,9 +84,22 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, c
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->InputURL(URI, userName, password);
+    return ((CRTSPCLient*)deList[INSTANCE].pt)->input_URI(URI, userName, password);
+}
 
-    return 0;
+RTSPFFMPEG_API int Connect(int INSTANCE)
+{
+    if(checkINSTANCE(INSTANCE) < 0)
+    {
+        return -1;
+    }
+
+    if(NULL == deList[INSTANCE].pt)
+    {
+        return -1;
+    }
+
+    return ((CRTSPCLient*)deList[INSTANCE].pt)->connect();
 }
 
 RTSPFFMPEG_API int Play(int INSTANCE, HWND hd)
@@ -96,7 +109,12 @@ RTSPFFMPEG_API int Play(int INSTANCE, HWND hd)
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->PlayURL(hd);
+    if(NULL == deList[INSTANCE].pt)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->play(hd);
 
     return 0;
 }
@@ -108,7 +126,7 @@ RTSPFFMPEG_API int Stop(int INSTANCE)
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->stopURL();
+    ((CRTSPCLient*)deList[INSTANCE].pt)->stop();
 
     deList[INSTANCE].idle = 0;
 
@@ -125,7 +143,7 @@ RTSPFFMPEG_API int DisConnect(int INSTANCE)
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->stopURL();
+    ((CRTSPCLient*)deList[INSTANCE].pt)->stop();
 
     deList[INSTANCE].idle = 0;
 
@@ -145,14 +163,14 @@ RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE)
             if(deList[i].idle == 0)
             {
                 CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-                DC->stopURL();
+                DC->stop();
                 delete DC;
 
             }
             else
             {
                 CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-                DC->stopURL();
+                DC->stop();
                 Sleep(40);
                 deList[INSTANCE].idle = 0;
                 delete DC;

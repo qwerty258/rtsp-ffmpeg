@@ -51,11 +51,12 @@
 #endif
 #endif
 
-typedef int (*lpFuncGetRtspINSTANCE)(void);
-typedef int (*lpFuncInitRtspVideoParam)(int INSTANCE, char* URL, char* UserName, char* PWD);
-typedef int (*lpFuncPlayRtsp)(int INSTANCE, HWND hd);
-typedef int (*lpFuncStopRtsp)(int INSTANCE);
-typedef int (*lpFuncInitRtspDLL)(void);
-typedef int (*lpFuncFreeRtspDll)(void);
-typedef int (*lpFuncFreeRtspDLL0000)(int INSTANCE);
-typedef int (*lpFuncRevoHWAcceleration)(int INSTANCE);
+typedef int(*lpFuncGetRtspINSTANCE)(void);
+typedef int(*lpFuncInitRtspVideoParam)(int INSTANCE, char* URL, char* UserName, char* PWD);
+typedef int(*lpFuncPlayRtsp)(int INSTANCE, HWND hd);
+typedef int(*lpFuncStopRtsp)(int INSTANCE);
+typedef int(*lpFuncInitRtspDLL)(void);
+typedef int(*lpFuncFreeRtspDll)(void);
+typedef int(*lpFuncFreeRtspDLL0000)(int INSTANCE);
+typedef int(*lpFuncRevoHWAcceleration)(int INSTANCE);
+typedef int(*lpFuncconnect)(int INSTANCE);

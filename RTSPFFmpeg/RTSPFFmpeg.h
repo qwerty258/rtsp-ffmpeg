@@ -13,6 +13,7 @@ extern "C" {
 
     RTSPFFMPEG_API int GetRtspINSTANCE(void);
     RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, char* password);
+    RTSPFFMPEG_API int Connect(int INSTANCE);
     RTSPFFMPEG_API int Play(int INSTANCE, HWND hd);
     RTSPFFMPEG_API int Stop(int INSTANCE);
     RTSPFFMPEG_API int InitRtspDLL(void);

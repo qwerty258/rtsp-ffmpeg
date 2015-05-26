@@ -6,296 +6,44 @@
 #include "Rtcp.h"
 #include <Windows.h>
 
-
 static bool inited = false;
-setYUVCallBack setYUVCallBackFunc;
-setH264CallBack setH264CallBackFunc;
-fSetCallBack SetCallBack;
-finitVideoDLL initVideoDLL;
-fGetIdlevideoINSTANCE GetIdlevideoINSTANCE;
-fInitVideoParamNew InitVideoParamNew;
-fInitVideoParam InitVideoParam;
-fpauseVideos pauseVideos;
-fplayVideos playVideos;
-ffreeVideos freeVideos;
-finputBuf inputBuf;
-fresize resize;
-fexitdll exitdll;
-fSetDrawLineCallBack SetDrawLineCallBack;
-fSetBmpCallBack SetBmpCallBack;
-fSetFillBmpCallBack SetFillBmpCallBack;
-revoHW revoHWFunc;
+setH264CallBack p_func_setH264CallBack;
+setYUVCallBack p_func_setYUVCallBack;
+fSetCallBack p_func_SetCallBack;
+finitVideoDLL p_func_initVideoDLL;
+fGetIdlevideoINSTANCE p_func_GetIdlevideoINSTANCE;
+fInitVideoParamNew p_func_InitVideoParamNew;
+fInitVideoParam p_func_InitVideoParam;
+fpauseVideos p_func_pauseVideos;
+fplayVideos p_func_playVideos;
+ffreeVideos p_func_freeVideos;
+finputBuf p_func_inputBuf;
+fresize p_func_resize;
+fexitdll p_func_exitdll;
+fSetDrawLineCallBack p_func_SetDrawLineCallBack;
+fSetBmpCallBack p_func_SetBmpCallBack;
+fSetFillBmpCallBack p_func_SetFillBmpCallBack;
+revoHW p_func_revoHWFunc;
 
-CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
-{
-    m_URI = new char[256];
-    m_userName = new char[256];
-    m_password = new char[256];
-
-    m_threadID = -1;
-    m_circulation = false;
-    m_INSTANCE = -1;
-    m_hWnd = NULL;
-    m_ans = 0;
-
-    m_RTSPRequest = new CRTSPRequest;
-
-    func = NULL;
-    funcD = NULL;
-    bmpFunc = NULL;
-    fillbmp = NULL;
-    YUVFunc = NULL;
-    H264Func = NULL;
-    YUVEx = NULL;
-    nHWAcceleration = false;
-
-    m_hDLL = LoadLibrary(L"PlayH264DLL.dll");
-    if(NULL == m_hDLL)
-    {
-        TCHAR* temp = new TCHAR[2048];
-        wsprintf(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
-        MessageBox(0, temp, NULL, MB_OK);
-        delete[] temp;
-    }
-
-    initVideoDLL = (finitVideoDLL)GetProcAddress(m_hDLL, "initVideoDLL");
-    if(NULL == initVideoDLL)
-    {
-        TCHAR* temp = new TCHAR[2048];
-        wsprintf(temp, L"GetProcAddress initVideoDLL error, error code: %d", GetLastError());
-        MessageBox(0, temp, NULL, MB_OK);
-        delete[] temp;
-    }
-
-    if(!inited)
-    {
-        initVideoDLL();
-        inited = true;
-    }
-}
-
-CRTSPCLient::~CRTSPCLient()
-{
-    if(NULL != m_URI)
-    {
-        delete[] m_URI;
-        m_URI = NULL;
-    }
-
-    if(NULL != m_userName)
-    {
-        delete[] m_userName;
-        m_userName = NULL;
-    }
-
-    if(NULL != m_password)
-    {
-        delete[] m_password;
-        m_password = NULL;
-    }
-
-    if(NULL != m_RTSPRequest)
-    {
-        delete m_RTSPRequest;
-        m_RTSPRequest = NULL;
-    }
-
-    FreeLibrary(m_hDLL);
-}
-
-int CRTSPCLient::InputURL(char* URI, char* userName, char* password)
-{
-    strncpy(m_userName, userName, 256);
-    strncpy(m_password, password, 256);
-    strncpy(m_URI, URI, 256);
-
-    return 1;
-}
-
-//线程函数
+// thread function
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
-    //解码器准备工�?
-    myparamInput *Myparam = new myparamInput();//播放结束需要删�?
-    RECT *rect = new RECT;//播放结束需要删�?
+    // prepare data for decode
+    RECT *rect = new RECT; // delete when play end
     GetWindowRect(((CRTSPCLient*)lpParam)->m_hWnd, rect);
-    Myparam->playHandle = ((CRTSPCLient*)lpParam)->m_hWnd;  // 取得控件的句�?
-    Myparam->stopPlay = 0;
-    Myparam->playChannle = 1;
-    Myparam->fps = 25;
-    Myparam->isDecode = true;
-    Myparam->playHeight = rect->bottom - rect->top;
-    Myparam->playWidth = rect->right - rect->left;
+    ((CRTSPCLient*)lpParam)->m_myparamInput->playHandle = ((CRTSPCLient*)lpParam)->m_hWnd; // get controls' window handle
+    ((CRTSPCLient*)lpParam)->m_myparamInput->stopPlay = 0;
+    ((CRTSPCLient*)lpParam)->m_myparamInput->playChannle = 1;
+    ((CRTSPCLient*)lpParam)->m_myparamInput->fps = 25;
+    ((CRTSPCLient*)lpParam)->m_myparamInput->isDecode = true;
+    ((CRTSPCLient*)lpParam)->m_myparamInput->playHeight = rect->bottom - rect->top;
+    ((CRTSPCLient*)lpParam)->m_myparamInput->playWidth = rect->right - rect->left;
 
-    HINSTANCE hdll = LoadLibrary(L"PlayH264DLL.dll");
-    if(NULL == hdll)
-    {
-        MessageBox(NULL, L"LoadLibrary PlayH264DLL.dll error", NULL, MB_OK);
-        return -1;
-    }
-
-    GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hdll, "GetIdlevideoINSTANCE");
-    if(NULL == GetIdlevideoINSTANCE)
-    {
-        MessageBox(NULL, L"GetProcAddress GetIdlevideoINSTANCE error", NULL, MB_OK);
-        return -1;
-    }
-
-    ((CRTSPCLient*)lpParam)->m_INSTANCE = GetIdlevideoINSTANCE();
-
-    //建立通信
-    string setupName = "";
-    srand(time(NULL));
-    static int initPort = rand() % 8000;
-    int rtpPort = 2000 + 6 * initPort;
-    initPort++;
-    int rtcpPort = rtpPort + 1;
-    string sdp = "";
-    char* sess = 0;
-
-    //获取本地IP
-    string ip;
-    WORD wVersionRequested;
-    WSADATA wsaData;//初始�?
-    char name[255];
-    memset(name, 0x0, 255);
-
-    PHOSTENT hostinfo = NULL;
-    wVersionRequested = MAKEWORD(2, 0);
-
-    if(WSAStartup(wVersionRequested, &wsaData) == 0)
-    {
-
-        if(gethostname(name, sizeof(name)) == 0)
-        {
-            if((hostinfo = (PHOSTENT)gethostbyname(name)) != NULL)
-            {
-                ip = inet_ntoa(*(struct in_addr *)*hostinfo->h_addr_list);
-            }
-        }
-
-        WSACleanup();
-    }
-
-    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->Open(((CRTSPCLient*)lpParam)->m_URI, ip.c_str(), rtpPort + 5))
-    {
-        //clean up on failure
-        if(NULL != Myparam)
-        {
-            delete Myparam;
-            Myparam = NULL;
-        }
-
-        if(NULL != rect)
-        {
-            delete rect;
-            rect = NULL;
-        }
-
-        ((CRTSPCLient*)lpParam)->m_ans = 4;
-        return -1;
-    }
-
-    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions())
-    {
-        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestOptions(((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
-        {
-            //clean up on failure
-            if(Myparam != NULL)
-            {
-                delete Myparam;
-                Myparam = NULL;
-            }
-            if(rect != NULL)
-            {
-                delete rect;
-                rect = NULL;
-            }
-
-            ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
-        }
-    }
-
-    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe(&sdp))//有时候会连不�?
-    {
-        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestDescribe(&sdp, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
-        {
-            //clean up on failure
-            if(Myparam != NULL)
-            {
-                delete Myparam;
-                Myparam = NULL;
-            }
-            if(rect != NULL)
-            {
-                delete rect;
-                rect = NULL;
-            }
-
-            ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
-        }
-    }
-
-    if(((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_video.length())
-    {
-        ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_video;
-        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess))
-        {
-            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
-            {
-                //clean up on failure
-                if(Myparam != NULL)
-                {
-                    delete Myparam;
-                    Myparam = NULL;
-                }
-                if(rect != NULL)
-                {
-                    delete rect;
-                    rect = NULL;
-                }
-
-                ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
-            }
-        }
-    }
-
-    //audio
-    if(((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_audio.length())
-    {
-        ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName_audio;
-        if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess))
-        {
-            if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, ((CRTSPCLient*)lpParam)->m_userName, ((CRTSPCLient*)lpParam)->m_password))
-            {
-                //clean up on failure
-                if(Myparam != NULL)
-                {
-                    delete Myparam;
-                    Myparam = NULL;
-                }
-                if(rect != NULL)
-                {
-                    delete rect;
-                    rect = NULL;
-                }
-
-                ((CRTSPCLient*)lpParam)->m_ans = 4; return -1;
-            }
-        }
-    }
-
-    ((CRTSPCLient*)lpParam)->m_RTSPRequest->m_SetupName = "";
     //RTSPCLient->m_SetupName_audio = "";
     //RTSPCLient->m_SetupName_video = "";
     if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestPlay())
     {
         //clean up on failure
-        if(Myparam != NULL)
-        {
-            delete Myparam;
-            Myparam = NULL;
-        }
         if(rect != NULL)
         {
             delete rect;
@@ -306,39 +54,31 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         return -1;
     }
 
-
-    //初始化解码器dll
     if(((CRTSPCLient*)lpParam)->m_RTSPRequest->frame != -1)
     {
-        Myparam->fps = ((CRTSPCLient*)lpParam)->m_RTSPRequest->frame;
+        ((CRTSPCLient*)lpParam)->m_myparamInput->fps = ((CRTSPCLient*)lpParam)->m_RTSPRequest->frame;
     }
 
     Sleep(10);
-    InitVideoParam = (fInitVideoParam)GetProcAddress(hdll, "InitVideoParam");
-    InitVideoParam(((CRTSPCLient*)lpParam)->m_INSTANCE, Myparam, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
-    //设置回调
-    SetCallBack = (fSetCallBack)GetProcAddress(hdll, "SetCallBack");
-    SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hdll, "SetDrawLineCallBack");
-    SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(hdll, "SetBmpCallBack");
-    SetFillBmpCallBack = (fSetFillBmpCallBack)GetProcAddress(hdll, "SetFillBmpCallBack");
-    setYUVCallBackFunc = (setYUVCallBack)GetProcAddress(hdll, "SetYUVCallBack");
-    setH264CallBackFunc = (setH264CallBack)GetProcAddress(hdll, "SetH264CallBack");
-    revoHWFunc = (revoHW)GetProcAddress(hdll, "RevoHWAcceleration");
-    SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
-    SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
-    SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
-    SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
-    setYUVCallBackFunc(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
-    setH264CallBackFunc(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
+    p_func_InitVideoParam(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
+    // set callback
+    p_func_SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
+    p_func_SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
+    p_func_SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
+    p_func_SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
+    p_func_setYUVCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
+    p_func_setH264CallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
     if(!((CRTSPCLient*)lpParam)->nHWAcceleration)
-        revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
+        p_func_revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
 
     ((CRTSPCLient*)lpParam)->m_RTSPRequest->ID = ((CRTSPCLient*)lpParam)->m_INSTANCE;
     ((CRTSPCLient*)lpParam)->m_RTSPRequest->nfirst = true;
     ((CRTSPCLient*)lpParam)->m_RTSPRequest->initS = 0;
 
     if(((CRTSPCLient*)lpParam)->m_circulation)
-        return -1;//已经在播放了
+    {
+        return -1; // already playing
+    }
 
     ((CRTSPCLient*)lpParam)->m_circulation = true;
     DWORD time1 = GetTickCount();
@@ -367,7 +107,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         {
             int i = ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
         }
-        else if(type == 2 || type == 3)//其余2-3的流全部丢弃
+        else if(type == 2 || type == 3) // discard rest of streams(2-3)
         {
             ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_Leave(size);
         }
@@ -377,7 +117,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         }
 
 
-        //RTCP模块,每隔大约5s，发送一次数据，间隔时间可根据实际带宽进行调�?
+        // RTCP module, send data once every 5 second, interval can be adjusted according to bandwidth
         time2 = GetTickCount();
         if(time2 - time1 > 5000)
         {
@@ -439,17 +179,11 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         }
     }
 
-    //关解�?
-    freeVideos = (ffreeVideos)GetProcAddress(hdll, "freeVideos");
-    int ret = freeVideos(((CRTSPCLient*)lpParam)->m_INSTANCE);
+    // close decode
+    int ret = p_func_freeVideos(((CRTSPCLient*)lpParam)->m_INSTANCE);
     if(ret < 0)
         return -1;
 
-    if(Myparam != NULL)
-    {
-        delete Myparam;
-        Myparam = NULL;
-    }
     if(rect != NULL)
     {
         delete rect;
@@ -461,33 +195,291 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     return 1;
 }
 
-//
-//typedef DWORD WINAPI (* beginrecv)(LPVOID lpParam);
-//**************************************************
-//函数功能：实时播�?
-//输入参数�?
-//输出参数�?
-//返回值：  1播放成功�?1播放失败
-//**************************************************
-int CRTSPCLient::PlayURL(HWND hWnd)
+CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
 {
-    //进入线程
-    this->m_hWnd = hWnd;
+    m_URI = new char[256];
+    m_userName = new char[256];
+    m_password = new char[256];
+
+    m_threadID = -1;
+    m_circulation = false;
+    m_INSTANCE = -1;
+    m_hWnd = NULL;
+    m_ans = 0;
+
+    m_RTSPRequest = new CRTSPRequest;
+
+    m_myparamInput = new myparamInput;
+
+    func = NULL;
+    funcD = NULL;
+    bmpFunc = NULL;
+    fillbmp = NULL;
+    YUVFunc = NULL;
+    H264Func = NULL;
+    YUVEx = NULL;
+    nHWAcceleration = false;
+
+    if(!inited)
+    {
+        load_PlayH264DLL();
+        p_func_initVideoDLL();
+        inited = true;
+    }
+}
+
+void CRTSPCLient::load_PlayH264DLL()
+{
+    m_hDLL = LoadLibrary(L"PlayH264DLL.dll");
+    if(NULL == m_hDLL)
+    {
+        TCHAR* temp = new TCHAR[2048];
+        wsprintf(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
+        MessageBox(0, temp, NULL, MB_OK);
+        delete[] temp;
+        exit(-1);
+    }
+
+    p_func_GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(m_hDLL, "GetIdlevideoINSTANCE");
+    if(NULL == p_func_GetIdlevideoINSTANCE)
+    {
+        MessageBox(NULL, L"GetProcAddress GetIdlevideoINSTANCE error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_initVideoDLL = (finitVideoDLL)GetProcAddress(m_hDLL, "initVideoDLL");
+    if(NULL == p_func_initVideoDLL)
+    {
+        MessageBox(0, L"GetProcAddress initVideoDLL error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_InitVideoParam = (fInitVideoParam)GetProcAddress(m_hDLL, "InitVideoParam");
+    if(NULL == p_func_InitVideoParam)
+    {
+        MessageBox(0, L"GetProcAddress InitVideoParam error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_SetCallBack = (fSetCallBack)GetProcAddress(m_hDLL, "SetCallBack");
+    if(NULL == p_func_SetCallBack)
+    {
+        MessageBox(0, L"GetProcAddress SetCallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(m_hDLL, "SetDrawLineCallBack");
+    if(NULL == p_func_SetDrawLineCallBack)
+    {
+        MessageBox(0, L"GetProcAddress SetDrawLineCallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(m_hDLL, "SetBmpCallBack");
+    if(NULL == p_func_SetBmpCallBack)
+    {
+        MessageBox(0, L"GetProcAddress SetBmpCallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_SetFillBmpCallBack = (fSetFillBmpCallBack)GetProcAddress(m_hDLL, "SetFillBmpCallBack");
+    if(NULL == p_func_SetFillBmpCallBack)
+    {
+        MessageBox(0, L"GetProcAddress SetFillBmpCallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_setYUVCallBack = (setYUVCallBack)GetProcAddress(m_hDLL, "SetYUVCallBack");
+    if(NULL == p_func_setYUVCallBack)
+    {
+        MessageBox(0, L"GetProcAddress SetYUVCallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_setH264CallBack = (setH264CallBack)GetProcAddress(m_hDLL, "SetH264CallBack");
+    if(NULL == p_func_setH264CallBack)
+    {
+        MessageBox(0, L"GetProcAddress SetH264CallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_revoHWFunc = (revoHW)GetProcAddress(m_hDLL, "RevoHWAcceleration");
+    if(NULL == p_func_revoHWFunc)
+    {
+        MessageBox(0, L"GetProcAddress RevoHWAcceleration error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_func_freeVideos = (ffreeVideos)GetProcAddress(m_hDLL, "freeVideos");
+    if(NULL == p_func_freeVideos)
+    {
+        MessageBox(0, L"GetProcAddress freeVideos error", NULL, MB_OK);
+        exit(-1);
+    }
+}
+
+CRTSPCLient::~CRTSPCLient()
+{
+    if(NULL != m_URI)
+    {
+        delete[] m_URI;
+        m_URI = NULL;
+    }
+
+    if(NULL != m_userName)
+    {
+        delete[] m_userName;
+        m_userName = NULL;
+    }
+
+    if(NULL != m_password)
+    {
+        delete[] m_password;
+        m_password = NULL;
+    }
+
+    if(NULL != m_RTSPRequest)
+    {
+        delete m_RTSPRequest;
+        m_RTSPRequest = NULL;
+    }
+
+    if(NULL != m_myparamInput)
+    {
+        delete m_myparamInput;
+        m_myparamInput = NULL;
+    }
+}
+
+int CRTSPCLient::input_URI(char* URI, char* username, char* password)
+{
+    strncpy(m_userName, username, 256);
+    strncpy(m_password, password, 256);
+    strncpy(m_URI, URI, 256);
+
+    return 0;
+}
+
+int CRTSPCLient::connect()
+{
+    m_INSTANCE = p_func_GetIdlevideoINSTANCE();
+
+    // set up communication port
+    string setupName = "";
+    srand(time(NULL));
+    static int initPort = rand() % 8000;
+    int rtpPort = 2000 + 6 * initPort;
+    initPort++;
+    int rtcpPort = rtpPort + 1;
+    string sdp = "";
+    char* sess = 0;
+
+    // get local IP
+    string ip;
+    WORD wVersionRequested;
+    WSADATA wsaData; // initial winsock
+    char name[255];
+    memset(name, 0x0, 255);
+
+    PHOSTENT hostinfo = NULL;
+    wVersionRequested = MAKEWORD(2, 0);
+
+    if(WSAStartup(wVersionRequested, &wsaData) == 0)
+    {
+
+        if(gethostname(name, sizeof(name)) == 0)
+        {
+            if((hostinfo = (PHOSTENT)gethostbyname(name)) != NULL)
+            {
+                ip = inet_ntoa(*(struct in_addr *)*hostinfo->h_addr_list);
+            }
+        }
+
+        WSACleanup();
+    }
+
+    if(!m_RTSPRequest->Open(m_URI, ip.c_str(), rtpPort + 5))
+    {
+        m_ans = 4;
+        return -1;
+    }
+
+    if(!m_RTSPRequest->RequestOptions())
+    {
+        if(!m_RTSPRequest->RequestOptions(m_userName, m_password))
+        {
+            m_ans = 4;
+            return -1;
+        }
+    }
+
+    if(!m_RTSPRequest->RequestDescribe(&sdp)) // sometimes it fails
+    {
+        if(!m_RTSPRequest->RequestDescribe(&sdp, m_userName, m_password))
+        {
+            m_ans = 4;
+            return -1;
+        }
+    }
+
+    // video
+    if(m_RTSPRequest->m_SetupName_video.length())
+    {
+        m_RTSPRequest->m_SetupName = m_RTSPRequest->m_SetupName_video;
+        if(!m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess))
+        {
+            if(!m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 0, 1, sess, m_userName, m_password))
+            {
+                m_ans = 4;
+                return -1;
+            }
+        }
+    }
+
+    //audio
+    if(m_RTSPRequest->m_SetupName_audio.length())
+    {
+        m_RTSPRequest->m_SetupName = m_RTSPRequest->m_SetupName_audio;
+        if(!m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess))
+        {
+            if(!m_RTSPRequest->RequestSetup(setupName.c_str(), transportModeRtpTcp, 2, 3, sess, m_userName, m_password))
+            {
+                m_ans = 4;
+                return -1;
+            }
+        }
+    }
+
+    m_RTSPRequest->m_SetupName = "";
+
+    return 0;
+}
+
+//**************************************************
+//function    : realtime play
+//input       :
+//output      :
+//return value: 1 success, -1 failure
+//**************************************************
+int CRTSPCLient::play(HWND hWnd)
+{
+    // enter the thread
+    m_hWnd = hWnd;
     CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
     while(m_ans != 1 && m_ans != 4)
         Sleep(1);
     if(m_threadID == -1 || m_ans == 4)
-        return -1;//进入线程失败
+        return -1; // enter thread failed
     return 1;
 }
 
 //**************************************************
-//函数功能：关闭实时播�?
-//输入参数�?
-//输出参数�?
-//返回值：  -1关闭失败�?关闭成功
+//function    : close realtime play
+//input       :
+//output      :
+//return value: 1 success, -1 failure
 //**************************************************
-int CRTSPCLient::stopURL()
+int CRTSPCLient::stop()
 {
     m_circulation = false;
     while(m_ans != 2 && m_ans != 4)
