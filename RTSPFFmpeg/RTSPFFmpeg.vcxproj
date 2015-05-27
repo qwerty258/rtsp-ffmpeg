@@ -89,7 +89,6 @@
     <ClInclude Include="Socket.h" />
     <ClInclude Include="string_t.h" />
     <ClInclude Include="Tcp.h" />
-    <ClInclude Include="TLock.h" />
     <ClInclude Include="Udp.h" />
     <ClInclude Include="UNpack.h" />
     <ClInclude Include="VBuffer.h" />

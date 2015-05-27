@@ -54,9 +54,6 @@
     <ClInclude Include="Socket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TLock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Tcp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
