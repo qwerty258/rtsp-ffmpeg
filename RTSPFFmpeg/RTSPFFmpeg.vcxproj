@@ -87,7 +87,6 @@
     <ClInclude Include="RTSPFFmpeg.h" />
     <ClInclude Include="RtspRequest.h" />
     <ClInclude Include="Socket.h" />
-    <ClInclude Include="string_t.h" />
     <ClInclude Include="Tcp.h" />
     <ClInclude Include="Udp.h" />
     <ClInclude Include="UNpack.h" />

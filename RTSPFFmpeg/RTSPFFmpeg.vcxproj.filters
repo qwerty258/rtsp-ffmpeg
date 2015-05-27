@@ -48,9 +48,6 @@
     <ClInclude Include="VBufferT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="string_t.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Socket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
