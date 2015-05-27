@@ -41,7 +41,7 @@ RTSPFFMPEG_API int FreeRtspDLL()
 
         if(NULL != deList[i].pt)
         {
-            ((CRTSPCLient*)deList[i].pt)->stop();
+            ((CRTSPCLient*)deList[i].pt)->disconnect();
             delete deList[i].pt;
             deList[i].pt = NULL;
         }
@@ -58,10 +58,6 @@ RTSPFFMPEG_API int GetRtspINSTANCE()
             if(0 == checkINSTANCE(i))
             {
                 deList[i].idle = 1;
-                //deList[i].pt->fillbmp = NULL;
-                //deList[i].pt->func = NULL;
-                //deList[i].pt->funcD = NULL;
-                //deList[i].pt->bmpFunc = NULL;
                 return i;
             }
         }
@@ -89,12 +85,7 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, c
 
 RTSPFFMPEG_API int Connect(int INSTANCE)
 {
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    if(NULL == deList[INSTANCE].pt)
+    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
@@ -102,48 +93,34 @@ RTSPFFMPEG_API int Connect(int INSTANCE)
     return ((CRTSPCLient*)deList[INSTANCE].pt)->connect();
 }
 
-RTSPFFMPEG_API int Play(int INSTANCE, HWND hd)
+RTSPFFMPEG_API int Play(int INSTANCE, HWND hWnd)
 {
-    if(checkINSTANCE(INSTANCE) < 0)
+    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
 
-    if(NULL == deList[INSTANCE].pt)
-    {
-        return -1;
-    }
-
-    ((CRTSPCLient*)deList[INSTANCE].pt)->play(hd);
-
-    return 0;
+    return ((CRTSPCLient*)deList[INSTANCE].pt)->play(hWnd);
 }
 
-RTSPFFMPEG_API int Stop(int INSTANCE)
+RTSPFFMPEG_API int Pause(int INSTANCE)
 {
-    if(checkINSTANCE(INSTANCE) < 0)
+    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->stop();
-
-    deList[INSTANCE].idle = 0;
-
-    delete deList[INSTANCE].pt;
-    deList[INSTANCE].pt = NULL;
-
-    return 0;
+    return ((CRTSPCLient*)deList[INSTANCE].pt)->pause();
 }
 
 RTSPFFMPEG_API int DisConnect(int INSTANCE)
 {
-    if(checkINSTANCE(INSTANCE) < 0)
+    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
 
-    ((CRTSPCLient*)deList[INSTANCE].pt)->stop();
+    ((CRTSPCLient*)deList[INSTANCE].pt)->disconnect();
 
     deList[INSTANCE].idle = 0;
 
@@ -151,45 +128,6 @@ RTSPFFMPEG_API int DisConnect(int INSTANCE)
     deList[INSTANCE].pt = NULL;
 
     return 0;
-}
-
-RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE)
-{
-
-    try
-    {
-        for(int i = 0; i < MACPL; i++)
-        {
-            if(deList[i].idle == 0)
-            {
-                CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-                DC->stop();
-                delete DC;
-
-            }
-            else
-            {
-                CRTSPCLient *DC = (CRTSPCLient *)deList[INSTANCE].pt;
-                DC->stop();
-                Sleep(40);
-                deList[INSTANCE].idle = 0;
-                delete DC;
-            }
-        }
-        //int ru=checkINSTANCE(INSTANCE);
-        //if (ru<0) return -1;
-        //RTSPCLientClass *DC=(RTSPCLientClass *)deList[INSTANCE].pt;
-        //delete DC;
-        //Sleep(50);
-        ///*deList[INSTANCE].pt = new RTSPCLientClass;
-        //Sleep(50);
-        //deList[INSTANCE].idle=0;*/
-        return 0;
-    }
-    catch(...)
-    {
-        return -1;
-    }
 }
 
 RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)

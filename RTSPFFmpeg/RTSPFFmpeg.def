@@ -1,17 +1,18 @@
 LIBRARY RTSPFFmpeg
 EXPORTS
-	GetRtspINSTANCE			@1
-	InitRtspVideoParam		@2
-	Play					@3
-	Stop					@4
-	InitRtspDLL				@5
-	FreeRtspDLL				@6
-	pSetDrawLineCallBack	@7
-	pSetBmpCallBack			@8
+	InitRtspDLL				@1
+	FreeRtspDLL				@2
+	GetRtspINSTANCE			@3
+	InitRtspVideoParam		@4
+	Connect					@5
+	Play					@6
+	Pause					@7
+	DisConnect				@8
 	pSetFillBmpCallBack		@9
 	pSetPFCALLBACK			@10
 	pSetYUVCallBack			@11
 	pSetH264CallBack		@12
 	RevoHWAcceleration		@13
 	FreeRtspDLL0000			@14
-	Connect					@15
+	pSetDrawLineCallBack	@15
+	pSetBmpCallBack			@16

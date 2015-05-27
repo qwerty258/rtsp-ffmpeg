@@ -53,8 +53,10 @@
 
 typedef int(*lpFuncGetRtspINSTANCE)(void);
 typedef int(*lpFuncInitRtspVideoParam)(int INSTANCE, char* URL, char* UserName, char* PWD);
-typedef int(*lpFuncPlayRtsp)(int INSTANCE, HWND hd);
-typedef int(*lpFuncStopRtsp)(int INSTANCE);
+typedef int(*lpFuncConnect)(int INSTANCE);
+typedef int(*lpFuncPlay)(int INSTANCE, HWND hd);
+typedef int(*lpFuncPause)(int INSTANCE);
+typedef int(*lpFuncDisConnect)(int INSTANCE);
 typedef int(*lpFuncInitRtspDLL)(void);
 typedef int(*lpFuncFreeRtspDll)(void);
 typedef int(*lpFuncFreeRtspDLL0000)(int INSTANCE);

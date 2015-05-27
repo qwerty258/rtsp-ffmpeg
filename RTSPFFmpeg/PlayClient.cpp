@@ -68,8 +68,11 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     p_func_SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
     p_func_setYUVCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
     p_func_setH264CallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
+
     if(!((CRTSPCLient*)lpParam)->nHWAcceleration)
+    {
         p_func_revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
+    }
 
     ((CRTSPCLient*)lpParam)->m_RTSPRequest->ID = ((CRTSPCLient*)lpParam)->m_INSTANCE;
     ((CRTSPCLient*)lpParam)->m_RTSPRequest->nfirst = true;
@@ -98,8 +101,6 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
         if(rs == -1)
             continue;
-
-
 
         if(size < 12)
             continue;
@@ -195,11 +196,19 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     return 1;
 }
 
-CRTSPCLient::CRTSPCLient():m_URI(NULL), m_userName(NULL), m_password(NULL)
+CRTSPCLient::CRTSPCLient()
 {
+    m_bInitURI = false;
+    m_bConnected = false;
+    m_bPlaying = false;
+
     m_URI = new char[256];
     m_userName = new char[256];
     m_password = new char[256];
+
+    memset(m_URI, 0x0, 256);
+    memset(m_userName, 0x0, 256);
+    memset(m_password, 0x0, 256);
 
     m_threadID = -1;
     m_circulation = false;
@@ -353,15 +362,26 @@ CRTSPCLient::~CRTSPCLient()
 
 int CRTSPCLient::input_URI(char* URI, char* username, char* password)
 {
+    if(m_bInitURI || m_bConnected || m_bPlaying || m_RTSPRequest->m_CRTSP_paused || NULL == username || NULL == password || NULL == URI)
+    {
+        return -1;
+    }
+
     strncpy(m_userName, username, 256);
-    strncpy(m_password, password, 256);
     strncpy(m_URI, URI, 256);
+
+    m_bInitURI = true;
 
     return 0;
 }
 
 int CRTSPCLient::connect()
 {
+    if(!m_bInitURI || m_bConnected || m_bPlaying || m_RTSPRequest->m_CRTSP_paused)
+    {
+        return -1;
+    }
+
     m_INSTANCE = p_func_GetIdlevideoINSTANCE();
 
     // set up communication port
@@ -452,6 +472,8 @@ int CRTSPCLient::connect()
 
     m_RTSPRequest->m_SetupName = "";
 
+    m_bConnected = true;
+
     return 0;
 }
 
@@ -463,14 +485,51 @@ int CRTSPCLient::connect()
 //**************************************************
 int CRTSPCLient::play(HWND hWnd)
 {
-    // enter the thread
-    m_hWnd = hWnd;
-    CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
-    while(m_ans != 1 && m_ans != 4)
-        Sleep(1);
-    if(m_threadID == -1 || m_ans == 4)
-        return -1; // enter thread failed
-    return 1;
+    if(!m_bInitURI || !m_bConnected || m_bPlaying)
+    {
+        return -1;
+    }
+
+    if(m_RTSPRequest->m_CRTSP_paused)
+    {
+        m_RTSPRequest->m_CRTSP_paused = false;
+        m_bPlaying = true;
+    }
+    else
+    {
+        // enter the thread
+        m_hWnd = hWnd;
+        HANDLE hThread = CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
+
+        m_bPlaying = true;
+
+        while(m_ans != 1 && m_ans != 4)
+        {
+            Sleep(1);
+        }
+
+        if(m_threadID == -1 || m_ans == 4)
+        {
+            return -1; // enter thread failed
+        }
+
+        CloseHandle(hThread);
+    }
+
+    return 0;
+}
+
+int CRTSPCLient::pause()
+{
+    if(!m_bInitURI || !m_bConnected || !m_bPlaying || m_RTSPRequest->m_CRTSP_paused)
+    {
+        return -1;
+    }
+
+    m_RTSPRequest->m_CRTSP_paused = true;
+    m_bPlaying = false;
+
+    return 0;
 }
 
 //**************************************************
@@ -479,11 +538,29 @@ int CRTSPCLient::play(HWND hWnd)
 //output      :
 //return value: 1 success, -1 failure
 //**************************************************
-int CRTSPCLient::stop()
+int CRTSPCLient::disconnect()
 {
-    m_circulation = false;
-    while(m_ans != 2 && m_ans != 4)
-        Sleep(1);
+    if(!m_bInitURI || !m_bConnected)
+    {
+        return -1;
+    }
 
-    return 1;
+    m_circulation = false;
+
+    if(!m_RTSPRequest->RequestTeardown(m_userName, m_password))
+    {
+        return -1;
+    }
+
+    while(m_ans != 2 && m_ans != 4)
+    {
+        Sleep(1);
+    }
+
+    m_bConnected = false;
+    m_bInitURI = false;
+    m_bPlaying = false;
+    m_RTSPRequest->m_CRTSP_paused = false;
+
+    return 0;
 }

@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_PLAY, &CtestPlayDlg::OnClickedButtonPlay)
     ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CtestPlayDlg::OnClickedButtonPause)
     ON_BN_CLICKED(IDC_BUTTON_CONNECT, &CtestPlayDlg::OnClickedButtonConnect)
+    ON_BN_CLICKED(IDC_BUTTON_DISCONNECT, &CtestPlayDlg::OnClickedButtonDisconnect)
 END_MESSAGE_MAP()
 
 
@@ -43,8 +44,8 @@ BOOL CtestPlayDlg::OnInitDialog()
 
     // Set the icon for this dialog.  The framework does this automatically
     //  when the application's main window is not a dialog
-    SetIcon(m_hIcon, TRUE);			// Set big icon
-    SetIcon(m_hIcon, FALSE);		// Set small icon
+    SetIcon(m_hIcon, TRUE);  // Set big icon
+    SetIcon(m_hIcon, FALSE); // Set small icon
 
     // TODO: Add extra initialization here
     m_hDll = LoadLibrary(L"RTSPFFmpeg.dll");
@@ -66,22 +67,28 @@ BOOL CtestPlayDlg::OnInitDialog()
         AfxMessageBox(L"GetProcAddress FreeRtspDLL error");
     }
 
-    Connect = (lpFuncconnect)GetProcAddress(m_hDll, "Connect");
+    Connect = (lpFuncConnect)GetProcAddress(m_hDll, "Connect");
     if(NULL == Connect)
     {
         AfxMessageBox(L"GetProcAddress Connect error");
     }
 
-    Play = (lpFuncPlayRtsp)GetProcAddress(m_hDll, "Play");
+    Play = (lpFuncPlay)GetProcAddress(m_hDll, "Play");
     if(NULL == Play)
     {
         AfxMessageBox(L"GetProcAddress Play error");
     }
 
-    Stop = (lpFuncStopRtsp)GetProcAddress(m_hDll, "Stop");
-    if(NULL == Stop)
+    Pause = (lpFuncPause)GetProcAddress(m_hDll, "Pause");
+    if(NULL == Pause)
     {
-        AfxMessageBox(L"GetProcAddress Stop error");
+        AfxMessageBox(L"GetProcAddress Pause error");
+    }
+
+    DisConnect = (lpFuncDisConnect)GetProcAddress(m_hDll, "DisConnect");
+    if(NULL == DisConnect)
+    {
+        AfxMessageBox(L"GetProcAddress DisConnect error");
     }
 
     InitRtspVideoParam = (lpFuncInitRtspVideoParam)GetProcAddress(m_hDll, "InitRtspVideoParam");
@@ -106,16 +113,6 @@ BOOL CtestPlayDlg::OnInitDialog()
     {
         AfxMessageBox(L"InitRtspDLL error");
     }
-
-    char URI[] = "rtsp://192.168.10.195:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
-
-    m_INSTANCE = GetRtspINSTANCE();
-    if(0 > m_INSTANCE)
-    {
-        return FALSE;
-    }
-
-    InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345");
 
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -160,7 +157,10 @@ void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
     //RevoHWAcceleration(m_INSTANCE);
-    Play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd);
+    if(0 > Play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd))
+    {
+        AfxMessageBox(L"Play error");
+    }
 }
 
 BOOL CtestPlayDlg::DestroyWindow()
@@ -181,9 +181,9 @@ BOOL CtestPlayDlg::DestroyWindow()
 void CtestPlayDlg::OnClickedButtonPause()
 {
     // TODO: Add your control notification handler code here
-    if(0 != Stop(m_INSTANCE))
+    if(0 != Pause(m_INSTANCE))
     {
-        AfxMessageBox(L"StopRtsp error");
+        AfxMessageBox(L"Pause error");
     }
 }
 
@@ -191,8 +191,33 @@ void CtestPlayDlg::OnClickedButtonPause()
 void CtestPlayDlg::OnClickedButtonConnect()
 {
     // TODO: Add your control notification handler code here
+    char URI[] = "rtsp://192.168.10.147:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
+
+    m_INSTANCE = GetRtspINSTANCE();
+    if(0 > m_INSTANCE)
+    {
+        AfxMessageBox(L"GetRtspINSTANCE error");
+        return;
+    }
+
+    if(0 > InitRtspVideoParam(m_INSTANCE, URI, "admin", "12345"))
+    {
+        AfxMessageBox(L"InitRtspVideoParam error");
+        return;
+    }
+
     if(0 > Connect(m_INSTANCE))
     {
         AfxMessageBox(L"Connect error");
+    }
+}
+
+
+void CtestPlayDlg::OnClickedButtonDisconnect()
+{
+    // TODO: Add your control notification handler code here
+    if(0 > DisConnect(m_INSTANCE))
+    {
+        AfxMessageBox(L"DisConnect error");
     }
 }

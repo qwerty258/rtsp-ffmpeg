@@ -13,6 +13,7 @@ Rtsp::Rtsp()
     m_CSeq = 0;
     m_State = 0;
     m_Session[0] = 0;
+    m_CRTSP_paused = false;
 }
 
 Rtsp::~Rtsp()
@@ -223,10 +224,14 @@ int Rtsp::Read_PlayLoad(short int len)
 
     if(iRead < 0)
         return -1;
-    if(Decode == 1)
-        rtp_unpackage(&buffer[0], len, ID, &nfirst);
-    if(Decode == 2)
-        rtp_unpackage_mpeg(buffer, len, ID, &nfirst);
+
+    if(!m_CRTSP_paused)
+    {
+        if(Decode == 1)
+            rtp_unpackage(&buffer[0], len, ID, &nfirst);
+        if(Decode == 2)
+            rtp_unpackage_mpeg(buffer, len, ID, &nfirst);
+    }
 
     if(tmpLen == 0)
     {
