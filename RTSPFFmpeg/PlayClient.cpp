@@ -193,7 +193,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     ((CRTSPCLient*)lpParam)->m_ans = 2;
 
-    return 1;
+    return 0;
 }
 
 CRTSPCLient::CRTSPCLient()
@@ -499,21 +499,20 @@ int CRTSPCLient::play(HWND hWnd)
     {
         // enter the thread
         m_hWnd = hWnd;
-        HANDLE hThread = CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
+        CloseHandle(CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID));
 
         m_bPlaying = true;
 
-        while(m_ans != 1 && m_ans != 4)
-        {
-            Sleep(1);
-        }
+        //while(m_ans != 1 && m_ans != 4)
+        //{
+        //    Sleep(1);
+        //}
 
         if(m_threadID == -1 || m_ans == 4)
         {
             return -1; // enter thread failed
         }
 
-        CloseHandle(hThread);
     }
 
     return 0;
@@ -552,10 +551,10 @@ int CRTSPCLient::disconnect()
         return -1;
     }
 
-    while(m_ans != 2 && m_ans != 4)
-    {
-        Sleep(1);
-    }
+    //while(m_ans != 2 && m_ans != 4)
+    //{
+    //    Sleep(1);
+    //}
 
     m_bConnected = false;
     m_bInitURI = false;
