@@ -29,15 +29,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
         return FALSE;
     }
 
-    //i_val = 1;	// 阻塞方式
-    //error = ioctlsocket(m_Socket, FIONBIO, (ULONG*)&i_val);
-    //if (error == SOCKET_ERROR)
-    //{
-    //	ReportError();
-    //	return FALSE;
-    //}
-
-    //设置使用keep alive    
+    // set keep alive
     i_val = 1;
     error = setsockopt(m_Socket, SOL_SOCKET, SO_KEEPALIVE, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -50,7 +42,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
     tcp_keepalive	outKeepAlive = {0};
     u_long			ulBytesReturn = 0;
 
-    //keep alive为10秒3次
+    //keep alive 3 times every 10 seconds
     inKeepAlive.onoff = 1;
     inKeepAlive.keepaliveinterval = 10000;
     inKeepAlive.keepalivetime = 3;
@@ -65,7 +57,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
         return FALSE;
     }
 
-    // 可重用
+    // reusable
     i_val = 1;
     error = setsockopt(m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -74,7 +66,7 @@ BOOL Tcp::Open(PCSTR bindIp, INT bindPort)
         return FALSE;
     }
 
-    // 绑定套接字
+    // bind socket
     inIp = inet_addr(bindIp);
 
     m_BindAddr.sin_family = AF_INET;
