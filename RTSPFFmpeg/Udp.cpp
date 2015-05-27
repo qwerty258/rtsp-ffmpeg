@@ -29,7 +29,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    i_val = 1;	// 非阻塞方式
+    i_val = 1;  // Non-blocking mode
     error = ioctlsocket(m_Socket, FIONBIO, (ULONG*)&i_val);
     if(error == SOCKET_ERROR)
     {
@@ -37,7 +37,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    i_val = (int)(1024 * 1024 * 1.25);//2M Byte 1000Mbps的network在0.01秒内最高可以接收到1.25MB数据
+    i_val = (int)(1024 * 1024 * 1.25); //2M Byte 1000Mbps network can receive 1.25MB data at most within 0.01s
     error = setsockopt(m_Socket, SOL_SOCKET, SO_RCVBUF, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
     {
@@ -52,7 +52,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    // 可重用
+    // reusable
     i_val = 1;
     error = setsockopt(m_Socket, SOL_SOCKET, SO_REUSEADDR, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -61,7 +61,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    // 设置ttl
+    // set ttl
     i_val = 5;
     error = setsockopt(m_Socket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&i_val, sizeof(i_val));
     if(error == SOCKET_ERROR)
@@ -70,7 +70,7 @@ BOOL Udp::Open(string bindIp, int bindPort)
         return FALSE;
     }
 
-    // 绑定套接字
+    // bind socket
     memset((PVOID)&m_BindAddr, 0, sizeof(m_BindAddr));
 
     m_BindAddr.sin_family = AF_INET;
@@ -158,7 +158,7 @@ BOOL Udp::SetMulticast(PCSTR textIP)
     int error = 0;
     int i_val = 0;
 
-    // 设置多播和广播
+    // set multicast
     if(IN_MULTICAST(ntohl(inet_addr(textIP))))
     {
         i_val = 1;
@@ -181,7 +181,7 @@ BOOL Udp::SetMulticast(PCSTR textIP)
         }
     }
 
-    //设置广播
+    // set broadcast
     if(inet_addr(textIP) == INADDR_BROADCAST)
     {
         i_val = 1;
