@@ -4,7 +4,6 @@
 
 #include "Rtsp.h"
 #include "UNpack.h"
-//#include "string_t.h"
 
 int Rtsp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以�?1
 
@@ -228,9 +227,9 @@ int Rtsp::Read_PlayLoad(short int len)
     if(!m_CRTSP_paused)
     {
         if(Decode == 1)
-            rtp_unpackage(&buffer[0], len, ID, &nfirst);
+            RTP_unpackage(&buffer[0], len, ID, &nfirst);
         if(Decode == 2)
-            rtp_unpackage_mpeg(buffer, len, ID, &nfirst);
+            RTP_unpackage_mpeg(buffer, len, ID, &nfirst);
     }
 
     if(tmpLen == 0)

@@ -63,7 +63,7 @@ typedef struct
     unsigned char  contributing_source_count; // CC: CSRC count, normally 0 in the absence of RTP mixers
     unsigned char  marker;                    // M: Marker bit
     unsigned char  payload_type;              // PT: 7 bits, Payload Type, dynamically established
-    unsigned short sequence_number;           // sequence number: incremented by one for each sent packet
+    unsigned short sequence_number;           // sequence number: increaced by one for each sent packet
     unsigned int   timestamp;                 // timestamp: 27 MHz for H.264
     unsigned int   synchronization_source;    // synchronization source (SSRC) identifier: chosen randomly
     unsigned int*  contributing_source_list;  // contributing source (CSRC) identifiers: pointer to the array head
@@ -142,5 +142,5 @@ void FreeNALU(NALU_t *n);
 *bufIn:rtppackage
 *len: the lengthe of rtppackage
 */
-void rtp_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, bool* nfirst);
-void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst);
+void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, bool* nfirst);
+void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst);

@@ -24,36 +24,32 @@ void FreeNALU(NALU_t* n)
 buffer: rtppackage buffer
 len: the length of rtppackage
 */
-void rtp_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, bool* nfirst)
+void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, bool* nfirst)
 {
     char* current_buffer_position = RTP_package_buffer;
 
     unsigned char poutfile[1600];
-    NALU_HEADER * nalu_hdr = NULL;
-    NALU_t * n = NULL;
+    //NALU_HEADER * nalu_hdr = NULL;
+    NALU_t* n = NULL;
     FU_INDICATOR    *fu_ind = NULL;
     FU_HEADER       *fu_hdr = NULL;
-    int total_bytes = 0;                 //当前包传出的数据  
-    static int total_recved = 0;         //一共传输的数据  
-    int fwrite_number = 0;               //存入文件的数据长�? 
+    int total_bytes = 0;                 // current package data
+    static int total_recved = 0;         // total received data
+    int fwrite_number = 0;               // bytes written to file
 
-    //memcpy(recvbuf,bufIn, len);          //复制rtp�? 
-
-    //printf("包长�? rtp头：   = %d\n",len);  
-
-    //begin rtp_payload and rtp_header  
+    //begin rtp_payload and rtp_header
 
     RTP_header* p_RTP_header = (RTP_header*)calloc(1, sizeof(RTP_header));
     if(NULL == p_RTP_header)
     {
-        MessageBox(NULL, L"calloc error", NULL, MB_OK);
+        MessageBox(NULL, L"memory calloc error", NULL, MB_OK);
         exit(-1);
     }
 
     p_RTP_header->payload = (unsigned char*)calloc(1, MAXDATASIZE);
     if(NULL == p_RTP_header->payload)
     {
-        MessageBox(NULL, L"calloc error", NULL, MB_OK);
+        MessageBox(NULL, L"memory calloc error", NULL, MB_OK);
         exit(-1);
     }
 
@@ -113,7 +109,7 @@ void rtp_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         }
     }
 
-#ifdef _DEBUG
+#ifdef NO_DEBUG
     FILE* p_file_sequence_number = fopen("sequence_number.txt", "ab");
     FILE* p_file_timestamp = fopen("timestamp.txt", "ab");
     FILE* p_file_payload_type = fopen("play_type.txt", "ab");
@@ -135,30 +131,48 @@ void rtp_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
 #endif // !_DEBUG
 
 
-    //end rtp_payload and rtp_header  
+    //end rtp_payload and rtp_header
     //////////////////////////////////////////////////////////////////////////  
     //begin nal_hdr
     n = AllocNALU(4096);
-    if(NULL == n)          //为结构体nalu_t及其成员buf分配空间。返回值为指向nalu_t存储空间的指�? 
+    if(NULL == n)          // locate memory for nalu_t and it's members
     {
-        MessageBox(NULL, L"AllocNALU error", NULL, MB_OK);
+        MessageBox(NULL, L"memory AllocNALU error", NULL, MB_OK);
+        exit(-1);
     }
 
-    nalu_hdr = (NALU_HEADER*)current_buffer_position;                        //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确�? 
+    //nalu_hdr = (NALU_HEADER*)current_buffer_position; //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确�? 
     //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //网络传输中的方式为：F->NRI->TYPE.. 内存中存储方式为 TYPE->NRI->F (和nal头匹�?�? 
-    n->forbidden_bit = nalu_hdr->F << 7;                          //内存中的字节序�? 
-    n->nal_reference_idc = nalu_hdr->NRI << 5;
-    n->nal_unit_type = nalu_hdr->TYPE;
+    n->forbidden_bit = ((NALU_HEADER*)current_buffer_position)->F; //<< 7;                          //内存中的字节序�? 
+    n->nal_reference_idc = ((NALU_HEADER*)current_buffer_position)->NRI; //<< 5;
+    n->nal_unit_type = ((NALU_HEADER*)current_buffer_position)->TYPE;
 
     //end nal_hdr  
     //////////////////////////////////////////////////////////////////////////  
     //开始解�? 
-    if(nalu_hdr->TYPE != 7 && (*nfirst))  //不是67开头的包，并且还是第一个包
+    if(((NALU_HEADER*)current_buffer_position)->TYPE != 7 && (*nfirst))  //不是67开头的包，并且还是第一个包
     {
+        if(NULL != p_RTP_header->contributing_source_list)
+        {
+            free(p_RTP_header->contributing_source_list);
+            p_RTP_header->contributing_source_list = NULL;
+        }
+        if(NULL != p_RTP_header->payload)
+        {
+            free(p_RTP_header->payload);
+            p_RTP_header->payload = NULL;
+        }
+        if(NULL != p_RTP_header)
+        {
+            free(p_RTP_header);
+            p_RTP_header = NULL;
+        }
+        FreeNALU(n);
+
         return;
     }
     *nfirst = false;
-    if(nalu_hdr->TYPE > 0 && nalu_hdr->TYPE < 24)  //单包  
+    if(((NALU_HEADER*)current_buffer_position)->TYPE > 0 && ((NALU_HEADER*)current_buffer_position)->TYPE < 24)  //单包  
     {
         poutfile[0] = 0x00;
         poutfile[1] = 0x00;
@@ -168,14 +182,13 @@ void rtp_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         total_bytes += 4;
         memcpy(p_RTP_header->payload, &RTP_package_buffer[13], RTP_package_length - 13);
         p_RTP_header->paylen = RTP_package_length - 13;
-        memcpy(poutfile + 4, nalu_hdr, 1);  //写NAL_HEADER  
+        memcpy(poutfile + 4, ((NALU_HEADER*)current_buffer_position), 1);  //写NAL_HEADER  
         total_bytes += 1;
         memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);//写NAL数据
         total_bytes += p_RTP_header->paylen;
         poutfile[total_bytes] = '\0';
     }
-
-    else if(nalu_hdr->TYPE == 28)                    //FU-A分片包，解码顺序和传输顺序相�? 
+    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 28)                    //FU-A分片包，解码顺序和传输顺序相�? 
     {
 
         fu_ind = (FU_INDICATOR*)&RTP_package_buffer[12];     //分片包用的是FU_INDICATOR而不是NALU_HEADER  
@@ -235,7 +248,7 @@ void rtp_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
             }
         }
     }
-    else if(nalu_hdr->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相�? 
+    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相�? 
     {
         //if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 1)                  //分片包最后一个包  
         //{
@@ -279,7 +292,7 @@ int ftyp = 0;
 int moov = 0;
 
 
-void rtp_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
+void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
 {
     unsigned char recvbuf[1500];
     memcpy(recvbuf, bufIn, len);
