@@ -67,7 +67,7 @@ RTSPFFMPEG_API int GetRtspINSTANCE()
 
 RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, char* password)
 {
-    if(checkINSTANCE(INSTANCE) < 0)
+    if(0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
@@ -85,7 +85,7 @@ RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, c
 
 RTSPFFMPEG_API int Connect(int INSTANCE)
 {
-    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
@@ -95,7 +95,7 @@ RTSPFFMPEG_API int Connect(int INSTANCE)
 
 RTSPFFMPEG_API int Play(int INSTANCE, HWND hWnd)
 {
-    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
@@ -105,7 +105,7 @@ RTSPFFMPEG_API int Play(int INSTANCE, HWND hWnd)
 
 RTSPFFMPEG_API int Pause(int INSTANCE)
 {
-    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
@@ -115,7 +115,7 @@ RTSPFFMPEG_API int Pause(int INSTANCE)
 
 RTSPFFMPEG_API int DisConnect(int INSTANCE)
 {
-    if(checkINSTANCE(INSTANCE) < 0 || NULL == deList[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
@@ -126,6 +126,20 @@ RTSPFFMPEG_API int DisConnect(int INSTANCE)
 
     delete deList[INSTANCE].pt;
     deList[INSTANCE].pt = NULL;
+
+    return 0;
+}
+
+// set hardware acceleration
+// acceleration: true: use hardware acceleration, false: use software decode
+RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration)
+{
+    if(0 > checkINSTANCE(INSTANCE) || NULL == deList[INSTANCE].pt)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient *)deList[INSTANCE].pt)->nHWAcceleration = acceleration;
 
     return 0;
 }
@@ -231,18 +245,6 @@ RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
     }
 
     ((CRTSPCLient*)deList[INSTANCE].pt)->H264Func = f3;
-
-    return 0;
-}
-//设置是否取消硬解
-RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE)
-{
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    ((CRTSPCLient *)deList[INSTANCE].pt)->nHWAcceleration = true;
 
     return 0;
 }
