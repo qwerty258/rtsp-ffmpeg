@@ -109,10 +109,9 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         }
     }
 
-#ifdef NO_DEBUG
+#ifdef _DEBUG
     FILE* p_file_sequence_number = fopen("sequence_number.txt", "ab");
     FILE* p_file_timestamp = fopen("timestamp.txt", "ab");
-    FILE* p_file_payload_type = fopen("play_type.txt", "ab");
     char* strBuffer = new char[256];
 
     sprintf(strBuffer, "%05u\n", p_RTP_header->sequence_number);
@@ -121,12 +120,8 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
     sprintf(strBuffer, "%010u\n", p_RTP_header->timestamp);
     fwrite(strBuffer, strlen(strBuffer), 1, p_file_timestamp);
 
-    sprintf(strBuffer, "%03u\n", p_RTP_header->payload_type);
-    fwrite(strBuffer, strlen(strBuffer), 1, p_file_payload_type);
-
     fclose(p_file_sequence_number);
     fclose(p_file_timestamp);
-    fclose(p_file_payload_type);
     delete[] strBuffer;
 #endif // !_DEBUG
 

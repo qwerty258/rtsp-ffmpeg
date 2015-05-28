@@ -144,6 +144,20 @@ RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration)
     return 0;
 }
 
+// set YUV callback function pointer
+RTSPFFMPEG_API int SetYUV420CallBack(int INSTANCE, YUV420Func p_func_YUV420Func, void *buffer)
+{
+    if(0 > checkINSTANCE(INSTANCE) || NULL == p_func_YUV420Func)
+    {
+        return -1;
+    }
+
+    ((CRTSPCLient*)deList[INSTANCE].pt)->YUVFunc = p_func_YUV420Func;
+    ((CRTSPCLient*)deList[INSTANCE].pt)->YUVEx = buffer;
+
+    return 0;
+}
+
 RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)
 {
     if(NULL == f1)
@@ -212,25 +226,6 @@ RTSPFFMPEG_API int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3)
     return 0;
 }
 
-//
-//获取YUV数据
-RTSPFFMPEG_API int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *buffer)
-{
-    if(NULL == f3)
-    {
-        return -1;
-    }
-
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    ((CRTSPCLient*)deList[INSTANCE].pt)->YUVFunc = f3;
-    ((CRTSPCLient*)deList[INSTANCE].pt)->YUVEx = buffer;
-
-    return 0;
-}
 //获取H264数据
 RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
 {

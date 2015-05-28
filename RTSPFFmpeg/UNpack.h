@@ -92,6 +92,23 @@ NAL Unit Type | Packet Type | Packet Type Name
 
 */
 
+
+
+
+/*
+
+Example of NRI values for coded slices and coded slice
+data partitions of primary coded reference pictures
+
+NAL Unit Type | Content of NAL Unit          | NRI(binary)
+--------------+------------------------------+------------
+1             | non - IDR coded slice        | 10
+2             | Coded slice data partition A | 10
+3             | Coded slice data partition B | 01
+4             | Coded slice data partition C | 01
+
+*/
+
 /*
 +---------------+
 |0|1|2|3|4|5|6|7|
@@ -148,11 +165,11 @@ typedef struct
     unsigned char  forbidden_zero_bit;
     unsigned char  NAL_reference_idc;       //! NALU_PRIORITY_xxxx  
     unsigned char  NAL_unit_type;           //! NALU_TYPE_xxxx    
-    unsigned int   startcodeprefix_len;      //! 前缀字节�? 
-    unsigned int   len;                      //! 包含nal 头的nal 长度，从第一�?0000001到下一�?00000001的长�? 
-    unsigned int   max_size;                 //! 做多一个nal 的长�? 
-    unsigned char* buf;                   //! 包含nal 头的nal 数据  
-    unsigned int   lost_packets;             //! 预留  
+    unsigned int   startcodeprefix_len;      //! 鍓嶇紑瀛楄妭鏁? 
+    unsigned int   len;                      //! 鍖呭惈nal 澶寸殑nal 闀垮害锛屼粠绗竴涓?0000001鍒颁笅涓€涓?00000001鐨勯暱搴? 
+    unsigned int   max_size;                 //! 鍋氬涓€涓猲al 鐨勯暱搴? 
+    unsigned char* buf;                   //! 鍖呭惈nal 澶寸殑nal 鏁版嵁  
+    unsigned int   lost_packets;             //! 棰勭暀  
 } NALU_t;
 
 
