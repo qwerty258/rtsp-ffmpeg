@@ -191,6 +191,7 @@ void CtestPlayDlg::OnClickedButtonPause()
 void CtestPlayDlg::OnClickedButtonConnect()
 {
     // TODO: Add your control notification handler code here
+    char URI[] = "rtsp://192.168.10.144:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif";
 
     m_INSTANCE = GetRtspINSTANCE();
     if(0 > m_INSTANCE)
