@@ -191,7 +191,6 @@ void CtestPlayDlg::OnClickedButtonPause()
 void CtestPlayDlg::OnClickedButtonConnect()
 {
     // TODO: Add your control notification handler code here
-    char URI[] = "rtsp://192.168.10.147:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
 
     m_INSTANCE = GetRtspINSTANCE();
     if(0 > m_INSTANCE)
