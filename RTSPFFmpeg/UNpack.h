@@ -146,8 +146,8 @@ typedef struct
     // type octet and payload may contain bit errors or other syntax
     // violations.
     unsigned char  forbidden_zero_bit;
-    unsigned char  nal_reference_idc;       //! NALU_PRIORITY_xxxx  
-    unsigned char  nal_unit_type;           //! NALU_TYPE_xxxx    
+    unsigned char  NAL_reference_idc;       //! NALU_PRIORITY_xxxx  
+    unsigned char  NAL_unit_type;           //! NALU_TYPE_xxxx    
     unsigned int   startcodeprefix_len;      //! 前缀字节�? 
     unsigned int   len;                      //! 包含nal 头的nal 长度，从第一�?0000001到下一�?00000001的长�? 
     unsigned int   max_size;                 //! 做多一个nal 的长�? 
