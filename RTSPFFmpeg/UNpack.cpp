@@ -143,7 +143,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
 
     //nalu_hdr = (NALU_HEADER*)current_buffer_position; //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确�? 
     //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //网络传输中的方式为：F->NRI->TYPE.. 内存中存储方式为 TYPE->NRI->F (和nal头匹�?�? 
-    n->forbidden_bit = ((NALU_HEADER*)current_buffer_position)->F; //<< 7;                          //内存中的字节序�? 
+    n->forbidden_zero_bit = ((NALU_HEADER*)current_buffer_position)->F; //<< 7;                          //内存中的字节序�? 
     n->nal_reference_idc = ((NALU_HEADER*)current_buffer_position)->NRI; //<< 5;
     n->nal_unit_type = ((NALU_HEADER*)current_buffer_position)->TYPE;
 
@@ -192,7 +192,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
     {
 
         fu_ind = (FU_INDICATOR*)&RTP_package_buffer[12];     //分片包用的是FU_INDICATOR而不是NALU_HEADER  
-        n->forbidden_bit = fu_ind->F << 7;
+        n->forbidden_zero_bit = fu_ind->F << 7;
         n->nal_reference_idc = fu_ind->NRI << 5;
 
         n->nal_unit_type = fu_ind->TYPE;

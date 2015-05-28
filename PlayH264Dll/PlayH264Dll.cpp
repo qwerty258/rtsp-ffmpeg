@@ -46,7 +46,10 @@ PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//depreated
 {
     try
     {
-        if(f1 == NULL) { return -1; };
+        if(f1 == NULL)
+        {
+            return -1;
+        };
         int ru = checkINSTANCE(INSTANCE);
         if(ru < 0) return -1;
         playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
@@ -86,22 +89,20 @@ PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
 
         if(pout_len > 0)
         {
-            //             while(((*(pout+pout_len-1)==0xFE)||(*(pout+pout_len-1)==0xFD)||(*(pout+pout_len-1)==0xFF)||(*(pout+pout_len-1)==0x7E)||(*(pout+pout_len-1)==0x7D)||(*(pout+pout_len-1)==0x7C)||(*(pout+pout_len-1)==0xFC)||(*(pout+pout_len-1)==0xFB)||(*(pout+pout_len-1)==0x7B))
-            //                          &&((*(pout+pout_len-320)==0xFE)||(*(pout+pout_len-320)==0xFD)||(*(pout+pout_len-320)==0xFF)||(*(pout+pout_len-320)==0x7E)||(*(pout+pout_len-320)==0x7D)||(*(pout+pout_len-320)==0x7C)||(*(pout+pout_len-320)==0xFC)||(*(pout+pout_len-320)==0xFB)||(*(pout+pout_len-320)==0x7B))
-            //                &&((*(pout+pout_len-160)==0xFE)||(*(pout+pout_len-160)==0xFD)||(*(pout+pout_len-160)==0xFF)||(*(pout+pout_len-160)==0x7E)||(*(pout+pout_len-160)==0x7D)||(*(pout+pout_len-160)==0x7C)||(*(pout+pout_len-160)==0xFC)||(*(pout+pout_len-160)==0xFB)||(*(pout+pout_len-160)==0x7B)))
-            //             {
-            //                  pout_len-=320;
-            //             }
-            /*if (debug==1)
-WriteLog("C:\\1.log","decoeVideo2");*/
+            /*
+            while(((*(pout+pout_len-1)==0xFE)||(*(pout+pout_len-1)==0xFD)||(*(pout+pout_len-1)==0xFF)||(*(pout+pout_len-1)==0x7E)||(*(pout+pout_len-1)==0x7D)||(*(pout+pout_len-1)==0x7C)||(*(pout+pout_len-1)==0xFC)||(*(pout+pout_len-1)==0xFB)||(*(pout+pout_len-1)==0x7B))&&((*(pout+pout_len-320)==0xFE)||(*(pout+pout_len-320)==0xFD)||(*(pout+pout_len-320)==0xFF)||(*(pout+pout_len-320)==0x7E)||(*(pout+pout_len-320)==0x7D)||(*(pout+pout_len-320)==0x7C)||(*(pout+pout_len-320)==0xFC)||(*(pout+pout_len-320)==0xFB)||(*(pout+pout_len-320)==0x7B))&&((*(pout+pout_len-160)==0xFE)||(*(pout+pout_len-160)==0xFD)||(*(pout+pout_len-160)==0xFF)||(*(pout+pout_len-160)==0x7E)||(*(pout+pout_len-160)==0x7D)||(*(pout+pout_len-160)==0x7C)||(*(pout+pout_len-160)==0xFC)||(*(pout+pout_len-160)==0xFB)||(*(pout+pout_len-160)==0x7B)))
+            {
+            pout_len-=320;
+            }
+
+            if (debug==1)
+            WriteLog("C:\\1.log","decoeVideo2");
+            */
             playH264VideoClass *DC = (playH264VideoClass *)deList[num].pt;
             if(DC == NULL) return;
             if(deList[num].idle == 1)
                 DC->writeNetBuf(num, pout, pout_len);
-
-
         }
-
     } while(pos < size);
 
 
@@ -182,7 +183,10 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
     if(debug == 1)
                 WriteLog("C:\\1.log", "InitVideoParam1");
 
-    if(Myparam == NULL) { return -1; };
+    if(Myparam == NULL)
+    {
+        return -1;
+    };
     int ru = checkINSTANCE(INSTANCE);
     if(ru < 0) return -1;
     //deList[INSTANCE].idle=2;
@@ -372,7 +376,10 @@ PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//dep
     //fclose(fp);
     try
     {
-        if(f1 == NULL) { return -1; };
+        if(f1 == NULL)
+        {
+            return -1;
+        };
         int ru = checkINSTANCE(INSTANCE);
         if(ru < 0) return -1;
         playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;

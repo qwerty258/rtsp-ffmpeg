@@ -6,7 +6,9 @@
 #include "Decode.h"
 
 /*
+
 The RTP header has the following format:
+
 |0                 1                   2                   3    |
 |0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7|
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -39,6 +41,7 @@ low  -> 4001(memory address) version:2
 high -> 4004(memory address) csrc_len:4
 
 local memory: high -> csrc_len:4 -> extension:1 -> padding:1 -> version:2 -> low
+
 */
 
 typedef struct
@@ -71,7 +74,23 @@ typedef struct
     unsigned int   paylen;                    // length of payload in bytes
 }RTP_header;
 
+/*
 
+Summary of NAL unit types and the corresponding packet types
+
+NAL Unit Type | Packet Type | Packet Type Name
+--------------+-------------+---------------------------------
+0             | reserved    |
+1 - 23        | NAL unit    | Single NAL unit packet
+24            | STAP - A    | Single - time aggregation packet
+25            | STAP - B    | Single - time aggregation packet
+26            | MTAP16      | Multi - time aggregation packet
+27            | MTAP24      | Multi - time aggregation packet
+28            | FU - A      | Fragmentation unit
+29            | FU - B      | Fragmentation unit
+30 - 31       | reserved    |
+
+*/
 
 /*
 +---------------+
@@ -121,7 +140,12 @@ typedef struct
 
 typedef struct
 {
-    unsigned char  forbidden_bit;           //! Should always be FALSE  
+    // A value of 0 indicates that the NAL unit
+    // type octet and payload should not contain bit errors or other
+    // syntax violations.A value of 1 indicates that the NAL unit
+    // type octet and payload may contain bit errors or other syntax
+    // violations.
+    unsigned char  forbidden_zero_bit;
     unsigned char  nal_reference_idc;       //! NALU_PRIORITY_xxxx  
     unsigned char  nal_unit_type;           //! NALU_TYPE_xxxx    
     unsigned int   startcodeprefix_len;      //! 前缀字节�? 
