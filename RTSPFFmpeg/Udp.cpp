@@ -1,6 +1,6 @@
 #include "Udp.h"
 
-Udp::Udp(UINT mtu):Socket(mtu)
+Udp::Udp(UINT mtu):CSocket(mtu)
 {
     m_isConnect = FALSE;
 }
@@ -135,7 +135,7 @@ int Udp::Read(BYTE* pBuffer, UINT16 bufferSize, UINT nTimeOut)
     if(!m_isOpen)
         return -1;
 
-    iRead = Socket::Read(pBuffer, bufferSize, nTimeOut);
+    iRead = CSocket::Read(pBuffer, bufferSize, nTimeOut);
 
     return iRead;
 }
@@ -147,7 +147,7 @@ int Udp::Write(PBYTE pBuffer, UINT16 bufferSize, UINT nTimeOut)
     if(!m_isOpen || !m_isConnect)
         return -1;
 
-    iWrite = Socket::Write(pBuffer, bufferSize, nTimeOut);
+    iWrite = CSocket::Write(pBuffer, bufferSize, nTimeOut);
 
     return iWrite;
 }

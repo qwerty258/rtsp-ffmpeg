@@ -22,7 +22,7 @@ int Rtsp::Read_Leave(int len)
 {
 
     char leave[1500];
-    int rs = Socket::Read((BYTE *)leave, len);
+    int rs = CSocket::Read((BYTE *)leave, len);
     if(rs == -1)
         return -1;
 
@@ -31,7 +31,7 @@ int Rtsp::Read_Leave(int len)
     int countT = 0;
     while(tmpLen > 0 && countT < 20)
     {
-        rs = Socket::Read((BYTE*)leave + len - tmpLen, tmpLen);
+        rs = CSocket::Read((BYTE*)leave + len - tmpLen, tmpLen);
         if(rs == -1)
             return -1;
         tmpLen = tmpLen - rs;
@@ -66,7 +66,7 @@ int Rtsp::Read_Start(int& type, short int* size)
 
     unsigned char start[4];
 
-    int iRead = Socket::Read((BYTE *)start, 4);
+    int iRead = CSocket::Read((BYTE *)start, 4);
 
     if(iRead < -1)
         return -1;
@@ -77,7 +77,7 @@ int Rtsp::Read_Start(int& type, short int* size)
 
     while(tmpLen > 0 && countT < 20)
     {
-        iRead = Socket::Read((BYTE*)start + 4 - tmpLen, tmpLen);
+        iRead = CSocket::Read((BYTE*)start + 4 - tmpLen, tmpLen);
         if(iRead == -1)
             return -1;
         tmpLen = tmpLen - iRead;
@@ -143,7 +143,7 @@ int Rtsp::Read_Start(int& type, short int* size)
 int Rtsp::Read_Head()
 {
     char head[12];
-    int iRead = Socket::Read((BYTE *)head, 12);
+    int iRead = CSocket::Read((BYTE *)head, 12);
 
     // 套接字读取错�?
     if(iRead == -1)
@@ -154,7 +154,7 @@ int Rtsp::Read_Head()
 int Rtsp::Read_PlayLoad(short int len)
 {
     char buffer[1500];
-    int iRead = Socket::Read((BYTE*)buffer, len);
+    int iRead = CSocket::Read((BYTE*)buffer, len);
     if(iRead == -1)
         return -1;
 
@@ -164,7 +164,7 @@ int Rtsp::Read_PlayLoad(short int len)
 
     while(tmpLen > 0 && countT < 20)
     {
-        iRead = Socket::Read((BYTE*)buffer + len - tmpLen, tmpLen);
+        iRead = CSocket::Read((BYTE*)buffer + len - tmpLen, tmpLen);
         if(iRead == -1)
             return -1;
         tmpLen = tmpLen - iRead;
@@ -290,7 +290,7 @@ int Rtsp::Read_PlayLoad(short int len)
 int Rtsp::Read_RTCPVideo(int len)
 {
     char buffer[1500];
-    int rs = Socket::Read((BYTE *)buffer, len);
+    int rs = CSocket::Read((BYTE *)buffer, len);
     if(rs == -1)
         return -1;
 
@@ -299,7 +299,7 @@ int Rtsp::Read_RTCPVideo(int len)
     int countT = 0;
     while(tmpLen > 0 && countT < 20)
     {
-        rs = Socket::Read((BYTE*)buffer + len - tmpLen, tmpLen);
+        rs = CSocket::Read((BYTE*)buffer + len - tmpLen, tmpLen);
         if(rs == -1)
             return -1;
         tmpLen = tmpLen - rs;
@@ -415,7 +415,7 @@ int Rtsp::Read(string& str)
 
     do
     {
-        iRead = Socket::Read((BYTE*)&c, 1);
+        iRead = CSocket::Read((BYTE*)&c, 1);
         if(iRead == 1)
         {
             //中心力维的相机会立马发送rtcp包，在这份代码里要去除这个干�?
@@ -424,13 +424,13 @@ int Rtsp::Read(string& str)
                 char size[2];
                 char leave[1500];
 
-                Socket::Read((BYTE *)leave, 1);//丢弃
+                CSocket::Read((BYTE *)leave, 1);//丢弃
 
-                Socket::Read((BYTE *)(size + 1), 1);
-                Socket::Read((BYTE *)size, 1);
+                CSocket::Read((BYTE *)(size + 1), 1);
+                CSocket::Read((BYTE *)size, 1);
                 short int i = 0;
                 i = *((int *)size);
-                Socket::Read((BYTE*)leave, i);//丢弃
+                CSocket::Read((BYTE*)leave, i);//丢弃
                 continue;
             }
 
@@ -442,7 +442,7 @@ int Rtsp::Read(string& str)
     } while(iRead == 1);
 
     if(c == '\r')
-        iRead = Socket::Read((BYTE*)&c, 1);
+        iRead = CSocket::Read((BYTE*)&c, 1);
 
     // 套接字读取错�?
     if(iRead == -1)
@@ -581,6 +581,6 @@ void Rtsp::initSdt()
 int Rtsp::Read_Test()
 {
     char buffer[1000];
-    Socket::Read((BYTE*)buffer, 1000);
+    CSocket::Read((BYTE*)buffer, 1000);
     return 0;
 }

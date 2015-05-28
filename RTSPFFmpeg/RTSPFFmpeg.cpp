@@ -139,7 +139,7 @@ RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration)
         return -1;
     }
 
-    ((CRTSPCLient *)deList[INSTANCE].pt)->nHWAcceleration = acceleration;
+    ((CRTSPCLient*)deList[INSTANCE].pt)->nHWAcceleration = acceleration;
 
     return 0;
 }

@@ -7,7 +7,7 @@
 #include <string>
 using namespace std;
 
-class Udp : public Socket
+class Udp : public CSocket
 {
 public:
 

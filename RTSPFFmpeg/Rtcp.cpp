@@ -1,6 +1,6 @@
 #include "Rtcp.h"
 
-int Rtcp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以后+1
+int Rtcp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以�?1
 
 Rtcp::Rtcp(UINT mtu):Udp(mtu)
 {
@@ -8,11 +8,11 @@ Rtcp::Rtcp(UINT mtu):Udp(mtu)
 	memset(&sdt,0,sizeof(sendRRTo));
 	initS = 0;//确定第一个包是否被填
 	memset(sSeNum,0,2);//最初的包数
-	memset(lSeNum,0,2);//上一次发送RR的包数
+	memset(lSeNum,0,2);//上一次发送RR的包�?
 	memset(eSeNum,0,2);//最后一次的包数
 	allGet = 0;//总接受数
-	perGet = 0;//单次接受数
-	memset(LSR,0,4);//:从reportee端最后收到的Sender Report中NTP timestamp的中32bits.(无则为0) 
+	perGet = 0;//单次接受�?
+	memset(LSR,0,4);//:从reportee端最后收到的Sender Report中NTP timestamp的中32bits.(无则�?) 
 	R_S = 0;
 	jitter = 0;
 }
@@ -91,7 +91,7 @@ void Rtcp::initSdt()
 int Rtcp::Read(BYTE* pBuffer, UINT16 bufferSize,UINT nTimeOut)
 {
 	int iRead =- 1;
-	iRead = Socket::Read(pBuffer, bufferSize, nTimeOut);
+    iRead = CSocket::Read(pBuffer, bufferSize, nTimeOut);
 	return iRead;
 }
 

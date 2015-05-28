@@ -36,7 +36,7 @@ struct tcp_keepalive
 #define RCVALL_ON              1
 #define RCVALL_SOCKETLEVELONLY 2
 
-class Tcp : public Socket
+class Tcp : public CSocket
 {
 public:
     Tcp();

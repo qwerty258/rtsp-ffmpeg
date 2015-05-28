@@ -116,7 +116,7 @@ void Tcp::Close()
 
     m_isConnect = FALSE;
 
-    Socket::Close();
+    CSocket::Close();
 }
 
 
@@ -132,7 +132,7 @@ INT Tcp::ReadLine(string* pStr, UINT strMaxSize, UINT nTimeOut)
 
     while(iRead != -1)
     {
-        iRead = Socket::Read((PBYTE)&c, 1, nTimeOut);
+        iRead = CSocket::Read((PBYTE)&c, 1, nTimeOut);
         if(iRead <= 0)
             continue;
         if(c == '\r' || c == '\n')

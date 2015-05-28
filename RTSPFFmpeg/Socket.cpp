@@ -1,7 +1,6 @@
 #include "Socket.h"
 
-Socket::Socket(UINT mtu)
-    :m_Mtu(mtu)
+CSocket::CSocket(UINT mtu):m_Mtu(mtu)
 {
     WSADATA wsaData;
     WORD wVersionRequested = MAKEWORD(2, 2);
@@ -14,14 +13,14 @@ Socket::Socket(UINT mtu)
     m_isOpen = FALSE;
 }
 
-Socket::~Socket()
+CSocket::~CSocket()
 {
     Close();
 
     WSACleanup();
 }
 
-void Socket::Close()
+void CSocket::Close()
 {
     if(m_Socket)
         closesocket(m_Socket);
@@ -30,7 +29,7 @@ void Socket::Close()
     m_isOpen = FALSE;
 }
 
-int Socket::Read(BYTE* pBuffer, int readSize, UINT nTimeOut)
+int CSocket::Read(BYTE* pBuffer, int readSize, UINT nTimeOut)
 {
     int selectState;
     int recvSize;
@@ -53,7 +52,7 @@ int Socket::Read(BYTE* pBuffer, int readSize, UINT nTimeOut)
     return -1;
 }
 
-int Socket::Write(PBYTE pBuffer, int writeSize, UINT nTimeOut)
+int CSocket::Write(PBYTE pBuffer, int writeSize, UINT nTimeOut)
 {
     int selectState = 0;
     int sendSize = 0;
@@ -76,17 +75,17 @@ int Socket::Write(PBYTE pBuffer, int writeSize, UINT nTimeOut)
     return -1;
 }
 
-SOCKADDR_IN Socket::GetBindAddr()
+SOCKADDR_IN CSocket::GetBindAddr()
 {
     return m_BindAddr;
 }
 
-SOCKADDR_IN Socket::GetConnectAddr()
+SOCKADDR_IN CSocket::GetConnectAddr()
 {
     return m_ConnectAddr;
 }
 
-UINT Socket::GetMTU()
+UINT CSocket::GetMTU()
 {
     return m_Mtu;
 }
@@ -107,7 +106,7 @@ UINT Socket::GetMTU()
 //    SELECT_STATE_ABORTED   command aborted by an other thread
 //    SELECT_STATE_TIMEOUT   the file descriptor is not ready after timeout_usec microsecond
 
-int Socket::Select(int mode, int timeoutUsec)
+int CSocket::Select(int mode, int timeoutUsec)
 {
     fd_set fdset;
     fd_set *readSet, *writeSet;
@@ -140,7 +139,7 @@ int Socket::Select(int mode, int timeoutUsec)
     return SELECT_STATE_TIMEOUT;
 }
 
-void Socket::ReportError()
+void CSocket::ReportError()
 {
     int isErr = WSAGetLastError();
     printf("Socket error is:%d\n", isErr);
@@ -148,7 +147,7 @@ void Socket::ReportError()
     //Close();
 }
 
-BOOL Socket::GetLocalIPList(vector<string>& vIPList)
+BOOL CSocket::GetLocalIPList(vector<string>& vIPList)
 {
     WORD wVersionRequested;
     WSADATA wsaData;

@@ -19,11 +19,11 @@ using namespace std;
 #define SELECT_STATE_ABORTED       2
 #define SELECT_STATE_TIMEOUT       3
 
-class Socket
+class CSocket
 {
 public:
-    Socket(UINT mtu = 1500);
-    virtual ~Socket();
+    CSocket(UINT mtu = 1500);
+    virtual ~CSocket();
 
     virtual void Close();
 
