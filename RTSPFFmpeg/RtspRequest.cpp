@@ -616,13 +616,13 @@ void CRTSPRequest::SendRequest(string requestType, char *name, char *pwd)
     char auth[280];
     Base64_Encode((unsigned char *)tempAuth, (unsigned char *)auth, i);
     for(i = 0; auth[i] > 0; i++);
-    char *auth1 = new char[i + 1];
+    char* auth1 = new char[i + 1];
     memcpy(auth1, auth, i);
     auth[i] = '\0';
     char authfinal[200] = "Authorization: Basic ";
     memcpy(authfinal + 21, auth1, i);
     Write(authfinal);
-    delete auth1;
+    delete[] auth1;
     WriteFields();
     Write("");
 }

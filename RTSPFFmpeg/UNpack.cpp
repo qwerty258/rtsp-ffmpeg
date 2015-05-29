@@ -109,7 +109,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         }
     }
 
-#ifdef _DEBUG
+#ifdef NO_DEBUG
     FILE* p_file_sequence_number = fopen("sequence_number.txt", "ab");
     FILE* p_file_timestamp = fopen("timestamp.txt", "ab");
     char* strBuffer = new char[256];
