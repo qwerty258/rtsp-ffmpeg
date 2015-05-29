@@ -44,7 +44,7 @@ public:
     TDrawLineCallBack funcD;
     TBmpCallBack bmpFunc;
     TDrawRectCallBack fillbmp;
-    YUV420Func YUVFunc;
+    TYUVCallBack YUVFunc;
     TH264CallBack H264Func;
     void * YUVEx;
     bool nHWAcceleration;

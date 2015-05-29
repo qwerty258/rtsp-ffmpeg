@@ -367,8 +367,9 @@ int CRTSPCLient::input_URI(char* URI, char* username, char* password)
         return -1;
     }
 
-    strncpy(m_userName, username, 256);
     strncpy(m_URI, URI, 256);
+    strncpy(m_userName, username, 256);
+    strncpy(m_password, password, 256);
 
     m_bInitURI = true;
 

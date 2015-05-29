@@ -41,7 +41,7 @@ typedef int(_cdecl *fSetFillBmpCallBack)(int INSTANCE, TDrawRectCallBack bmpf);
 typedef int(_cdecl *revoHW)(int INSTANCE);
 
 
-typedef int(_cdecl *YUV420Func)(int instance, char* frameBuff, int framebuffsize, int frameHeight, int frameWidth, int frameID, void* userdata, int frameLost);//YUV420»Øµ÷
+typedef int(_cdecl *YUV420Func)(int instance, char* frameBuff, int framebuffsize, int frameHeight, int frameWidth, int frameID, void* userdata, int frameLost); // YUV420 callback
 
 
 typedef struct

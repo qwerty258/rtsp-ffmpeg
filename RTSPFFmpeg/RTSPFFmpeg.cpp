@@ -145,7 +145,7 @@ RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration)
 }
 
 // set YUV callback function pointer
-RTSPFFMPEG_API int SetYUV420CallBack(int INSTANCE, YUV420Func p_func_YUV420Func, void *buffer)
+RTSPFFMPEG_API int SetYUV420CallBack(int INSTANCE, TYUVCallBack p_func_YUV420Func, void *buffer)
 {
     if(0 > checkINSTANCE(INSTANCE) || NULL == p_func_YUV420Func)
     {
