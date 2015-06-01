@@ -62,24 +62,23 @@ int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, in
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::writeNetBuf(int num, unsigned char *buf, int bufsize)
 {
-    m_temp_p_data_node = new dataNode;
-    if(NULL == m_temp_p_data_node)
+    dataNode* temp_p_data_node = new dataNode;
+    if(NULL == temp_p_data_node)
     {
         MessageBox(NULL, L"new memory error", NULL, MB_OK);
     }
-    memset(m_temp_p_data_node, 0x0, sizeof(dataNode));
+    memset(temp_p_data_node, 0x0, sizeof(dataNode));
 
-    m_temp_p_data_node->data = new unsigned char[bufsize];
-    if(NULL == m_temp_p_data_node->data)
+    temp_p_data_node->data = new unsigned char[bufsize];
+    if(NULL == temp_p_data_node->data)
     {
         MessageBox(NULL, L"new memory error", NULL, MB_OK);
     }
-    memset(m_temp_p_data_node->data, 0x0, bufsize);
 
-    memcpy(m_temp_p_data_node->data, buf, bufsize);
-    m_temp_p_data_node->size = bufsize;
+    memcpy(temp_p_data_node->data, buf, bufsize);
+    temp_p_data_node->size = bufsize;
 
-    m_DataQueue.push(m_temp_p_data_node);
+    m_DataQueue.push(temp_p_data_node);
 
     // get memory usage and decide whether to throw away data
 
@@ -113,24 +112,25 @@ int playH264VideoClass::setReadPosize(int index, int readsize)
 int playH264VideoClass::getNextNetBuf(char *buf, int bufsize)
 {
     int size;
+    dataNode* temp_p_data_node;
     try
     {
         //dataNode* p_temp_data_node;
-        if(m_DataQueue.try_pop(m_temp_p_data_node))
+        if(m_DataQueue.try_pop(temp_p_data_node))
         {
-            if(STOPVIDEO == m_temp_p_data_node->size)
+            if(STOPVIDEO == temp_p_data_node->size)
             {
-                delete[] m_temp_p_data_node->data;
-                delete m_temp_p_data_node;
+                delete[] temp_p_data_node->data;
+                delete temp_p_data_node;
                 return STOPVIDEO;
             }
             else
             {
-                memcpy(buf, m_temp_p_data_node->data, m_temp_p_data_node->size);
-                size = m_temp_p_data_node->size;
+                memcpy(buf, temp_p_data_node->data, temp_p_data_node->size);
+                size = temp_p_data_node->size;
 
-                delete[] m_temp_p_data_node->data;
-                delete m_temp_p_data_node;
+                delete[] temp_p_data_node->data;
+                delete temp_p_data_node;
                 return size;
             }
         }

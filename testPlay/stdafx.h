@@ -60,5 +60,5 @@ typedef int(*lpFuncDisConnect)(int INSTANCE);
 typedef int(*lpFuncInitRtspDLL)(void);
 typedef int(*lpFuncFreeRtspDll)(void);
 typedef int(*lpFuncFreeRtspDLL0000)(int INSTANCE);
-typedef int(*lpFuncRevoHWAcceleration)(int INSTANCE);
+typedef int(*lpFuncRevoHWAcceleration)(int INSTANCE, bool acceleration);
 typedef int(*lpFuncconnect)(int INSTANCE);

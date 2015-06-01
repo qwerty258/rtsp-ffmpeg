@@ -81,6 +81,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base64.h" />
     <ClInclude Include="Decode.h" />
     <ClInclude Include="PlayClient.h" />
     <ClInclude Include="Rtcp.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="VBufferT.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="base64.c" />
     <ClCompile Include="PlayClient.cpp" />
     <ClCompile Include="Rtcp.cpp" />
     <ClCompile Include="Rtp.cpp" />

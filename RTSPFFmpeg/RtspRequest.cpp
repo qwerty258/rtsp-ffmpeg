@@ -1,5 +1,5 @@
 #include "RtspRequest.h"
-
+#include "base64.h"
 #include <algorithm>
 
 CRTSPRequest::CRTSPRequest()
@@ -454,115 +454,6 @@ void CRTSPRequest::SendRequest(string requestType)
     //Write("Authorization: Basic YWRtaW46MTIzNDU=");
     Write("");
 }
-//码表
-unsigned char EncodeIndex[] = {
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-    'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-    'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'};
-unsigned char DecodeIndex[] = {
-    0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-    0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x3E, 0x40, 0x40, 0x40, 0x3F,
-    0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-    0x40, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
-    0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x40, 0x40, 0x40, 0x40, 0x40,
-    0x40, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
-    0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x40, 0x40, 0x40, 0x40, 0x40};
-
-//baseh264解码函数
-inline char GetCharIndex(char c) //内联函数可以省去函数调用过程，提�? 
-{
-    if((c >= 'A') && (c <= 'Z'))
-    {
-        return c - 'A';
-    }
-    else if((c >= 'a') && (c <= 'z'))
-    {
-        return c - 'a' + 26;
-    }
-    else if((c >= '0') && (c <= '9'))
-    {
-        return c - '0' + 52;
-    }
-    else if(c == '+')
-    {
-        return 62;
-    }
-    else if(c == '/')
-    {
-        return 63;
-    }
-    else if(c == '=')
-    {
-        return 0;
-    }
-    return 0;
-}
-int fnBase64Decode(char *lpString, char *lpSrc, int sLen)   //解码函数  
-{
-    static char lpCode[4];
-    register int vLen = 0;
-    if(sLen % 4)        //Base64编码长度必定�?的倍数，包�?='  
-    {
-        lpString[0] = '\0';
-        return -1;
-    }
-    while(sLen > 2)      //不足三个字符，忽�? 
-    {
-        lpCode[0] = GetCharIndex(lpSrc[0]);
-        lpCode[1] = GetCharIndex(lpSrc[1]);
-        lpCode[2] = GetCharIndex(lpSrc[2]);
-        lpCode[3] = GetCharIndex(lpSrc[3]);
-
-        *lpString++ = (lpCode[0] << 2) | (lpCode[1] >> 4);
-        *lpString++ = (lpCode[1] << 4) | (lpCode[2] >> 2);
-        *lpString++ = (lpCode[2] << 6) | (lpCode[3]);
-
-        lpSrc += 4;
-        sLen -= 4;
-        vLen += 3;
-    }
-    return vLen;
-}
-//base64加码函数
-void Base64_Encode(unsigned char* src, unsigned char* dest, int srclen)
-{
-    int sign = 0;
-    for(int i = 0; i != srclen; i++, src++, dest++)
-    {
-        switch(sign)
-        {
-            case 0:
-                *(dest) = EncodeIndex[*src >> 2];
-                break;
-            case 1:
-                *dest = EncodeIndex[((*(src - 1) & 0x03) << 4) | (((*src) & 0xF0) >> 4)];
-                break;
-            case 2:
-                *dest = EncodeIndex[((*(src - 1) & 0x0F) << 2) | ((*(src)& 0xC0) >> 6)];
-                *(++dest) = EncodeIndex[(*(src)& 0x3F)];
-                break;
-        }
-        (sign == 2) ? (sign = 0) : (sign++);
-    }
-    switch(sign)
-    {
-        case 0:
-            break;
-        case 1:
-            *(dest++) = EncodeIndex[((*(src - 1) & 0x03) << 4) | (((*src) & 0xF0) >> 4)];
-            *(dest++) = '=';
-            *(dest++) = '=';
-            break;
-        case 2:
-            *(dest++) = EncodeIndex[((*(src - 1) & 0x0F) << 2) | ((*(src)& 0xC0) >> 6)];
-            *(dest++) = '=';
-            break;
-        default:
-            break;
-    }
-}
 
 void CRTSPRequest::SendRequest(string requestType, char *name, char *pwd)
 {
@@ -606,23 +497,19 @@ void CRTSPRequest::SendRequest(string requestType, char *name, char *pwd)
 
     if(m_Session[0] > 0)
         Write(session);
-    //写入授权
-    char tempAuth[200];
-    strcpy(tempAuth, name);
-    strcat(tempAuth, ":");
-    strcat(tempAuth, pwd);
-    int i;
-    for(i = 0; tempAuth[i] != '\0'; i++);
-    char auth[280];
-    Base64_Encode((unsigned char *)tempAuth, (unsigned char *)auth, i);
-    for(i = 0; auth[i] > 0; i++);
-    char* auth1 = new char[i + 1];
-    memcpy(auth1, auth, i);
-    auth[i] = '\0';
-    char authfinal[200] = "Authorization: Basic ";
-    memcpy(authfinal + 21, auth1, i);
-    Write(authfinal);
-    delete[] auth1;
+
+    // add authorization information
+    char plain_text[200];
+    strcpy(plain_text, name);
+    strcat(plain_text, ":");
+    strcat(plain_text, pwd);
+    char* encoded_text = new char[Base64encode_len(strnlen(plain_text, 200)) + 30];
+    memset(encoded_text, 0x0, Base64encode_len(strnlen(plain_text, 200)) + 30);
+    sprintf(encoded_text, "Authorization: Basic ");
+    Base64encode(encoded_text + 21, plain_text, strnlen(plain_text, 200));
+
+    Write(encoded_text);
+    delete[] encoded_text;
     WriteFields();
     Write("");
 }

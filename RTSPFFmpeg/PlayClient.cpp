@@ -6,7 +6,7 @@
 #include "Rtcp.h"
 #include <Windows.h>
 
-static bool inited = false;
+bool inited = false;
 setH264CallBack p_func_setH264CallBack;
 setYUVCallBack p_func_setYUVCallBack;
 fSetCallBack p_func_SetCallBack;

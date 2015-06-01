@@ -95,7 +95,6 @@ private:
     //LPnetBuf   BuffList[ListCount];
     Concurrency::concurrent_queue<dataNode *> m_DataQueue;
     MEMORYSTATUSEX m_memory_statex;
-    dataNode* m_temp_p_data_node;
 
     double m_total_phys_memory;
     double m_available_phys_memory;
