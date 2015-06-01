@@ -39,48 +39,29 @@ DecodeList deList[MACPL];
 
 int checkINSTANCE(int INSTANCE)
 {
-    try
-    {
-        if((INSTANCE<0) || (INSTANCE>MACPL)) return -1;
-        if(deList == NULL) return -1;
-        if(deList[INSTANCE].pt == NULL) return -1;
-        return 0;
-    }
-    catch(...)
+    if(0 > INSTANCE || MACPL < INSTANCE || NULL == deList || NULL == deList[INSTANCE].pt)
     {
         return -1;
     }
+    return 0;
 }
 
-PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1)//depreated
+PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1) //depreated
 {
-    try
-    {
-        if(f1 == NULL)
-        {
-            return -1;
-        };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->func = f1;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f1 || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->func = f1;
+    return 0;
 }
 
 PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
 {
-
-
-    int ru = checkINSTANCE(num);
-    if(ru < 0) return;
-    if(deList[num].idle != 1) return;
-    if(!m_parser)
+    if(0 > checkINSTANCE(num) || 1 != deList[num].idle || NULL == m_parser)
+    {
         return;
+    }
 
     int pos = 0;
     int64_t pts = AV_NOPTS_VALUE;
@@ -179,9 +160,7 @@ PLAYH264DLL_API int GetIdlevideoINSTANCE()
             if(ru == 0)
             {
                 deList[i].idle = 2;
-                playH264VideoClass *DC = (playH264VideoClass *)deList[i].pt;
-                DC->INSTANCE = i;
-                //DC->func=NULL;
+                deList[i].pt->INSTANCE = i;
                 return i;
             }
         }
@@ -194,12 +173,10 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
     if(debug == 1)
                 WriteLog("C:\\1.log", "InitVideoParam1");
 
-    if(Myparam == NULL)
+    if(NULL == Myparam || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
-    };
-    int ru = checkINSTANCE(INSTANCE);
-    if(ru < 0) return -1;
+    }
     //deList[INSTANCE].idle=2;
 
     deList[INSTANCE].pt->type = type;
@@ -210,14 +187,13 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
     deList[INSTANCE].pt->funcD = NULL;
     deList[INSTANCE].pt->yuvFunc = NULL;
     deList[INSTANCE].pt->H264Func = NULL;
-    ru = deList[INSTANCE].pt->InputParam(Myparam);
 
     //FILE *fp;
     //fp = fopen("c:\\set.txt","a+");
     //fputs("NULL",fp);
     //fclose(fp);
 
-    if(deList[INSTANCE].pt->type == 1)
+    if(1 == deList[INSTANCE].pt->type)
     {
         AVCodec *codec;
         codec = avcodec_find_decoder(CODEC_ID_H264);
@@ -225,7 +201,7 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
         m_pFrame[INSTANCE] = avcodec_alloc_frame();
         m_parser[INSTANCE] = av_parser_init(CODEC_ID_H264);
     }
-    if(deList[INSTANCE].pt->type == 2)
+    if(2 == deList[INSTANCE].pt->type)
     {
         AVCodec *codec;
         codec = avcodec_find_decoder(CODEC_ID_MPEG4);
@@ -236,23 +212,18 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
     deList[INSTANCE].idle = 1;
     if(debug == 1)
             WriteLog("C:\\1.log", "InitVideoParam2");
-    return ru;
+
+    return deList[INSTANCE].pt->InputParam(Myparam);
     //f1=fopen("c:\\buf264.h264","wb");
 }
 
 PLAYH264DLL_API int pauseVideos(int INSTANCE)
 {
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->pauseVideo();
-    }
-    catch(...)
+    if(0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->pauseVideo();
     return 0;
 }
 
@@ -260,68 +231,55 @@ PLAYH264DLL_API int playVideos(int INSTANCE)
 {
     if(debug == 1)
             WriteLog("C:\\1.log", "playVideos");
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->playVideo();
-    }
-    catch(...)
+    if(0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->playVideo();
     return 0;
 }
 
 PLAYH264DLL_API int freeVideos(int INSTANCE)
 {
-    try
-    {
-        if(debug == 1)
-                 WriteLog("C:\\1.log", "freeVideos");
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        if(deList[INSTANCE].idle != 1) return -1;
-        deList[INSTANCE].idle = 2;//ensure locks
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->freeParam();
-        if(debug == 1)
-                  WriteLog("C:\\1.log", "freeVideos1");
-        //m_pCodecContext[INSTANCE]=avcodec_alloc_context3(codec);
-        //   m_pFrame[INSTANCE]=avcodec_alloc_frame();
-        //   m_parser[INSTANCE]=av_parser_init(CODEC_ID_H264);
-        avcodec_close(m_pCodecContext[INSTANCE]);
-        // avcodec_free_context(&m_pCodecContext[INSTANCE]);
-        av_freep(&m_pCodecContext[INSTANCE]);
-        if(debug == 1)
-                  WriteLog("C:\\1.log", "freeVideos2");
-        //av_free(m_pFrame[INSTANCE]->data[0]);
-        av_frame_free(&m_pFrame[INSTANCE]);
-        if(debug == 1)
-                  WriteLog("C:\\1.log", "freeVideos3");
-
-        av_parser_close(m_parser[INSTANCE]);
-        m_pCodecContext[INSTANCE] = NULL;
-        m_pFrame[INSTANCE] = NULL;
-        m_parser[INSTANCE] = NULL;
-        //if(debug == 1)
-        //          WriteLog("C:\\1.log", "freeVideos4");
-
-        deList[INSTANCE].idle = 0;// release lock
-
-        //FILE *fp;
-        //fp = fopen("c:\\free.txt","a+");
-        //fputs("free",fp);
-        //fclose(fp);
-
-        //Sleep(1);
-        return 0;
-    }
-    catch(...)
+    if(debug == 1)
+             WriteLog("C:\\1.log", "freeVideos");
+    if(0 > checkINSTANCE(INSTANCE) || 1 != deList[INSTANCE].idle)
     {
         return -1;
     }
+    deList[INSTANCE].idle = 2;//ensure locks
+    deList[INSTANCE].pt->freeParam();
+    if(debug == 1)
+              WriteLog("C:\\1.log", "freeVideos1");
+    //m_pCodecContext[INSTANCE]=avcodec_alloc_context3(codec);
+    //   m_pFrame[INSTANCE]=avcodec_alloc_frame();
+    //   m_parser[INSTANCE]=av_parser_init(CODEC_ID_H264);
+    avcodec_close(m_pCodecContext[INSTANCE]);
+    // avcodec_free_context(&m_pCodecContext[INSTANCE]);
+    av_freep(&m_pCodecContext[INSTANCE]);
+    if(debug == 1)
+              WriteLog("C:\\1.log", "freeVideos2");
+    //av_free(m_pFrame[INSTANCE]->data[0]);
+    av_frame_free(&m_pFrame[INSTANCE]);
+    if(debug == 1)
+              WriteLog("C:\\1.log", "freeVideos3");
+
+    av_parser_close(m_parser[INSTANCE]);
+    m_pCodecContext[INSTANCE] = NULL;
+    m_pFrame[INSTANCE] = NULL;
+    m_parser[INSTANCE] = NULL;
+    //if(debug == 1)
+    //          WriteLog("C:\\1.log", "freeVideos4");
+
+    deList[INSTANCE].idle = 0;// release lock
+
+    //FILE *fp;
+    //fp = fopen("c:\\free.txt","a+");
+    //fputs("free",fp);
+    //fclose(fp);
+
+    //Sleep(1);
+    return 0;
 }
 
 PLAYH264DLL_API int inputBuf(int INSTANCE, char *buf, int bufsize)
@@ -331,41 +289,26 @@ PLAYH264DLL_API int inputBuf(int INSTANCE, char *buf, int bufsize)
     //fwrite(buf,1,bufsize,fp);
     //fclose(fp);
 
-    try
-    {
-        if(debug == 1)
-           WriteLog("C:\\1.log", "inputBuf");
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        if(deList[INSTANCE].idle != 1) return -1;
-        if(buf == NULL) return -1;
-        if(bufsize < 0) return -1;
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->writeNetBuf(INSTANCE, (unsigned char*)buf, bufsize);
-        if(debug == 1)
-          WriteLog("C:\\1.log", "inputBufEnd");
-        return 0;
-    }
-    catch(...)
+    if(debug == 1)
+       WriteLog("C:\\1.log", "inputBuf");
+    if(0 > checkINSTANCE(INSTANCE) || 1 != deList[INSTANCE].idle || NULL == buf || 0 > bufsize)
     {
         return -1;
     }
+    deList[INSTANCE].pt->writeNetBuf(INSTANCE, (unsigned char*)buf, bufsize);
+    if(debug == 1)
+      WriteLog("C:\\1.log", "inputBufEnd");
+    return 0;
 }
 
 PLAYH264DLL_API int resize(int INSTANCE, int width, int height)
 {
-    try
-    {
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->playResize(width, height);
-        return 0;
-    }
-    catch(...)
+    if(0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->playResize(width, height);
+    return 0;
 }
 
 PLAYH264DLL_API void exitdll()
@@ -386,141 +329,67 @@ PLAYH264DLL_API void exitdll()
 
 PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)//depreated
 {
-
     //FILE *fp;
     //fp = fopen("c:\\set.txt","a+");
     //fputs("set",fp);
     //fclose(fp);
-    try
-    {
-        if(f1 == NULL)
-        {
-            return -1;
-        };
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0) return -1;
-        playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-        DC->funcD = f1;
-        return 0;
-    }
-    catch(...)
+    if(NULL == f1 || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->funcD = f1;
+    return 0;
 }
 
 PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1)//depreated
 {
-    try
-    {
-        if(bmp1 == NULL)
-        {
-            return -1;
-        }
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0)
-        {
-            return -1;
-        }
-        playH264VideoClass *PC = (playH264VideoClass *)deList[INSTANCE].pt;
-        PC->bmpFunc = bmp1;
-        return 0;
-    }
-    catch(...)
+    if(NULL == bmp1 || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
-
+    deList[INSTANCE].pt->bmpFunc = bmp1;
+    return 0;
 }
 
 PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf)//depreated
 {
-    try
-    {
-        if(bmpf == NULL)
-        {
-            return -1;
-        }
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0)
-        {
-            return -1;
-        }
-        playH264VideoClass *PC = (playH264VideoClass *)deList[INSTANCE].pt;
-        PC->fillbmp = bmpf;
-        return 0;
-    }
-    catch(...)
+    if(NULL == bmpf || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->fillbmp = bmpf;
+    return 0;
 }
 
 PLAYH264DLL_API int SetYUVCallBack(int INSTANCE, TYUVCallBack yuvf, void *buffer)
 {
-    try
-    {
-        if(yuvf == NULL)
-        {
-            return -1;
-        }
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0)
-        {
-            return -1;
-        }
-        playH264VideoClass *PC = (playH264VideoClass *)deList[INSTANCE].pt;
-        PC->yuvFunc = yuvf;
-        PC->userBuffer = buffer;
-        return 0;
-    }
-    catch(...)
+    if(NULL == yuvf || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->yuvFunc = yuvf;
+    deList[INSTANCE].pt->userBuffer = buffer;
+    return 0;
 }
 
 PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf)
 {
-    try
-    {
-        if(yuvf == NULL)
-        {
-            return -1;
-        }
-        int ru = checkINSTANCE(INSTANCE);
-        if(ru < 0)
-        {
-            return -1;
-        }
-        playH264VideoClass *PC = (playH264VideoClass *)deList[INSTANCE].pt;
-        PC->H264Func = yuvf;
-        return 0;
-    }
-    catch(...)
+    if(NULL == yuvf || 0 > checkINSTANCE(INSTANCE))
     {
         return -1;
     }
+    deList[INSTANCE].pt->H264Func = yuvf;
+    return 0;
 }
 
 //support hardware acceleration, default is software decode.
 //hardware acceleration support h264 and YUV callback, software decode support all callback functions
 PLAYH264DLL_API int RevoHWAcceleration(int instance)
 {
-    try
-    {
-
-        int ru = checkINSTANCE(instance);
-        if(ru < 0)
-        {
-            return -1;
-        }
-        playH264VideoClass *PC = (playH264VideoClass *)deList[instance].pt;
-        PC->nHWAcceleration = true;
-        return 0;
-    }
-    catch(...)
+    if(0 > checkINSTANCE(instance))
     {
         return -1;
     }
+    deList[instance].pt->nHWAcceleration = true;
+    return 0;
 }
