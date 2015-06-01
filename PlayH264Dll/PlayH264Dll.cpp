@@ -5,9 +5,19 @@
 #include "PlayH264Dll.h"
 #include <fstream>
 #include  "Gunit.h"
-#pragma warning(disable: 4996)  
+#pragma warning(disable: 4996)
 
 using namespace std;
+
+#ifdef _DEBUG // for memory leak check
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif // _DEBUG
 
 #define MACPL 100
 int debug = 0;
@@ -151,6 +161,7 @@ PLAYH264DLL_API int initVideoDLL()
     {
         deList[i].idle = 0;
         deList[i].pt = new playH264VideoClass;
+        deList[i].cs = {0};
     }
 
     return 0;
@@ -191,23 +202,22 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
     if(ru < 0) return -1;
     //deList[INSTANCE].idle=2;
 
-    playH264VideoClass *DC = (playH264VideoClass *)deList[INSTANCE].pt;
-    DC->type = type;
-    DC->nHWAcceleration = false;
-    DC->bmpFunc = NULL;
-    DC->fillbmp = NULL;
-    DC->func = NULL;
-    DC->funcD = NULL;
-    DC->yuvFunc = NULL;
-    DC->H264Func = NULL;
-    ru = DC->InputParam(Myparam);
+    deList[INSTANCE].pt->type = type;
+    deList[INSTANCE].pt->nHWAcceleration = false;
+    deList[INSTANCE].pt->bmpFunc = NULL;
+    deList[INSTANCE].pt->fillbmp = NULL;
+    deList[INSTANCE].pt->func = NULL;
+    deList[INSTANCE].pt->funcD = NULL;
+    deList[INSTANCE].pt->yuvFunc = NULL;
+    deList[INSTANCE].pt->H264Func = NULL;
+    ru = deList[INSTANCE].pt->InputParam(Myparam);
 
     //FILE *fp;
     //fp = fopen("c:\\set.txt","a+");
     //fputs("NULL",fp);
     //fclose(fp);
 
-    if(DC->type == 1)
+    if(deList[INSTANCE].pt->type == 1)
     {
         AVCodec *codec;
         codec = avcodec_find_decoder(CODEC_ID_H264);
@@ -215,7 +225,7 @@ PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type
         m_pFrame[INSTANCE] = avcodec_alloc_frame();
         m_parser[INSTANCE] = av_parser_init(CODEC_ID_H264);
     }
-    if(DC->type == 2)
+    if(deList[INSTANCE].pt->type == 2)
     {
         AVCodec *codec;
         codec = avcodec_find_decoder(CODEC_ID_MPEG4);
@@ -362,8 +372,15 @@ PLAYH264DLL_API void exitdll()
 {
     for(int i = 0; i < MACPL; i++)
     {
-        deList[i].pt->paramUser.stopPlay = -2;
-        deList[i].pt->~playH264VideoClass();
+        if(0 != deList[i].idle)
+        {
+            deList[i].idle = 0;
+        }
+        if(NULL != deList[i].pt)
+        {
+            deList[i].pt->paramUser.stopPlay = -2;
+            delete deList[i].pt;
+        }
     }
 }
 

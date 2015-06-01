@@ -10,6 +10,17 @@
 #include "stdafx.h"
 #include "windows.h"
 #include "va.h"
+
+#ifdef _DEBUG // for memory leak check
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif // _DEBUG
+
 //#define log_va
 extern HWND gPlayWnd;
 enum PixelFormat DxGetFormat(AVCodecContext *avctx,

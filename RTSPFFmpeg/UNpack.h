@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifdef _DEBUG
 #include <cstdio>
 #endif
@@ -163,13 +163,13 @@ typedef struct
     // type octet and payload may contain bit errors or other syntax
     // violations.
     unsigned char  forbidden_zero_bit;
-    unsigned char  NAL_reference_idc;       //! NALU_PRIORITY_xxxx  
-    unsigned char  NAL_unit_type;           //! NALU_TYPE_xxxx    
-    unsigned int   startcodeprefix_len;      //! 鍓嶇紑瀛楄妭鏁? 
-    unsigned int   len;                      //! 鍖呭惈nal 澶寸殑nal 闀垮害锛屼粠绗竴涓?0000001鍒颁笅涓€涓?00000001鐨勯暱搴? 
-    unsigned int   max_size;                 //! 鍋氬涓€涓猲al 鐨勯暱搴? 
-    unsigned char* buf;                   //! 鍖呭惈nal 澶寸殑nal 鏁版嵁  
-    unsigned int   lost_packets;             //! 棰勭暀  
+    unsigned char  NAL_reference_idc;   // NALU_PRIORITY_xxxx  
+    unsigned char  NAL_unit_type;       // NALU_TYPE_xxxx    
+    unsigned int   startcodeprefix_len; // 閸撳秶绱戠€涙濡弫? 
+    unsigned int   len;                 // 閸栧懎鎯坣al 婢跺娈憂al 闂€鍨閿涘奔绮犵粭顑跨娑?0000001閸掗绗呮稉鈧稉?00000001閻ㄥ嫰鏆辨惔? 
+    unsigned int   max_size;            // 閸嬫艾顦挎稉鈧稉鐚瞐l 閻ㄥ嫰鏆辨惔? 
+    unsigned char* buf;                 // 閸栧懎鎯坣al 婢跺娈憂al 閺佺増宓? 
+    unsigned int   lost_packets;        // 妫板嫮鏆€  
 } NALU_t;
 
 

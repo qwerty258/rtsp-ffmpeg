@@ -1,4 +1,5 @@
-﻿#include <winsock2.h>
+﻿#pragma once
+#include <winsock2.h>
 #include <string.h>
 #include <cstdlib>
 #include <cstdio>
@@ -93,6 +94,11 @@ public:
 private:
     //LPnetBuf   BuffList[ListCount];
     Concurrency::concurrent_queue<dataNode *> m_DataQueue;
+    MEMORYSTATUSEX m_memory_statex;
+    dataNode* m_temp_p_data_node;
+
+    double m_total_phys_memory;
+    double m_available_phys_memory;
 
 
     unsigned long int readNetBufIndex;
@@ -132,9 +138,18 @@ public:
 
     BITMAPINFOHEADER bmpinfo;
     int INSTANCE;
-    void abc() { writeNetBufIndex++; }
-    unsigned long int getW() { return writeNetBufIndex; }
-    unsigned long int getR() { return readNetBufIndex; }
+    void abc()
+    {
+        writeNetBufIndex++;
+    }
+    unsigned long int getW()
+    {
+        return writeNetBufIndex;
+    }
+    unsigned long int getR()
+    {
+        return readNetBufIndex;
+    }
 public:
     int type;//code type: 1,h264,2,mpeg,3,FLV
     void *userBuffer;

@@ -173,7 +173,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         poutfile[1] = 0x00;
         poutfile[2] = 0x00;
         poutfile[3] = 0x01;
-        //写进起始字节0x00000001  
+        // 0x00000001 for framing
         total_bytes += 4;
         memcpy(p_RTP_header->payload, &RTP_package_buffer[13], RTP_package_length - 13);
         p_RTP_header->paylen = RTP_package_length - 13;

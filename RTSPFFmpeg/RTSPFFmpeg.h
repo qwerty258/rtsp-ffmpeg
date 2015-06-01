@@ -74,7 +74,7 @@ extern "C" {
     //获取H264数据
     RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3);
     //设置是否取消硬解
-    RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE);
+    RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration = false);
 
 #ifdef __cplusplus
 }

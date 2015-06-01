@@ -11,6 +11,16 @@ using namespace std;
 #pragma comment(lib,"ddraw.lib")
 #pragma warning(disable: 4996)
 
+#ifdef _DEBUG // for memory leak check
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif // _DEBUG
+
 #define PICMAX (500000) //每一帧图片数据最大值
 int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
 {
@@ -52,14 +62,38 @@ int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, in
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::writeNetBuf(int num, unsigned char *buf, int bufsize)
 {
+    m_temp_p_data_node = new dataNode;
+    if(NULL == m_temp_p_data_node)
+    {
+        MessageBox(NULL, L"new memory error", NULL, MB_OK);
+    }
+    memset(m_temp_p_data_node, 0x0, sizeof(dataNode));
 
-    unsigned char *data = new unsigned char[bufsize];
-    memcpy(data, buf, bufsize);
-    dataNode * m_dataNode = new dataNode;
-    m_dataNode->size = bufsize;
-    m_dataNode->data = data;
+    m_temp_p_data_node->data = new unsigned char[bufsize];
+    if(NULL == m_temp_p_data_node->data)
+    {
+        MessageBox(NULL, L"new memory error", NULL, MB_OK);
+    }
+    memset(m_temp_p_data_node->data, 0x0, bufsize);
 
-    m_DataQueue.push(m_dataNode);
+    memcpy(m_temp_p_data_node->data, buf, bufsize);
+    m_temp_p_data_node->size = bufsize;
+
+    m_DataQueue.push(m_temp_p_data_node);
+
+    // get memory usage and decide whether to throw away data
+
+    //GlobalMemoryStatusEx(&m_memory_statex);
+
+    //m_total_phys_memory = m_memory_statex.ullTotalPhys;
+    //m_available_phys_memory = m_memory_statex.ullAvailPhys;
+    //if(m_available_phys_memory / m_total_phys_memory < 0.1)
+    //{
+    //    m_DataQueue.try_pop(m_temp_p_data_node);
+    //    delete[] m_temp_p_data_node->data;
+    //    delete m_temp_p_data_node;
+    //    m_temp_p_data_node = NULL;
+    //}
 
     return 0;
 }
@@ -78,28 +112,32 @@ int playH264VideoClass::setReadPosize(int index, int readsize)
 }
 int playH264VideoClass::getNextNetBuf(char *buf, int bufsize)
 {
+    int size;
     try
     {
-        dataNode *m_dataNode;
-        int size;
-        if(m_DataQueue.try_pop(m_dataNode))
+        //dataNode* p_temp_data_node;
+        if(m_DataQueue.try_pop(m_temp_p_data_node))
         {
-            if(m_dataNode->size == STOPVIDEO)
+            if(STOPVIDEO == m_temp_p_data_node->size)
             {
-                delete m_dataNode;
+                delete[] m_temp_p_data_node->data;
+                delete m_temp_p_data_node;
                 return STOPVIDEO;
             }
-            memcpy(buf, m_dataNode->data, m_dataNode->size);
-            size = m_dataNode->size;
+            else
+            {
+                memcpy(buf, m_temp_p_data_node->data, m_temp_p_data_node->size);
+                size = m_temp_p_data_node->size;
 
-            delete m_dataNode->data;
-            delete m_dataNode;
-
-            return size;
+                delete[] m_temp_p_data_node->data;
+                delete m_temp_p_data_node;
+                return size;
+            }
         }
-        return -1;
-
-
+        else
+        {
+            return -1;
+        }
     }
     catch(...)
     {
@@ -208,6 +246,7 @@ playH264VideoClass::playH264VideoClass()
     writeNetBufIndex = 0;
     bpp = 24;//24色
     //writewait=CreateEvent(NULL,TRUE,FALSE,NULL);
+    nHWAcceleration = false;
 }
 
 playH264VideoClass::~playH264VideoClass()
@@ -218,7 +257,6 @@ playH264VideoClass::~playH264VideoClass()
     //	 //BuffList[i]=NULL;
     //	 //CloseHandle(hMutex);
     //}
-
 }
 //void WriteLog(char * LogFileName,int writeIndex,int readIndex)
 //{
@@ -294,7 +332,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     char *netBuf = new char[PICMAX];
     char *bmpBuf = new char[1920 * 1080 * 3];
 
-    if((netBuf == NULL) || (bmpBuf = NULL)) return -1;
+    if(NULL == netBuf || NULL == bmpBuf)
+    {
+        return -1;
+    }
 
     HWND hd = VideoClass->paramUser.playHandle;
 
@@ -555,7 +596,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         av_freep(c);
         //avcodec_free_context(&c);
         delete[] netBuf;
-        //delete[] bmpBuf;
+        delete[] bmpBuf;
         VideoClass->dataQueueClean();
 
     }

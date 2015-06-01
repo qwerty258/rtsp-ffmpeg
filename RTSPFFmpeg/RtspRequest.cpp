@@ -300,7 +300,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
     describeSize = Tcp::Read(pDescribeBuffer, describeSize);
     if(describeSize != describeSize)
     {
-        delete[]pDescribeBuffer;
+        delete[] pDescribeBuffer;
         return FALSE;
     }
     pDescribeBuffer[describeSize] = '\0';
@@ -404,7 +404,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
         }
     }
 
-    delete[]pDescribeBuffer;
+    delete[] pDescribeBuffer;
     return TRUE;
 }
 
