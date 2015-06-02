@@ -30,7 +30,6 @@ extern "C" {
 #define STOPVIDEO -2
 #define PAUSEVIDEO -1
 #define ErrorNoMemory -2
-#define CLASSDLL_API __declspec(dllexport)
 #define BUFH264 1
 #define BUFBMP 2
 typedef struct SwsContext SwScaleContext;    //just for convenience

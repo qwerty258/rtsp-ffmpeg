@@ -62,37 +62,37 @@ int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, in
 ///////////////////////////////////////////////////////////////////
 int playH264VideoClass::writeNetBuf(int num, unsigned char *buf, int bufsize)
 {
-    dataNode* temp_p_data_node = new dataNode;
-    if(NULL == temp_p_data_node)
+    dataNode* p_data_node_temp = new dataNode;
+    if(NULL == p_data_node_temp)
     {
         MessageBox(NULL, L"new memory error", NULL, MB_OK);
     }
-    memset(temp_p_data_node, 0x0, sizeof(dataNode));
+    memset(p_data_node_temp, 0x0, sizeof(dataNode));
 
-    temp_p_data_node->data = new unsigned char[bufsize];
-    if(NULL == temp_p_data_node->data)
+    p_data_node_temp->data = new unsigned char[bufsize];
+    if(NULL == p_data_node_temp->data)
     {
         MessageBox(NULL, L"new memory error", NULL, MB_OK);
     }
 
-    memcpy(temp_p_data_node->data, buf, bufsize);
-    temp_p_data_node->size = bufsize;
+    memcpy(p_data_node_temp->data, buf, bufsize);
+    p_data_node_temp->size = bufsize;
 
-    m_DataQueue.push(temp_p_data_node);
+    m_DataQueue.push(p_data_node_temp);
 
     // get memory usage and decide whether to throw away data
 
-    //GlobalMemoryStatusEx(&m_memory_statex);
+    GlobalMemoryStatusEx(&m_memory_statex);
 
-    //m_total_phys_memory = m_memory_statex.ullTotalPhys;
-    //m_available_phys_memory = m_memory_statex.ullAvailPhys;
-    //if(m_available_phys_memory / m_total_phys_memory < 0.1)
-    //{
-    //    m_DataQueue.try_pop(m_temp_p_data_node);
-    //    delete[] m_temp_p_data_node->data;
-    //    delete m_temp_p_data_node;
-    //    m_temp_p_data_node = NULL;
-    //}
+    m_total_phys_memory = m_memory_statex.ullTotalPhys;
+    m_available_phys_memory = m_memory_statex.ullAvailPhys;
+    if(m_available_phys_memory / m_total_phys_memory < 0.1)
+    {
+        m_DataQueue.try_pop(p_data_node_temp);
+        delete[] p_data_node_temp->data;
+        delete p_data_node_temp;
+        p_data_node_temp = NULL;
+    }
 
     return 0;
 }
@@ -112,25 +112,25 @@ int playH264VideoClass::setReadPosize(int index, int readsize)
 int playH264VideoClass::getNextNetBuf(char *buf, int bufsize)
 {
     int size;
-    dataNode* temp_p_data_node;
+    dataNode* p_data_node_temp;
     try
     {
         //dataNode* p_temp_data_node;
-        if(m_DataQueue.try_pop(temp_p_data_node))
+        if(m_DataQueue.try_pop(p_data_node_temp))
         {
-            if(STOPVIDEO == temp_p_data_node->size)
+            if(STOPVIDEO == p_data_node_temp->size)
             {
-                delete[] temp_p_data_node->data;
-                delete temp_p_data_node;
+                delete[] p_data_node_temp->data;
+                delete p_data_node_temp;
                 return STOPVIDEO;
             }
             else
             {
-                memcpy(buf, temp_p_data_node->data, temp_p_data_node->size);
-                size = temp_p_data_node->size;
+                memcpy(buf, p_data_node_temp->data, p_data_node_temp->size);
+                size = p_data_node_temp->size;
 
-                delete[] temp_p_data_node->data;
-                delete temp_p_data_node;
+                delete[] p_data_node_temp->data;
+                delete p_data_node_temp;
                 return size;
             }
         }
@@ -379,13 +379,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(bufsize == STOPVIDEO)
         {
-            Sleep(1);
             break;
         }
         if(bufsize <= 0)
         {
-
-            Sleep(1);
             continue;
         }
 
@@ -417,7 +414,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
             if(len < 0)
             {
-                //Sleep(1);
                 break;
             }
 
@@ -446,15 +442,13 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                     pFrameYUV->width = picture->width;
                     pFrameYUV->height = picture->height;
                     int numBytes = avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height);
-                    avpicture_fill((AVPicture *)pFrameYUV, (uint8_t *)av_malloc(numBytes*sizeof(uint8_t)), PIX_FMT_YUV420P, picture->width, picture->height);
+                    avpicture_fill((AVPicture *)pFrameYUV, (uint8_t *)av_malloc(numBytes), PIX_FMT_YUV420P, picture->width, picture->height);
                 }
                 bGPlayWnd = 0;//打开开关
                 fir = false;
             }
             if(!c->opaque&&VideoClass->nHWAcceleration)//p_va失败
             {
-
-                Sleep(1);
                 continue;
             }
             //h264输出
@@ -485,7 +479,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                     memcpy(data + c->width*c->height / 4 * 5 + i*c->width / 2, pFrameYUV->data[1] + i*pFrameYUV->linesize[1], c->width / 2);
                 }
                 VideoClass->yuvFunc(data, c->height, c->width, VideoClass->userBuffer);
-                delete data;
+                delete[] data;
             }
             if(VideoClass->yuvFunc != NULL&&!VideoClass->nHWAcceleration)
             {
@@ -503,7 +497,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                     memcpy(data + c->width*c->height / 4 * 5 + i*c->width / 2, picture->data[1] + i*picture->linesize[1], 640/*c->width/2*/);
                 }
                 VideoClass->yuvFunc(data, c->width, c->height, VideoClass->userBuffer);
-                delete data;
+                delete[] data;
             }
 
             if(fir&&!VideoClass->nHWAcceleration)
@@ -561,8 +555,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
                 VideoClass->playBMPbuf(picRGB, c->width, c->height, VideoClass->paramUser.playWidth, VideoClass->paramUser.playHeight, m_hdc, hmemDC, (uint8_t *)bmpBuf, hd);
             }
-
-
         }
         catch(...)
         {
@@ -615,11 +607,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
 void playH264VideoClass::dataQueueClean()
 {
-    dataNode *m_dataNode;
+    dataNode* p_data_node_temp;
 
-    while(m_DataQueue.try_pop(m_dataNode))
+    while(m_DataQueue.try_pop(p_data_node_temp))
     {
-        delete m_dataNode->data;
-        delete m_dataNode;
+        if(NULL != p_data_node_temp->data)
+        {
+            delete[] p_data_node_temp->data;
+        }
+        if(NULL != p_data_node_temp)
+        {
+            delete p_data_node_temp;
+        }
     }
 }

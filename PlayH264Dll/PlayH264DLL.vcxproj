@@ -46,8 +46,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\ffmpeg-2.2.2-win32-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\ffmpeg-2.2.2-win32-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\ffmpeg-2.5.2-win32-dev\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\ffmpeg-2.5.2-win32-dev\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
