@@ -47,15 +47,13 @@ enum PixelFormat DxGetFormat(AVCodecContext *avctx,
         for(i = 0; pi_fmt[i] != PIX_FMT_NONE; i++)
         {
             const char *name = av_get_pix_fmt_name(pi_fmt[i]);
-            av_log(NULL, AV_LOG_DEBUG, "Available decoder output format %d (%s)",
-                     pi_fmt[i], name ? name : "unknown");
+            av_log(NULL, AV_LOG_DEBUG, "Available decoder output format %d (%s)", pi_fmt[i], name ? name : "unknown");
             if(p_va->pix_fmt != pi_fmt[i])
                 continue;
 
             /* We try to call dxva_Setup when possible to detect errors when
              * possible (later is too late) */
-            if(avctx->width > 0 && avctx->height > 0
-             && dxva_Setup(p_va, &avctx->hwaccel_context, avctx))
+            if(avctx->width > 0 && avctx->height > 0 && dxva_Setup(p_va, &avctx->hwaccel_context, avctx))
             {
                 av_log(NULL, AV_LOG_ERROR, "acceleration setup failure");
 #ifdef log_va
@@ -113,8 +111,7 @@ enum PixelFormat DxGetFormat(AVCodecContext *avctx,
  * It is used for direct rendering as well as to get the right PTS for each
  * decoded picture (even in indirect rendering mode).
  *****************************************************************************/
-int DxGetFrameBuf(struct AVCodecContext *avctx,
-                               AVFrame *pic)
+int DxGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic)
 {
     dxva_t *p_va = (dxva_t *)avctx->opaque;
     //picture_t *p_pic;
@@ -157,10 +154,8 @@ int  DxReGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic)
     return avcodec_default_reget_buffer(avctx, pic);
 }
 
-void DxReleaseFrameBuf(struct AVCodecContext *avctx,
-                                    AVFrame *pic)
+void DxReleaseFrameBuf(struct AVCodecContext *avctx, AVFrame *pic)
 {
-
     dxva_t *p_va = (dxva_t *)avctx->opaque;
     int i;
 

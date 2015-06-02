@@ -572,16 +572,22 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     try
     {
         if(picture->height >= 1080)
-          availableGPU[currentGPU] -= 300;
-
+        {
+            availableGPU[currentGPU] -= 300;
+        }
         else if(picture->height >= 960)
-          availableGPU[currentGPU] -= 250;
-
+        {
+            availableGPU[currentGPU] -= 250;
+        }
         else if(picture->height >= 720)
-          availableGPU[currentGPU] -= 140;
-
+        {
+            availableGPU[currentGPU] -= 140;
+        }
         else
+        {
             availableGPU[currentGPU] -= 60;
+        }
+
         //av_free(&picture->data[0]);
         av_frame_free(&picture);
         //av_free(&picRGB->data[0]);
