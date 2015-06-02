@@ -588,9 +588,7 @@ error:
 }
 /* */
 
-static void CopyPlane(uint8_t *dst, size_t dst_pitch,
-                      const uint8_t *src, size_t src_pitch,
-                      unsigned width, unsigned height)
+static void CopyPlane(uint8_t *dst, size_t dst_pitch, const uint8_t *src, size_t src_pitch, unsigned width, unsigned height)
 {
     unsigned y;
     for(y = 0; y < height; y++)
@@ -601,10 +599,7 @@ static void CopyPlane(uint8_t *dst, size_t dst_pitch,
     }
 }
 
-static void SplitPlanes(uint8_t *dstu, size_t dstu_pitch,
-                        uint8_t *dstv, size_t dstv_pitch,
-                        const uint8_t *src, size_t src_pitch,
-                        unsigned width, unsigned height)
+static void SplitPlanes(uint8_t *dstu, size_t dstu_pitch, uint8_t *dstv, size_t dstv_pitch, const uint8_t *src, size_t src_pitch, unsigned width, unsigned height)
 {
     unsigned x, y;
     for(y = 0; y < height; y++)
@@ -620,8 +615,7 @@ static void SplitPlanes(uint8_t *dstu, size_t dstu_pitch,
     }
 }
 
-static void CopyFromNv12(AVFrame *dst, uint8_t *src[2], size_t src_pitch[2],
-                  unsigned width, unsigned height)
+static void CopyFromNv12(AVFrame *dst, uint8_t *src[2], size_t src_pitch[2], unsigned width, unsigned height)
 {
     CopyPlane(dst->data[0], dst->linesize[0],
               src[0], src_pitch[0],
@@ -632,8 +626,7 @@ static void CopyFromNv12(AVFrame *dst, uint8_t *src[2], size_t src_pitch[2],
                 width / 2, height / 2);
 }
 
-static void CopyFromYv12(AVFrame *dst, uint8_t *src[3], size_t src_pitch[3],
-                  unsigned width, unsigned height)
+static void CopyFromYv12(AVFrame *dst, uint8_t *src[3], size_t src_pitch[3], unsigned width, unsigned height)
 {
     CopyPlane(dst->data[0], dst->linesize[0],
               src[0], src_pitch[0], width, height);
@@ -861,14 +854,10 @@ static int D3dCreateDevice(va_dxva2_t *va)
     fclose(fp);
 #endif
 
-    if(FAILED(IDirect3D9_CreateDevice(d3dobj, /*D3DADAPTER_DEFAULT*/ currentGPU,
-                                        D3DDEVTYPE_HAL, gPlayWnd,
-                                       D3DCREATE_SOFTWARE_VERTEXPROCESSING |
-                                       D3DCREATE_MULTITHREADED,
-                                       d3dpp, &d3ddev)))
+    if(FAILED(IDirect3D9_CreateDevice(d3dobj, /*D3DADAPTER_DEFAULT*/ currentGPU, D3DDEVTYPE_HAL, gPlayWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, d3dpp, &d3ddev)))
     {
 #ifdef log_GPU
-        int hr = IDirect3D9_CreateDevice(d3dobj, /*D3DADAPTER_DEFAULT*/ currentGPU,D3DDEVTYPE_HAL, gPlayWnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING |
+        int hr = IDirect3D9_CreateDevice(d3dobj, /*D3DADAPTER_DEFAULT*/ currentGPU, D3DDEVTYPE_HAL, gPlayWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING |
                                            D3DCREATE_MULTITHREADED,
                                            d3dpp, &d3ddev);
         char cHr[20];
@@ -884,8 +873,8 @@ static int D3dCreateDevice(va_dxva2_t *va)
     }
     va->d3ddev = d3ddev;
 #ifdef log_GPU
-    FILE *fp1 = fopen(a,"a+");
-    fputs("创建device成功\n",fp1);
+    FILE *fp1 = fopen(a, "a+");
+    fputs("创建device成功\n", fp1);
     fclose(fp1);
 #endif
 
@@ -948,9 +937,7 @@ static char *DxDescribe(va_dxva2_t *va)
         }
     }
 
-    if(sprintf(description, "DXVA2 (%.*s, vendor %lu(%s), device %lu, revision %lu)",
-                 sizeof(id->Description), id->Description,
-                 id->VendorId, vendor, id->DeviceId, id->Revision) < 0)
+    if(sprintf(description, "DXVA2 (%.*s, vendor %lu(%s), device %lu, revision %lu)", sizeof(id->Description), id->Description, id->VendorId, vendor, id->DeviceId, id->Revision) < 0)
         return NULL;
     return description;
 }
@@ -963,10 +950,8 @@ static int D3dCreateDeviceManager(va_dxva2_t *va)
     UINT token;
     IDirect3DDeviceManager9 *devmng;
     HRESULT hr;
-    typedef HRESULT(WINAPI *CreateDeviceManager9)(UINT *pResetToken,
-                                           IDirect3DDeviceManager9 **);
-    CreateDeviceManager9 CreateDeviceManagerFunc =
-      (CreateDeviceManager9)GetProcAddress(va->hdxva2_dll, "DXVA2CreateDirect3DDeviceManager9");
+    typedef HRESULT(WINAPI *CreateDeviceManager9)(UINT *pResetToken, IDirect3DDeviceManager9 **);
+    CreateDeviceManager9 CreateDeviceManagerFunc = (CreateDeviceManager9)GetProcAddress(va->hdxva2_dll, "DXVA2CreateDirect3DDeviceManager9");
 
     if(!CreateDeviceManagerFunc)
     {
@@ -1013,11 +998,8 @@ static int DxCreateVideoService(va_dxva2_t *va)
     HRESULT hr;
 
     HANDLE device;
-    typedef HRESULT(WINAPI *CreateVideoService)(IDirect3DDevice9 *,
-                                         REFIID riid,
-                                         void **ppService);
-    CreateVideoService CreateVideoServiceFunc =
-      (CreateVideoService)GetProcAddress(va->hdxva2_dll, "DXVA2CreateVideoService");
+    typedef HRESULT(WINAPI *CreateVideoService)(IDirect3DDevice9 *, REFIID riid, void **ppService);
+    CreateVideoService CreateVideoServiceFunc = (CreateVideoService)GetProcAddress(va->hdxva2_dll, "DXVA2CreateVideoService");
 
     if(!CreateVideoServiceFunc)
     {
@@ -1036,9 +1018,7 @@ static int DxCreateVideoService(va_dxva2_t *va)
     va->device = device;
 
 
-    hr = IDirect3DDeviceManager9_GetVideoService(va->devmng, device,
-                                                 IID_IDirectXVideoDecoderService,
-                                                 (void**)&vs);
+    hr = IDirect3DDeviceManager9_GetVideoService(va->devmng, device, IID_IDirectXVideoDecoderService, (void**)&vs);
     if(FAILED(hr))
     {
         av_log(NULL, AV_LOG_ERROR, "GetVideoService failed");
@@ -1071,9 +1051,7 @@ static int DxFindVideoServiceConversion(va_dxva2_t *va, GUID *input, D3DFORMAT *
     UINT  output_count = 0;
     D3DFORMAT *output_list;
     unsigned i, j;
-    if(FAILED(IDirectXVideoDecoderService_GetDecoderDeviceGuids(va->vs,
-                                                                 &input_count,
-                                                                 &input_list)))
+    if(FAILED(IDirectXVideoDecoderService_GetDecoderDeviceGuids(va->vs, &input_count, &input_list)))
     {
         av_log(NULL, AV_LOG_ERROR, "IDirectXVideoDecoderService_GetDecoderDeviceGuids failed");
         return -1;
@@ -1116,9 +1094,7 @@ static int DxFindVideoServiceConversion(va_dxva2_t *va, GUID *input, D3DFORMAT *
         av_log(NULL, AV_LOG_DEBUG, "Trying to use '%s' as input", mode->name);
 
         output_list = NULL;
-        if(FAILED(IDirectXVideoDecoderService_GetDecoderRenderTargets(va->vs, *mode->guid,
-                                                                       &output_count,
-                                                                       &output_list)))
+        if(FAILED(IDirectXVideoDecoderService_GetDecoderRenderTargets(va->vs, *mode->guid, &output_count, &output_list)))
         {
             av_log(NULL, AV_LOG_ERROR, "IDirectXVideoDecoderService_GetDecoderRenderTargets failed");
             continue;
@@ -1171,8 +1147,7 @@ static int DxFindVideoServiceConversion(va_dxva2_t *va, GUID *input, D3DFORMAT *
 /**
  * It creates a DXVA2 decoder using the given video format
  */
-static int DxCreateVideoDecoder(va_dxva2_t *va,
-                                int codec_id, const AVCodecContext *avctx)
+static int DxCreateVideoDecoder(va_dxva2_t *va, int codec_id, const AVCodecContext *avctx)
 {
     unsigned i;
     DXVA2_VideoDesc dsc;
@@ -1202,16 +1177,7 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
             break;
     }
 
-    if(FAILED(IDirectXVideoDecoderService_CreateSurface(va->vs,
-                                                         va->surface_width,
-                                                         va->surface_height,
-                                                         va->surface_count - 1,
-                                                         va->render,
-                                                         D3DPOOL_DEFAULT,
-                                                         0,
-                                                         DXVA2_VideoDecoderRenderTarget,
-                                                         surface_list,
-                                                         NULL)))
+    if(FAILED(IDirectXVideoDecoderService_CreateSurface(va->vs, va->surface_width, va->surface_height, va->surface_count - 1, va->render, D3DPOOL_DEFAULT, 0, DXVA2_VideoDecoderRenderTarget, surface_list, NULL)))
     {
 #ifdef log_GPU
         char cHr[20];
@@ -1246,8 +1212,7 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
         surface->refcount = 0;
         surface->order = 0;
     }
-    av_log(NULL, AV_LOG_DEBUG, "IDirectXVideoAccelerationService_CreateSurface succeed with %d surfaces (%dx%d)",
-            va->surface_count, avctx->width, avctx->height);
+    av_log(NULL, AV_LOG_DEBUG, "IDirectXVideoAccelerationService_CreateSurface succeed with %d surfaces (%dx%d)", va->surface_count, avctx->width, avctx->height);
 
     /* */
 
@@ -1284,18 +1249,13 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
 
     /* List all configurations available for the decoder */
 
-    if(FAILED(IDirectXVideoDecoderService_GetDecoderConfigurations(va->vs,
-                                                                    va->input,
-                                                                    &dsc,
-                                                                    NULL,
-                                                                    &cfg_count,
-                                                                    &cfg_list)))
+    if(FAILED(IDirectXVideoDecoderService_GetDecoderConfigurations(va->vs, va->input, &dsc, NULL, &cfg_count, &cfg_list)))
     {
 #ifdef log_GPU
         char a[10] = "c:\\";
         itoa((int)gPlayWnd, a + 3, 10);
-        FILE *fp = fopen(a,"a+");
-        fputs("IDirectXVideoDecoderService_GetDecoderConfigurations failed\n",fp);
+        FILE *fp = fopen(a, "a+");
+        fputs("IDirectXVideoDecoderService_GetDecoderConfigurations failed\n", fp);
         fclose(fp);
 #endif
         av_log(NULL, AV_LOG_ERROR, "IDirectXVideoDecoderService_GetDecoderConfigurations failed");
@@ -1310,8 +1270,7 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
         const DXVA2_ConfigPictureDecode *cfg = &cfg_list[i];
         int score;
         /* */
-        av_log(NULL, AV_LOG_DEBUG, "configuration[%d] ConfigBitstreamRaw %d",
-                i, cfg->ConfigBitstreamRaw);
+        av_log(NULL, AV_LOG_DEBUG, "configuration[%d] ConfigBitstreamRaw %d", i, cfg->ConfigBitstreamRaw);
 
         /* */
 
@@ -1336,8 +1295,8 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
 #ifdef log_GPU
         char a[10] = "c:\\";
         itoa((int)gPlayWnd, a + 3, 10);
-        FILE *fp = fopen(a,"a+");
-        fputs("Failed to find a supported decoder configuration\n",fp);
+        FILE *fp = fopen(a, "a+");
+        fputs("Failed to find a supported decoder configuration\n", fp);
         fclose(fp);
 #endif
         av_log(NULL, AV_LOG_ERROR, "Failed to find a supported decoder configuration");
@@ -1346,19 +1305,13 @@ static int DxCreateVideoDecoder(va_dxva2_t *va,
 
     /* Create the decoder */
 
-    if(FAILED(IDirectXVideoDecoderService_CreateVideoDecoder(va->vs,
-                                                              va->input,
-                                                              &dsc,
-                                                              &va->cfg,
-                                                              surface_list,
-                                                              va->surface_count,
-                                                              &decoder)))
+    if(FAILED(IDirectXVideoDecoderService_CreateVideoDecoder(va->vs, va->input, &dsc, &va->cfg, surface_list, va->surface_count, &decoder)))
     {
 #ifdef log_GPU
         char a[10] = "c:\\";
         itoa((int)gPlayWnd, a + 3, 10);
-        FILE *fp = fopen(a,"a+");
-        fputs("IDirectXVideoDecoderService_CreateVideoDecoder failed\n",fp);
+        FILE *fp = fopen(a, "a+");
+        fputs("IDirectXVideoDecoderService_CreateVideoDecoder failed\n", fp);
         fclose(fp);
 #endif
         av_log(NULL, AV_LOG_ERROR, "IDirectXVideoDecoderService_CreateVideoDecoder failed");
