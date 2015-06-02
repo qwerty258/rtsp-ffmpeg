@@ -325,8 +325,7 @@ static int DxCreateVideoService(va_dxva2_t *);
 static void DxDestroyVideoService(va_dxva2_t *);
 static int DxFindVideoServiceConversion(va_dxva2_t *, GUID *input, D3DFORMAT *output);
 
-static int DxCreateVideoDecoder(va_dxva2_t *,
-                                int codec_id, const AVCodecContext *avctx);
+static int DxCreateVideoDecoder(va_dxva2_t *, int codec_id, const AVCodecContext *avctx);
 static void DxDestroyVideoDecoder(va_dxva2_t *);
 static int DxResetVideoDecoder(va_dxva2_t *);
 

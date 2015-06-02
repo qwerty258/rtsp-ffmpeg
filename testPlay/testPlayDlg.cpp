@@ -156,7 +156,7 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
-    //RevoHWAcceleration(m_INSTANCE, true);
+    RevoHWAcceleration(m_INSTANCE, true);
     if(0 > Play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd))
     {
         AfxMessageBox(L"Play error");

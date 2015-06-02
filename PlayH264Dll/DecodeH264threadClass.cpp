@@ -316,11 +316,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     int height = 0;
     int width = 0;
     //启用编码器 
-    AVPacket  avp;
-    playH264VideoClass *VideoClass = (playH264VideoClass *)lpParam;
+    AVPacket avp;
 
-    AVCodec *codec;
-    AVCodecContext *c = NULL;
+    AVCodec* codec;
+    AVCodecContext* cocec_context = NULL;
     int bufsize, len;
     int got_picture;
     AVFrame *picture, *picRGB;
@@ -337,33 +336,32 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         return -1;
     }
 
-    HWND hd = VideoClass->paramUser.playHandle;
+    HWND hd = ((playH264VideoClass*)lpParam)->paramUser.playHandle;
 
     HDC m_hdc = ::GetDC(hd);
     HDC hmemDC = CreateCompatibleDC(m_hdc);
     if(m_hdc == NULL) return 0;
 
-    //c=avcodec_alloc_context3(codec);
     picture = avcodec_alloc_frame();
     picRGB = avcodec_alloc_frame();
 
     pFrameYUV = avcodec_alloc_frame();
     AVCodecID codeType;
-    if(VideoClass->type == 2)
+    if(((playH264VideoClass*)lpParam)->type == 2)
         codeType = CODEC_ID_MPEG4;
-    if(VideoClass->type == 1)
+    if(((playH264VideoClass*)lpParam)->type == 1)
         codeType = CODEC_ID_H264;
-    if(VideoClass->type == 3)
+    if(((playH264VideoClass*)lpParam)->type == 3)
         codeType = CODEC_ID_FLV1;
 
 
     codec = avcodec_find_decoder(codeType);
-    c = avcodec_alloc_context3(codec);
+    cocec_context = avcodec_alloc_context3(codec);
 
-    if(VideoClass->nHWAcceleration)
-        mAVCodecContextInit(c);
+    if(((playH264VideoClass*)lpParam)->nHWAcceleration)
+        mAVCodecContextInit(cocec_context);
 
-    if(avcodec_open2(c, codec, NULL) < 0)
+    if(avcodec_open2(cocec_context, codec, NULL) < 0)
     {
         return 0;
     }
@@ -375,7 +373,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     for(;;)
     {
-        bufsize = VideoClass->getNextNetBuf(netBuf, PICMAX);
+        bufsize = ((playH264VideoClass*)lpParam)->getNextNetBuf(netBuf, PICMAX);
 
         if(bufsize == STOPVIDEO)
         {
@@ -392,15 +390,15 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         //h264输出
         int nWH = 0;
-        if(VideoClass->H264Func&&nWH)
+        if(((playH264VideoClass*)lpParam)->H264Func&&nWH)
         {
-            VideoClass->H264Func(VideoClass->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
+            ((playH264VideoClass*)lpParam)->H264Func(((playH264VideoClass*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
             continue;
         }
 
         try
         {
-            if(fir&&VideoClass->nHWAcceleration)
+            if(fir && ((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
                 while(bGPlayWnd)
                     Sleep(1);
@@ -410,14 +408,14 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             }
 
 
-            len = avcodec_decode_video2(c, picture, &got_picture, &avp);
+            len = avcodec_decode_video2(cocec_context, picture, &got_picture, &avp);
 
             if(len < 0)
             {
                 break;
             }
 
-            if(fir&&VideoClass->nHWAcceleration)
+            if(fir && ((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
                 //GT620总值1000
                 //1080,GPU消耗300
@@ -437,7 +435,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 else
                     availableGPU[currentGPU] += 60;
 
-                if(VideoClass->yuvFunc)
+                if(((playH264VideoClass*)lpParam)->yuvFunc)
                 {
                     pFrameYUV->width = picture->width;
                     pFrameYUV->height = picture->height;
@@ -447,113 +445,113 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 bGPlayWnd = 0;//打开开关
                 fir = false;
             }
-            if(!c->opaque&&VideoClass->nHWAcceleration)//p_va失败
+            if(!cocec_context->opaque && ((playH264VideoClass*)lpParam)->nHWAcceleration)//p_va失败
             {
                 continue;
             }
             //h264输出
-            if(VideoClass->H264Func)
+            if(((playH264VideoClass*)lpParam)->H264Func)
             {
-                VideoClass->H264Func(VideoClass->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
+                ((playH264VideoClass*)lpParam)->H264Func(((playH264VideoClass*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
                 nWH = 1;
                 continue;
             }
-            if(VideoClass->nHWAcceleration)
-                DxPictureCopy(c, picture, pFrameYUV, VideoClass->yuvFunc);//内部代码改为直接显示
+            if(((playH264VideoClass*)lpParam)->nHWAcceleration)
+                DxPictureCopy(cocec_context, picture, pFrameYUV, ((playH264VideoClass*)lpParam)->yuvFunc);//内部代码改为直接显示
 
 
 
-            if(VideoClass->yuvFunc != NULL&&VideoClass->nHWAcceleration)
+            if(((playH264VideoClass*)lpParam)->yuvFunc != NULL && ((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
                 unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
-                for(int i = 0; i < c->height; i++)
+                for(int i = 0; i < cocec_context->height; i++)
                 {
-                    memcpy(data + i*c->width, pFrameYUV->data[0] + i*pFrameYUV->linesize[0], c->width);
+                    memcpy(data + i*cocec_context->width, pFrameYUV->data[0] + i*pFrameYUV->linesize[0], cocec_context->width);
                 }
-                for(int i = 0; i < c->height / 2; i++)
+                for(int i = 0; i < cocec_context->height / 2; i++)
                 {
-                    memcpy(data + c->width*c->height + i*c->width / 2, pFrameYUV->data[2] + i*pFrameYUV->linesize[2], c->width / 2);
+                    memcpy(data + cocec_context->width*cocec_context->height + i*cocec_context->width / 2, pFrameYUV->data[2] + i*pFrameYUV->linesize[2], cocec_context->width / 2);
                 }
-                for(int i = 0; i < c->height / 2; i++)
+                for(int i = 0; i < cocec_context->height / 2; i++)
                 {
-                    memcpy(data + c->width*c->height / 4 * 5 + i*c->width / 2, pFrameYUV->data[1] + i*pFrameYUV->linesize[1], c->width / 2);
+                    memcpy(data + cocec_context->width*cocec_context->height / 4 * 5 + i*cocec_context->width / 2, pFrameYUV->data[1] + i*pFrameYUV->linesize[1], cocec_context->width / 2);
                 }
-                VideoClass->yuvFunc(data, c->height, c->width, VideoClass->userBuffer);
+                ((playH264VideoClass*)lpParam)->yuvFunc(data, cocec_context->height, cocec_context->width, ((playH264VideoClass*)lpParam)->userBuffer);
                 delete[] data;
             }
-            if(VideoClass->yuvFunc != NULL&&!VideoClass->nHWAcceleration)
+            if(((playH264VideoClass*)lpParam)->yuvFunc != NULL&&!((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
                 unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
-                for(int i = 0; i < c->height; i++)
+                for(int i = 0; i < cocec_context->height; i++)
                 {
-                    memcpy(data + i*c->width, picture->data[0] + i*picture->linesize[0],/*c->width*/1280);
+                    memcpy(data + i*cocec_context->width, picture->data[0] + i*picture->linesize[0],/*cocec_context->width*/1280);
                 }
-                for(int i = 0; i < c->height / 2; i++)
+                for(int i = 0; i < cocec_context->height / 2; i++)
                 {
-                    memcpy(data + c->width*c->height + i*c->width / 2, picture->data[2] + i*picture->linesize[2], 640/*c->width/2*/);
+                    memcpy(data + cocec_context->width*cocec_context->height + i*cocec_context->width / 2, picture->data[2] + i*picture->linesize[2], 640/*cocec_context->width/2*/);
                 }
-                for(int i = 0; i < c->height / 2; i++)
+                for(int i = 0; i < cocec_context->height / 2; i++)
                 {
-                    memcpy(data + c->width*c->height / 4 * 5 + i*c->width / 2, picture->data[1] + i*picture->linesize[1], 640/*c->width/2*/);
+                    memcpy(data + cocec_context->width*cocec_context->height / 4 * 5 + i*cocec_context->width / 2, picture->data[1] + i*picture->linesize[1], 640/*cocec_context->width/2*/);
                 }
-                VideoClass->yuvFunc(data, c->width, c->height, VideoClass->userBuffer);
+                ((playH264VideoClass*)lpParam)->yuvFunc(data, cocec_context->width, cocec_context->height, ((playH264VideoClass*)lpParam)->userBuffer);
                 delete[] data;
             }
 
-            if(fir&&!VideoClass->nHWAcceleration)
+            if(fir&&!((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
-                width = c->width;
-                height = c->height;
-                PictureSize = avpicture_get_size(PIX_FMT_BGR24, c->width, c->height);
+                width = cocec_context->width;
+                height = cocec_context->height;
+                PictureSize = avpicture_get_size(PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
                 buf = (uint8_t*)av_malloc(PictureSize);
                 if(buf == NULL)
                 {
                     break;
                 }
-                VideoClass->bmpinfo.biWidth = c->width;
-                VideoClass->bmpinfo.biHeight = c->height;
-                avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, c->width, c->height);
+                ((playH264VideoClass*)lpParam)->bmpinfo.biWidth = cocec_context->width;
+                ((playH264VideoClass*)lpParam)->bmpinfo.biHeight = cocec_context->height;
+                avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
             }
 
-            if((width != c->width) || (height != c->height) && !VideoClass->nHWAcceleration)
+            if((width != cocec_context->width) || (height != cocec_context->height) && !((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
                 av_free(buf);
-                width = c->width;
-                height = c->height;
-                PictureSize = avpicture_get_size(PIX_FMT_BGR24, c->width, c->height);
+                width = cocec_context->width;
+                height = cocec_context->height;
+                PictureSize = avpicture_get_size(PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
                 buf = (uint8_t*)av_malloc(PictureSize);
                 if(buf == NULL)
                 {
                     break;
                 }
-                VideoClass->bmpinfo.biWidth = c->width;
-                VideoClass->bmpinfo.biHeight = c->height;
-                avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, c->width, c->height);
+                ((playH264VideoClass*)lpParam)->bmpinfo.biWidth = cocec_context->width;
+                ((playH264VideoClass*)lpParam)->bmpinfo.biHeight = cocec_context->height;
+                avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
             }
 
-            if(!VideoClass->nHWAcceleration&&fir)
+            if(!((playH264VideoClass*)lpParam)->nHWAcceleration&&fir)
             {
-                pSwsCtx = sws_getContext(c->width, c->height, c->pix_fmt, c->width, c->height, PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+                pSwsCtx = sws_getContext(cocec_context->width, cocec_context->height, cocec_context->pix_fmt, cocec_context->width, cocec_context->height, PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
                 fir = FALSE;
             }
-            if(!VideoClass->nHWAcceleration)
+            if(!((playH264VideoClass*)lpParam)->nHWAcceleration)
             {
-                picture->data[0] += picture->linesize[0] * (c->height - 1);
+                picture->data[0] += picture->linesize[0] * (cocec_context->height - 1);
                 picture->linesize[0] *= -1;
-                picture->data[1] += picture->linesize[1] * (c->height / 2 - 1);
+                picture->data[1] += picture->linesize[1] * (cocec_context->height / 2 - 1);
                 picture->linesize[1] *= -1;
-                picture->data[2] += picture->linesize[2] * (c->height / 2 - 1);
+                picture->data[2] += picture->linesize[2] * (cocec_context->height / 2 - 1);
                 picture->linesize[2] *= -1;
 
-                sws_scale(pSwsCtx, picture->data, picture->linesize, 0, c->height, picRGB->data, picRGB->linesize);//效率？
+                sws_scale(pSwsCtx, picture->data, picture->linesize, 0, cocec_context->height, picRGB->data, picRGB->linesize);//效率？
 
                 SetStretchBltMode(m_hdc, COLORONCOLOR);//这种模式依然不行
                 RECT rect;
-                GetWindowRect(VideoClass->paramUser.playHandle, &rect);
-                VideoClass->paramUser.playHeight = rect.bottom - rect.top;
-                VideoClass->paramUser.playWidth = rect.right - rect.left;
+                GetWindowRect(((playH264VideoClass*)lpParam)->paramUser.playHandle, &rect);
+                ((playH264VideoClass*)lpParam)->paramUser.playHeight = rect.bottom - rect.top;
+                ((playH264VideoClass*)lpParam)->paramUser.playWidth = rect.right - rect.left;
 
-                VideoClass->playBMPbuf(picRGB, c->width, c->height, VideoClass->paramUser.playWidth, VideoClass->paramUser.playHeight, m_hdc, hmemDC, (uint8_t *)bmpBuf, hd);
+                ((playH264VideoClass*)lpParam)->playBMPbuf(picRGB, cocec_context->width, cocec_context->height, ((playH264VideoClass*)lpParam)->paramUser.playWidth, ((playH264VideoClass*)lpParam)->paramUser.playHeight, m_hdc, hmemDC, (uint8_t *)bmpBuf, hd);
             }
         }
         catch(...)
@@ -585,17 +583,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         //av_free(&picRGB->data[0]);
 
         av_frame_free(&pFrameYUV);
-        avcodec_close(c);
+        avcodec_close(cocec_context);
 
-        if(c->opaque)
+        if(cocec_context->opaque)
         {
-            dxva_Delete((dxva_t *)c->opaque);
+            dxva_Delete((dxva_t *)cocec_context->opaque);
         }
-        av_freep(c);
-        //avcodec_free_context(&c);
+        av_freep(cocec_context);
+        //avcodec_free_context(&cocec_context);
         delete[] netBuf;
         delete[] bmpBuf;
-        VideoClass->dataQueueClean();
+        ((playH264VideoClass*)lpParam)->dataQueueClean();
 
     }
     catch(...)
