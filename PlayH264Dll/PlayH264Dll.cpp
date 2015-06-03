@@ -23,7 +23,7 @@ using namespace std;
 int debug = 0;
 struct DecodeList
 {
-    playH264VideoClass *pt;
+    CDecode *pt;
     CRITICAL_SECTION cs;
     int idle; //1 enable 0 disable 2 lock
 };
@@ -66,7 +66,7 @@ PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
     int pos = 0;
     int64_t pts = AV_NOPTS_VALUE;
     int64_t dts = AV_NOPTS_VALUE;
-    //   playH264VideoClass *DC=(playH264VideoClass *)deList[num].pt;
+    //   CDecode *DC=(CDecode *)deList[num].pt;
     do
     {
         uint8_t *pout;// a complete frame, if incomplete it's NULL
@@ -89,7 +89,7 @@ PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
             if (debug==1)
             WriteLog("C:\\1.log","decoeVideo2");
             */
-            playH264VideoClass *DC = (playH264VideoClass *)deList[num].pt;
+            CDecode *DC = (CDecode *)deList[num].pt;
             if(DC == NULL) return;
             if(deList[num].idle == 1)
                 DC->writeNetBuf(num, pout, pout_len);
@@ -99,7 +99,7 @@ PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
 
     //if(size<=0)
     //{
-    //     //   playH264VideoClass *DC=(playH264VideoClass *)deList[num].pt;
+    //     //   CDecode *DC=(CDecode *)deList[num].pt;
     //     //   while(DC->writeNetBuf(num,NULL,0));
     //}
 }
@@ -138,7 +138,7 @@ PLAYH264DLL_API int initVideoDLL()
     for(int i = 0; i < MACPL; i++)
     {
         deList[i].idle = 0;
-        deList[i].pt = new playH264VideoClass;
+        deList[i].pt = new CDecode;
         deList[i].cs = {0};
     }
 

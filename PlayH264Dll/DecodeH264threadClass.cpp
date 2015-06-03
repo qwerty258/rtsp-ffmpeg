@@ -22,7 +22,7 @@ using namespace std;
 #endif // _DEBUG
 
 #define PICMAX (500000) //每一帧图片数据最大值
-int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
+int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
 {
     bufptr = BMPbuf;
     if(fillbmp != NULL)
@@ -60,7 +60,7 @@ int playH264VideoClass::playBMPbuf(AVFrame *pFrameRGB, int width, int height, in
 //输入：buf 
 //输出：写入netbuf链表
 ///////////////////////////////////////////////////////////////////
-int playH264VideoClass::writeNetBuf(int num, unsigned char *buf, int bufsize)
+int CDecode::writeNetBuf(int num, unsigned char *buf, int bufsize)
 {
     dataNode* p_data_node_temp = new dataNode;
     if(NULL == p_data_node_temp)
@@ -97,7 +97,7 @@ int playH264VideoClass::writeNetBuf(int num, unsigned char *buf, int bufsize)
     return 0;
 }
 
-int playH264VideoClass::setReadPosize(int index, int readsize)
+int CDecode::setReadPosize(int index, int readsize)
 {
     //try
     //{
@@ -109,43 +109,20 @@ int playH264VideoClass::setReadPosize(int index, int readsize)
     //{return -1;}
     return 0;
 }
-int playH264VideoClass::getNextNetBuf(char *buf, int bufsize)
+dataNode* CDecode::getNextNetBuf(void)
 {
-    int size;
     dataNode* p_data_node_temp;
-    try
+    if(m_DataQueue.try_pop(p_data_node_temp))
     {
-        //dataNode* p_temp_data_node;
-        if(m_DataQueue.try_pop(p_data_node_temp))
-        {
-            if(STOPVIDEO == p_data_node_temp->size)
-            {
-                delete[] p_data_node_temp->data;
-                delete p_data_node_temp;
-                return STOPVIDEO;
-            }
-            else
-            {
-                memcpy(buf, p_data_node_temp->data, p_data_node_temp->size);
-                size = p_data_node_temp->size;
-
-                delete[] p_data_node_temp->data;
-                delete p_data_node_temp;
-                return size;
-            }
-        }
-        else
-        {
-            return -1;
-        }
+        return p_data_node_temp;
     }
-    catch(...)
+    else
     {
-        return -1;
+        return NULL;
     }
 }
 
-int playH264VideoClass::InputParam(myparamInput *p1)
+int CDecode::InputParam(myparamInput *p1)
 {
     try
     {
@@ -191,7 +168,7 @@ int playH264VideoClass::InputParam(myparamInput *p1)
 //输入：buf 
 //输出：写入链表
 ///////////////////////////////////////////////////////////////////
-int playH264VideoClass::freeParam(void)
+int CDecode::freeParam(void)
 {
     try
     {
@@ -212,7 +189,7 @@ int playH264VideoClass::freeParam(void)
 //输入：buf 
 //输出：写入链表
 ///////////////////////////////////////////////////////////////////
-int playH264VideoClass::playVideo()
+int CDecode::playVideo()
 {
     paramUser.stopPlay = 0;
     return 0;
@@ -222,18 +199,18 @@ int playH264VideoClass::playVideo()
 //输入：buf 
 //输出：写入链表
 ///////////////////////////////////////////////////////////////////
-int playH264VideoClass::pauseVideo()
+int CDecode::pauseVideo()
 {
     paramUser.stopPlay = 0;
     return 0;
 }
-int playH264VideoClass::playResize(int newWidth, int newHeight)
+int CDecode::playResize(int newWidth, int newHeight)
 {
     paramUser.playWidth = newWidth;
     paramUser.playHeight = newHeight;
     return 0;
 }
-playH264VideoClass::playH264VideoClass()
+CDecode::CDecode()
 {
     //for(int i=0;i<ListCount;i++)
     //{
@@ -249,7 +226,7 @@ playH264VideoClass::playH264VideoClass()
     nHWAcceleration = false;
 }
 
-playH264VideoClass::~playH264VideoClass()
+CDecode::~CDecode()
 {
     //for(int i=0;i<ListCount;i++)
     //{
@@ -320,7 +297,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     AVCodec* codec;
     AVCodecContext* cocec_context = NULL;
-    int bufsize, len;
+    int /*bufsize,*/ len;
+    dataNode* p_data_node_temp;
     int got_picture;
     AVFrame *picture, *picRGB;
     AVFrame *pFrameYUV = NULL;
@@ -328,15 +306,15 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     // av_register_all();
     int PictureSize;
     uint8_t *buf = NULL;
-    char *netBuf = new char[PICMAX];
+    //char *netBuf = new char[PICMAX];
     char *bmpBuf = new char[1920 * 1080 * 3];
 
-    if(NULL == netBuf || NULL == bmpBuf)
+    if(/*NULL == netBuf ||*/ NULL == bmpBuf)
     {
         return -1;
     }
 
-    HWND hd = ((playH264VideoClass*)lpParam)->paramUser.playHandle;
+    HWND hd = ((CDecode*)lpParam)->paramUser.playHandle;
 
     HDC m_hdc = GetDC(hd);
     HDC hmemDC = CreateCompatibleDC(m_hdc);
@@ -350,18 +328,18 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     pFrameYUV = avcodec_alloc_frame();
     AVCodecID codeType;
-    if(((playH264VideoClass*)lpParam)->type == 2)
+    if(((CDecode*)lpParam)->type == 2)
         codeType = CODEC_ID_MPEG4;
-    if(((playH264VideoClass*)lpParam)->type == 1)
+    if(((CDecode*)lpParam)->type == 1)
         codeType = CODEC_ID_H264;
-    if(((playH264VideoClass*)lpParam)->type == 3)
+    if(((CDecode*)lpParam)->type == 3)
         codeType = CODEC_ID_FLV1;
 
 
     codec = avcodec_find_decoder(codeType);
     cocec_context = avcodec_alloc_context3(codec);
 
-    if(((playH264VideoClass*)lpParam)->nHWAcceleration)
+    if(((CDecode*)lpParam)->nHWAcceleration)
         mAVCodecContextInit(cocec_context);
 
     if(avcodec_open2(cocec_context, codec, NULL) < 0)
@@ -376,239 +354,245 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     for(;;)
     {
-        bufsize = ((playH264VideoClass*)lpParam)->getNextNetBuf(netBuf, PICMAX);
+        p_data_node_temp = ((CDecode*)lpParam)->getNextNetBuf();
 
-        if(bufsize == STOPVIDEO)
-        {
-            break;
-        }
-
-        if(0 >= bufsize)
+        if(NULL == p_data_node_temp)
         {
             Sleep(30);
             continue;
         }
 
+        if(STOPVIDEO == p_data_node_temp->size)
+        {
+            if(NULL != p_data_node_temp->data)
+            {
+                delete[] p_data_node_temp->data;
+            }
+
+            if(NULL != p_data_node_temp)
+            {
+                delete p_data_node_temp;
+            }
+
+            break;
+        }
+
         av_init_packet(&avp);
-        avp.data = (uint8_t *)netBuf;
-        avp.size = bufsize;
+        avp.data = (uint8_t*)p_data_node_temp->data;
+        avp.size = p_data_node_temp->size;
 
         //h264输出
         int nWH = 0;
-        if(((playH264VideoClass*)lpParam)->H264Func&&nWH)
+        if(((CDecode*)lpParam)->H264Func&&nWH)
         {
-            ((playH264VideoClass*)lpParam)->H264Func(((playH264VideoClass*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
+            ((CDecode*)lpParam)->H264Func(((CDecode*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
             continue;
         }
 
-        try
+        if(fir && ((CDecode*)lpParam)->nHWAcceleration)
         {
-            if(fir && ((playH264VideoClass*)lpParam)->nHWAcceleration)
+            while(bGPlayWnd)
+                Sleep(1);
+            bGPlayWnd = 1;
+            gPlayWnd = hd;
+
+        }
+
+
+        len = avcodec_decode_video2(cocec_context, picture, &got_picture, &avp);
+
+        if(len < 0)
+        {
+            break;
+        }
+
+        if(fir && ((CDecode*)lpParam)->nHWAcceleration)
+        {
+            //GT620总值1000
+            //1080,GPU消耗300
+            //960,GPU 250
+            //720,GPU 140
+            //D1，GPU 60
+
+            if(picture->height >= 1080)
+                availableGPU[currentGPU] += 300;
+
+            else if(picture->height >= 960)
+                availableGPU[currentGPU] += 250;
+
+            else if(picture->height >= 720)
+                availableGPU[currentGPU] += 140;
+
+            else
+                availableGPU[currentGPU] += 60;
+
+            if(((CDecode*)lpParam)->yuvFunc)
             {
-                while(bGPlayWnd)
-                    Sleep(1);
-                bGPlayWnd = 1;
-                gPlayWnd = hd;
-
+                pFrameYUV->width = picture->width;
+                pFrameYUV->height = picture->height;
+                int numBytes = avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height);
+                avpicture_fill((AVPicture *)pFrameYUV, (uint8_t *)av_malloc(numBytes), PIX_FMT_YUV420P, picture->width, picture->height);
             }
+            bGPlayWnd = 0;//打开开关
+            fir = false;
+        }
+        if(!cocec_context->opaque && ((CDecode*)lpParam)->nHWAcceleration)//p_va失败
+        {
+            continue;
+        }
+        //h264输出
+        if(((CDecode*)lpParam)->H264Func)
+        {
+            ((CDecode*)lpParam)->H264Func(((CDecode*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
+            nWH = 1;
+            continue;
+        }
+        if(((CDecode*)lpParam)->nHWAcceleration)
+            DxPictureCopy(cocec_context, picture, pFrameYUV, ((CDecode*)lpParam)->yuvFunc);//内部代码改为直接显示
 
 
-            len = avcodec_decode_video2(cocec_context, picture, &got_picture, &avp);
 
-            if(len < 0)
+        if(((CDecode*)lpParam)->yuvFunc != NULL && ((CDecode*)lpParam)->nHWAcceleration)
+        {
+            unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
+            for(int i = 0; i < cocec_context->height; i++)
+            {
+                memcpy(data + i*cocec_context->width, pFrameYUV->data[0] + i*pFrameYUV->linesize[0], cocec_context->width);
+            }
+            for(int i = 0; i < cocec_context->height / 2; i++)
+            {
+                memcpy(data + cocec_context->width*cocec_context->height + i*cocec_context->width / 2, pFrameYUV->data[2] + i*pFrameYUV->linesize[2], cocec_context->width / 2);
+            }
+            for(int i = 0; i < cocec_context->height / 2; i++)
+            {
+                memcpy(data + cocec_context->width*cocec_context->height / 4 * 5 + i*cocec_context->width / 2, pFrameYUV->data[1] + i*pFrameYUV->linesize[1], cocec_context->width / 2);
+            }
+            ((CDecode*)lpParam)->yuvFunc(data, cocec_context->height, cocec_context->width, ((CDecode*)lpParam)->userBuffer);
+            delete[] data;
+        }
+        if(((CDecode*)lpParam)->yuvFunc != NULL&&!((CDecode*)lpParam)->nHWAcceleration)
+        {
+            unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
+            for(int i = 0; i < cocec_context->height; i++)
+            {
+                memcpy(data + i*cocec_context->width, picture->data[0] + i*picture->linesize[0],/*cocec_context->width*/1280);
+            }
+            for(int i = 0; i < cocec_context->height / 2; i++)
+            {
+                memcpy(data + cocec_context->width*cocec_context->height + i*cocec_context->width / 2, picture->data[2] + i*picture->linesize[2], 640/*cocec_context->width/2*/);
+            }
+            for(int i = 0; i < cocec_context->height / 2; i++)
+            {
+                memcpy(data + cocec_context->width*cocec_context->height / 4 * 5 + i*cocec_context->width / 2, picture->data[1] + i*picture->linesize[1], 640/*cocec_context->width/2*/);
+            }
+            ((CDecode*)lpParam)->yuvFunc(data, cocec_context->width, cocec_context->height, ((CDecode*)lpParam)->userBuffer);
+            delete[] data;
+        }
+
+        if(fir&&!((CDecode*)lpParam)->nHWAcceleration)
+        {
+            width = cocec_context->width;
+            height = cocec_context->height;
+            PictureSize = avpicture_get_size(PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
+            buf = (uint8_t*)av_malloc(PictureSize);
+            if(buf == NULL)
             {
                 break;
             }
-
-            if(fir && ((playH264VideoClass*)lpParam)->nHWAcceleration)
-            {
-                //GT620总值1000
-                //1080,GPU消耗300
-                //960,GPU 250
-                //720,GPU 140
-                //D1，GPU 60
-
-                if(picture->height >= 1080)
-                    availableGPU[currentGPU] += 300;
-
-                else if(picture->height >= 960)
-                    availableGPU[currentGPU] += 250;
-
-                else if(picture->height >= 720)
-                    availableGPU[currentGPU] += 140;
-
-                else
-                    availableGPU[currentGPU] += 60;
-
-                if(((playH264VideoClass*)lpParam)->yuvFunc)
-                {
-                    pFrameYUV->width = picture->width;
-                    pFrameYUV->height = picture->height;
-                    int numBytes = avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height);
-                    avpicture_fill((AVPicture *)pFrameYUV, (uint8_t *)av_malloc(numBytes), PIX_FMT_YUV420P, picture->width, picture->height);
-                }
-                bGPlayWnd = 0;//打开开关
-                fir = false;
-            }
-            if(!cocec_context->opaque && ((playH264VideoClass*)lpParam)->nHWAcceleration)//p_va失败
-            {
-                continue;
-            }
-            //h264输出
-            if(((playH264VideoClass*)lpParam)->H264Func)
-            {
-                ((playH264VideoClass*)lpParam)->H264Func(((playH264VideoClass*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
-                nWH = 1;
-                continue;
-            }
-            if(((playH264VideoClass*)lpParam)->nHWAcceleration)
-                DxPictureCopy(cocec_context, picture, pFrameYUV, ((playH264VideoClass*)lpParam)->yuvFunc);//内部代码改为直接显示
-
-
-
-            if(((playH264VideoClass*)lpParam)->yuvFunc != NULL && ((playH264VideoClass*)lpParam)->nHWAcceleration)
-            {
-                unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
-                for(int i = 0; i < cocec_context->height; i++)
-                {
-                    memcpy(data + i*cocec_context->width, pFrameYUV->data[0] + i*pFrameYUV->linesize[0], cocec_context->width);
-                }
-                for(int i = 0; i < cocec_context->height / 2; i++)
-                {
-                    memcpy(data + cocec_context->width*cocec_context->height + i*cocec_context->width / 2, pFrameYUV->data[2] + i*pFrameYUV->linesize[2], cocec_context->width / 2);
-                }
-                for(int i = 0; i < cocec_context->height / 2; i++)
-                {
-                    memcpy(data + cocec_context->width*cocec_context->height / 4 * 5 + i*cocec_context->width / 2, pFrameYUV->data[1] + i*pFrameYUV->linesize[1], cocec_context->width / 2);
-                }
-                ((playH264VideoClass*)lpParam)->yuvFunc(data, cocec_context->height, cocec_context->width, ((playH264VideoClass*)lpParam)->userBuffer);
-                delete[] data;
-            }
-            if(((playH264VideoClass*)lpParam)->yuvFunc != NULL&&!((playH264VideoClass*)lpParam)->nHWAcceleration)
-            {
-                unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
-                for(int i = 0; i < cocec_context->height; i++)
-                {
-                    memcpy(data + i*cocec_context->width, picture->data[0] + i*picture->linesize[0],/*cocec_context->width*/1280);
-                }
-                for(int i = 0; i < cocec_context->height / 2; i++)
-                {
-                    memcpy(data + cocec_context->width*cocec_context->height + i*cocec_context->width / 2, picture->data[2] + i*picture->linesize[2], 640/*cocec_context->width/2*/);
-                }
-                for(int i = 0; i < cocec_context->height / 2; i++)
-                {
-                    memcpy(data + cocec_context->width*cocec_context->height / 4 * 5 + i*cocec_context->width / 2, picture->data[1] + i*picture->linesize[1], 640/*cocec_context->width/2*/);
-                }
-                ((playH264VideoClass*)lpParam)->yuvFunc(data, cocec_context->width, cocec_context->height, ((playH264VideoClass*)lpParam)->userBuffer);
-                delete[] data;
-            }
-
-            if(fir&&!((playH264VideoClass*)lpParam)->nHWAcceleration)
-            {
-                width = cocec_context->width;
-                height = cocec_context->height;
-                PictureSize = avpicture_get_size(PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
-                buf = (uint8_t*)av_malloc(PictureSize);
-                if(buf == NULL)
-                {
-                    break;
-                }
-                ((playH264VideoClass*)lpParam)->bmpinfo.biWidth = cocec_context->width;
-                ((playH264VideoClass*)lpParam)->bmpinfo.biHeight = cocec_context->height;
-                avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
-            }
-
-            if((width != cocec_context->width) || (height != cocec_context->height) && !((playH264VideoClass*)lpParam)->nHWAcceleration)
-            {
-                av_free(buf);
-                width = cocec_context->width;
-                height = cocec_context->height;
-                PictureSize = avpicture_get_size(PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
-                buf = (uint8_t*)av_malloc(PictureSize);
-                if(buf == NULL)
-                {
-                    break;
-                }
-                ((playH264VideoClass*)lpParam)->bmpinfo.biWidth = cocec_context->width;
-                ((playH264VideoClass*)lpParam)->bmpinfo.biHeight = cocec_context->height;
-                avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
-            }
-
-            if(!((playH264VideoClass*)lpParam)->nHWAcceleration&&fir)
-            {
-                pSwsCtx = sws_getContext(cocec_context->width, cocec_context->height, cocec_context->pix_fmt, cocec_context->width, cocec_context->height, PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
-                fir = FALSE;
-            }
-            if(!((playH264VideoClass*)lpParam)->nHWAcceleration)
-            {
-                picture->data[0] += picture->linesize[0] * (cocec_context->height - 1);
-                picture->linesize[0] *= -1;
-                picture->data[1] += picture->linesize[1] * (cocec_context->height / 2 - 1);
-                picture->linesize[1] *= -1;
-                picture->data[2] += picture->linesize[2] * (cocec_context->height / 2 - 1);
-                picture->linesize[2] *= -1;
-
-                sws_scale(pSwsCtx, picture->data, picture->linesize, 0, cocec_context->height, picRGB->data, picRGB->linesize);//效率？
-
-                SetStretchBltMode(m_hdc, COLORONCOLOR);//这种模式依然不行
-                RECT rect;
-                GetWindowRect(((playH264VideoClass*)lpParam)->paramUser.playHandle, &rect);
-                ((playH264VideoClass*)lpParam)->paramUser.playHeight = rect.bottom - rect.top;
-                ((playH264VideoClass*)lpParam)->paramUser.playWidth = rect.right - rect.left;
-
-                ((playH264VideoClass*)lpParam)->playBMPbuf(picRGB, cocec_context->width, cocec_context->height, ((playH264VideoClass*)lpParam)->paramUser.playWidth, ((playH264VideoClass*)lpParam)->paramUser.playHeight, m_hdc, hmemDC, (uint8_t *)bmpBuf, hd);
-            }
+            ((CDecode*)lpParam)->bmpinfo.biWidth = cocec_context->width;
+            ((CDecode*)lpParam)->bmpinfo.biHeight = cocec_context->height;
+            avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
         }
-        catch(...)
+
+        if((width != cocec_context->width) || (height != cocec_context->height) && !((CDecode*)lpParam)->nHWAcceleration)
         {
-            continue;
+            av_free(buf);
+            width = cocec_context->width;
+            height = cocec_context->height;
+            PictureSize = avpicture_get_size(PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
+            buf = (uint8_t*)av_malloc(PictureSize);
+            if(buf == NULL)
+            {
+                break;
+            }
+            ((CDecode*)lpParam)->bmpinfo.biWidth = cocec_context->width;
+            ((CDecode*)lpParam)->bmpinfo.biHeight = cocec_context->height;
+            avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, cocec_context->width, cocec_context->height);
+        }
+
+        if(!((CDecode*)lpParam)->nHWAcceleration&&fir)
+        {
+            pSwsCtx = sws_getContext(cocec_context->width, cocec_context->height, cocec_context->pix_fmt, cocec_context->width, cocec_context->height, PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+            fir = FALSE;
+        }
+        if(!((CDecode*)lpParam)->nHWAcceleration)
+        {
+            picture->data[0] += picture->linesize[0] * (cocec_context->height - 1);
+            picture->linesize[0] *= -1;
+            picture->data[1] += picture->linesize[1] * (cocec_context->height / 2 - 1);
+            picture->linesize[1] *= -1;
+            picture->data[2] += picture->linesize[2] * (cocec_context->height / 2 - 1);
+            picture->linesize[2] *= -1;
+
+            sws_scale(pSwsCtx, picture->data, picture->linesize, 0, cocec_context->height, picRGB->data, picRGB->linesize);//效率？
+
+            SetStretchBltMode(m_hdc, COLORONCOLOR);//这种模式依然不行
+            RECT rect;
+            GetWindowRect(((CDecode*)lpParam)->paramUser.playHandle, &rect);
+            ((CDecode*)lpParam)->paramUser.playHeight = rect.bottom - rect.top;
+            ((CDecode*)lpParam)->paramUser.playWidth = rect.right - rect.left;
+
+            ((CDecode*)lpParam)->playBMPbuf(picRGB, cocec_context->width, cocec_context->height, ((CDecode*)lpParam)->paramUser.playWidth, ((CDecode*)lpParam)->paramUser.playHeight, m_hdc, hmemDC, (uint8_t *)bmpBuf, hd);
+        }
+
+        if(NULL != p_data_node_temp->data)
+        {
+            delete[] p_data_node_temp->data;
+        }
+        if(NULL != p_data_node_temp)
+        {
+            delete p_data_node_temp;
         }
     }
-    try
+
+    if(picture->height >= 1080)
     {
-        if(picture->height >= 1080)
-        {
-            availableGPU[currentGPU] -= 300;
-        }
-        else if(picture->height >= 960)
-        {
-            availableGPU[currentGPU] -= 250;
-        }
-        else if(picture->height >= 720)
-        {
-            availableGPU[currentGPU] -= 140;
-        }
-        else
-        {
-            availableGPU[currentGPU] -= 60;
-        }
-
-        //av_free(&picture->data[0]);
-        av_frame_free(&picture);
-        //av_free(&picRGB->data[0]);
-
-        av_frame_free(&pFrameYUV);
-        avcodec_close(cocec_context);
-
-        if(cocec_context->opaque)
-        {
-            dxva_Delete((dxva_t *)cocec_context->opaque);
-        }
-        av_freep(cocec_context);
-        //avcodec_free_context(&cocec_context);
-        delete[] netBuf;
-        delete[] bmpBuf;
-        ((playH264VideoClass*)lpParam)->dataQueueClean();
-
+        availableGPU[currentGPU] -= 300;
     }
-    catch(...)
+    else if(picture->height >= 960)
     {
-        return 0;
+        availableGPU[currentGPU] -= 250;
+    }
+    else if(picture->height >= 720)
+    {
+        availableGPU[currentGPU] -= 140;
+    }
+    else
+    {
+        availableGPU[currentGPU] -= 60;
     }
 
+    //av_free(&picture->data[0]);
+    av_frame_free(&picture);
+    //av_free(&picRGB->data[0]);
+
+    av_frame_free(&pFrameYUV);
+    avcodec_close(cocec_context);
+
+    if(cocec_context->opaque)
+    {
+        dxva_Delete((dxva_t *)cocec_context->opaque);
+    }
+    av_freep(cocec_context);
+    //avcodec_free_context(&cocec_context);
+    //delete[] netBuf;
+    delete[] bmpBuf;
+    ((CDecode*)lpParam)->dataQueueClean();
+
+    return 0;
 }
 
-void playH264VideoClass::dataQueueClean()
+void CDecode::dataQueueClean()
 {
     dataNode* p_data_node_temp;
 

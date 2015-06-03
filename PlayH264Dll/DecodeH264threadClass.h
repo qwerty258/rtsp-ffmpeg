@@ -83,11 +83,11 @@ typedef struct
 }dataNode;
 
 
-class playH264VideoClass
+class CDecode
 {
 public:
-    playH264VideoClass();
-    ~playH264VideoClass();
+    CDecode();
+    ~CDecode();
 
     void  dataQueueClean();
 private:
@@ -117,7 +117,7 @@ public:
     int writeNetBuf(int num, unsigned char *buf, int bufsize);
     //int getNetBuf(AVCodecContext* m_pCodecContext,AVCodecParserContext * m_parser,char *buf,int bufsize);
     int setReadPosize(int index, int readsize);
-    int getNextNetBuf(char *buf, int bufsize);
+    dataNode* getNextNetBuf(void);
     int playResize(int newWidth, int newHeight);
     //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
     int playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND);
