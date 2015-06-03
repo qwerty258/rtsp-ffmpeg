@@ -1,24 +1,24 @@
 // VBuffer.h: interface for the buffer vector class.
-// Author:			ChenRui
-// Contact:			ChenRui@Sobey.com
-// LastUpdteDate:	2008-05-23
+// Author:        ChenRui
+// Contact:       ChenRui@Sobey.com
+// LastUpdteDate: 2008-05-23
 //
 // How to use the VBuffer:
 //  
-//	[heard] ... FullBuffer  FullBuffer  FullBuffer  ... [tail]
+//  [heard] ... FullBuffer  FullBuffer  FullBuffer  ... [tail]
 //
-//	GetFullBuffer()							        AddFullBuffer()
+//  GetFullBuffer()                                 AddFullBuffer()
 //
-//	   �?                                                 �?
+//     ↓                                                  ↑
 //
-//	AddEmptyBuffer()					            GetEmptyBuffer()
+//  AddEmptyBuffer()                                GetEmptyBuffer()
 //
-//	[tail]  ... EmptyBuffer EmptyBuffer EmptyBuffer ... [heard]
+//  [tail]  ... EmptyBuffer EmptyBuffer EmptyBuffer ... [heard]
 //
 //
 //  Split the VBuffer:
 //
-//	SetData() �?[tail]  ... Buffer Buffer ... [heard]   �?GetData()
+//  SetData() → [tail]  ... Buffer Buffer ... [heard]   → GetData()
 //
 //
 //////////////////////////////////////////////////////////////////////
@@ -331,31 +331,31 @@ public:
             return FALSE;
 
         Buffer* pBuffer;
-        UINT	nGetSize = 0;
-        UINT	nCopyDataSize;		//	获取部分长度
+        UINT nGetSize = 0;
+        UINT nCopyDataSize; // get partial length
 
-        while(nGetSize < nDataSize)	//	获取至足够的数据后返�?
+        while(nGetSize < nDataSize) // return after get enough data
         {
             pBuffer = m_FullBuffer.front();
 
             if(nDataSize - nGetSize < pBuffer->m_nDataSize)
             {
-                // 只取buffer中部分数据进行拷�?
-                nCopyDataSize = nDataSize - nGetSize;	//	拷贝部分长度
+                // only copy data in buffer
+                nCopyDataSize = nDataSize - nGetSize; // copy partial length
 
                 memcpy(pData + nGetSize, pBuffer->m_pData, nCopyDataSize);
 
-                // 修正可用数据偏移
+                // correct available data offset
                 pBuffer->m_pData += nCopyDataSize;
                 pBuffer->m_nDataSize -= nCopyDataSize;
             }
             else
             {
-                nCopyDataSize = pBuffer->m_nDataSize;	//	拷贝部分长度
+                nCopyDataSize = pBuffer->m_nDataSize; // copy partial length
 
                 memcpy(pData + nGetSize, pBuffer->m_pData, nCopyDataSize);
 
-                // 移送buffer到空缓冲区中
+                // move buffer to empty buffer
                 m_nFullBufferSize -= pBuffer->m_nBufferSize;
                 m_nEmptyBufferSize += pBuffer->m_nBufferSize;
 
@@ -384,14 +384,14 @@ public:
 
         nFillSize = 0;
 
-        while(nFillSize < nDataSize)	//	填充至足够的数据后返�?
+        while(nFillSize < nDataSize) // return after get enough data
         {
             pBuffer = m_EmptyBuffer.front();
             pBuffer->ClearData();
 
             if(nDataSize - nFillSize < pBuffer->m_nBufferSize)
             {
-                nCopyDataSize = nDataSize - nFillSize;		//	拷贝部分长度
+                nCopyDataSize = nDataSize - nFillSize; // copy partial length
 
                 memcpy(pBuffer->m_pBuffer, pData + nFillSize, nCopyDataSize);
                 pBuffer->m_nDataSize = nCopyDataSize;
@@ -405,7 +405,7 @@ public:
             }
             nFillSize += nCopyDataSize;
 
-            // 移送buffer到数据缓冲区�?
+            // move buffer to empty buffer
             m_nDataSize += pBuffer->m_nDataSize;
             m_nFullBufferSize += pBuffer->m_nBufferSize;
             m_nEmptyBufferSize -= pBuffer->m_nBufferSize;

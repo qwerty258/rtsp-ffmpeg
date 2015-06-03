@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <winsock2.h>
 #include <string.h>
 #include <cstdlib>
@@ -9,9 +9,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 #include <libavcodec\avcodec.h>
 #include <libavformat\avformat.h>
 #include <libswscale\swscale.h>
+
 #ifdef __cplusplus
 }
 #endif
@@ -39,21 +41,20 @@ const int ListCount = 100;
 
 typedef int (WINAPI *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, int bufsize, int buftype);//define my CallBack Func
 
-/*半透明填充多边形回调函数（bmp图片Buffer，bmp图片wid，bmp图片high）*/
+/*Translucent filled polygons callback 半透明填充多边形回调函数(bmp Buffer，bmp width，bmp high)*/
 
 typedef int(WINAPI *TDrawRectCallBack)(char*, int, int);
 typedef int (WINAPI *TDrawLineCallBack)(int, HDC);//define my CallBack Func
 
-/*TBmpCallBack参数说明：char*（BMPbufer）,int(buferSize),bmpWidth,bmpHight,int(帧号),int(通道号),int(数据类型),HWND,句柄*/
+/*TBmpCallBack: char*（BMPbufer）,int(buferSize),bmpWidth,bmpHight,int(frame number),int(channel number),int(data type),HWND,handle*/
 
 typedef int (WINAPI *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
 
-/*TYUVCallBack参数说明: yuvbuffer流，图片长和宽*/
-
+/*TYUVCallBack: yuvbuffer stream, frame width and length*/
 typedef int (WINAPI *TYUVCallBack)(unsigned char *buffer, int width, int length, void *);
 
 typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);
-//收到网络数据块
+// received net packages
 typedef struct
 {
     int  fileSize;
@@ -64,16 +65,16 @@ typedef struct
 
 typedef struct
 {
-    int width;             //实际宽度
-    int height;            //实际高度
-    int playWidth;         //显示宽度
-    int playHeight;        //显示高度
-    int fps;               //播放频率
-    HWND playHandle;       //播放句柄
-    int stopPlay;          //播放控制
+    int width;             // actual width
+    int height;            // actual hight
+    int playWidth;         // display width
+    int playHeight;        // display hight
+    int fps;               // frame per second
+    HWND playHandle;       // handle to the paly window
+    int stopPlay;          // play control
     int playChannle;
-    bool isDecode;        //是否解码
-    //int  VideoCode;       //码流类型  0，H264  1 mpeg4 
+    bool isDecode;        // is decode
+    //int  VideoCode;       //code type: 0: H264, 1: mpeg4
 }myparamInput;
 
 typedef struct
@@ -149,14 +150,11 @@ public:
         return readNetBufIndex;
     }
 public:
-    int type;//code type: 1,h264,2,mpeg,3,FLV
+    int type;//code type: 1: h264, 2: mpeg, 3: FLV
     void *userBuffer;
     bool nHWAcceleration;
 };
 
-DWORD WINAPI videoDecodeQueue(LPVOID lpParam);
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
 //void DrawImage(HDC hdc,HBITMAP hbmp,COLORREF color,int x,int y,int width,int height,int SrcX,int SrcY);
-
-
-
+DWORD WINAPI videoDecodeQueue(LPVOID lpParam);

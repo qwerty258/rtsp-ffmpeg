@@ -1,4 +1,4 @@
-﻿#include "UNpack.h"
+#include "UNpack.h"
 
 NALU_t* AllocNALU(int buffersize)
 {
@@ -127,8 +127,8 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
 
 
     //end rtp_payload and rtp_header
-    //////////////////////////////////////////////////////////////////////////  
-    //begin nal_hdr
+
+    //begin nal unit header
     n = AllocNALU(4096);
     if(NULL == n)          // locate memory for nalu_t and it's members
     {
@@ -136,16 +136,14 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         exit(-1);
     }
 
-    //nalu_hdr = (NALU_HEADER*)current_buffer_position; //网络传输过来的字节序 ，当存入内存还是和文档描述的相反，只要匹配网络字节序和文档描述即可传输正确�? 
-    //printf("forbidden_zero_bit: %d\n",nalu_hdr->F);              //网络传输中的方式为：F->NRI->TYPE.. 内存中存储方式为 TYPE->NRI->F (和nal头匹�?�? 
-    n->forbidden_zero_bit = ((NALU_HEADER*)current_buffer_position)->F; //<< 7;                          //内存中的字节序�? 
-    n->NAL_reference_idc = ((NALU_HEADER*)current_buffer_position)->NRI; //<< 5;
+    n->forbidden_zero_bit = ((NALU_HEADER*)current_buffer_position)->F;
+    n->NAL_reference_idc = ((NALU_HEADER*)current_buffer_position)->NRI;
     n->NAL_unit_type = ((NALU_HEADER*)current_buffer_position)->TYPE;
 
-    //end nal_hdr  
-    //////////////////////////////////////////////////////////////////////////  
-    //开始解�? 
-    if(((NALU_HEADER*)current_buffer_position)->TYPE != 7 && (*nfirst))  //不是67开头的包，并且还是第一个包
+    //end nal unit header
+
+    // 
+    if(((NALU_HEADER*)current_buffer_position)->TYPE != 7 && (*nfirst))  // not "sequence parameter set" and the first package
     {
         if(NULL != p_RTP_header->contributing_source_list)
         {
@@ -167,7 +165,9 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         return;
     }
     *nfirst = false;
-    if(((NALU_HEADER*)current_buffer_position)->TYPE > 0 && ((NALU_HEADER*)current_buffer_position)->TYPE < 24)  //单包  
+
+    // Single NAL Unit Packet
+    if(((NALU_HEADER*)current_buffer_position)->TYPE > 0 && ((NALU_HEADER*)current_buffer_position)->TYPE < 24)
     {
         poutfile[0] = 0x00;
         poutfile[1] = 0x00;
@@ -177,33 +177,34 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         total_bytes += 4;
         memcpy(p_RTP_header->payload, &RTP_package_buffer[13], RTP_package_length - 13);
         p_RTP_header->paylen = RTP_package_length - 13;
-        memcpy(poutfile + 4, ((NALU_HEADER*)current_buffer_position), 1);  //写NAL_HEADER  
+        memcpy(poutfile + 4, ((NALU_HEADER*)current_buffer_position), 1); // write NAL unit header
         total_bytes += 1;
-        memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);//写NAL数据
+        memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);// write NAL unit data
         total_bytes += p_RTP_header->paylen;
         poutfile[total_bytes] = '\0';
     }
-    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 28)                    //FU-A分片包，解码顺序和传输顺序相�? 
+    // Fragmentation Units A (FU-A), decoding order and transfer order are same
+    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 28)
     {
-
-        fu_ind = (FU_INDICATOR*)&RTP_package_buffer[12];     //分片包用的是FU_INDICATOR而不是NALU_HEADER  
+        // FU-A use FU_INDICATOR, not NALU_HEADER
+        fu_ind = (FU_INDICATOR*)&RTP_package_buffer[12];
         n->forbidden_zero_bit = fu_ind->F << 7;
         n->NAL_reference_idc = fu_ind->NRI << 5;
 
         n->NAL_unit_type = fu_ind->TYPE;
 
-        fu_hdr = (FU_HEADER*)&RTP_package_buffer[13];        //FU_HEADER赋�? 
-        n->NAL_unit_type = fu_hdr->TYPE;               //应用的是FU_HEADER的TYPE  
+        fu_hdr = (FU_HEADER*)&RTP_package_buffer[13];
+        n->NAL_unit_type = fu_hdr->TYPE;               // FU_HEADER TYPE
 
-        if(p_RTP_header->marker == 1)                      //分片包最后一个包  
+        if(p_RTP_header->marker == 1)                      // the last package of FU-A
         {
             memcpy(p_RTP_header->payload, &RTP_package_buffer[14], RTP_package_length - 14);
             p_RTP_header->paylen = RTP_package_length - 14;
-            memcpy(poutfile, p_RTP_header->payload, p_RTP_header->paylen);  //写NAL数据  
+            memcpy(poutfile, p_RTP_header->payload, p_RTP_header->paylen);  // write NAL unit data
             total_bytes = p_RTP_header->paylen;
             poutfile[total_bytes] = '\0';
         }
-        else if(p_RTP_header->marker == 0)                 //分片�?但不是最后一个包  
+        else if(p_RTP_header->marker == 0)                 //分片包 但不是最后一个包
         {
             if(fu_hdr->S == 1)                        //分片的第一个包  
             {
@@ -215,7 +216,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
                 poutfile[0] = 0x00;
                 poutfile[1] = 0x00;
                 poutfile[2] = 0x00;
-                poutfile[3] = 0x01;               //写起始字节码0x00000001  
+                poutfile[3] = 0x01;               // write first 4 byte 0x00000001
                 total_bytes += 4;
 
                 F = fu_ind->F << 7;
@@ -229,11 +230,11 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
                 total_bytes += 1;
                 memcpy(p_RTP_header->payload, &RTP_package_buffer[14], RTP_package_length - 14);
                 p_RTP_header->paylen = RTP_package_length - 14;
-                memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);  //写NAL数据  
+                memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);  //写NAL数据
                 total_bytes += p_RTP_header->paylen;
                 poutfile[total_bytes] = '\0';
             }
-            else                                      //如果不是第一个包  
+            else                                      //如果不是第一个包
             {
                 memcpy(p_RTP_header->payload, &RTP_package_buffer[14], RTP_package_length - 14);
                 p_RTP_header->paylen = RTP_package_length - 14;
@@ -243,12 +244,12 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
             }
         }
     }
-    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相�? 
+    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相同
     {
         //if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 1)                  //分片包最后一个包  
         //{
         //}
-        //else if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 0)             //分片�?但不是最后一个包  
+        //else if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 0)             //分片包 但不是最后一个包
         //{
         //}
     }

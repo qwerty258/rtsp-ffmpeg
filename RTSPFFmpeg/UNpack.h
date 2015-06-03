@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #ifdef _DEBUG
 #include <cstdio>
 #endif
@@ -165,11 +165,11 @@ typedef struct
     unsigned char  forbidden_zero_bit;
     unsigned char  NAL_reference_idc;   // NALU_PRIORITY_xxxx  
     unsigned char  NAL_unit_type;       // NALU_TYPE_xxxx    
-    unsigned int   startcodeprefix_len; // 閸撳秶绱戠€涙濡弫? 
-    unsigned int   len;                 // 閸栧懎鎯坣al 婢跺娈憂al 闂€鍨閿涘奔绮犵粭顑跨娑?0000001閸掗绗呮稉鈧稉?00000001閻ㄥ嫰鏆辨惔? 
-    unsigned int   max_size;            // 閸嬫艾顦挎稉鈧稉鐚瞐l 閻ㄥ嫰鏆辨惔? 
-    unsigned char* buf;                 // 閸栧懎鎯坣al 婢跺娈憂al 閺佺増宓? 
-    unsigned int   lost_packets;        // 妫板嫮鏆€  
+    unsigned int   startcodeprefix_len; // 前缀字节数
+    unsigned int   len;                 // 包含nal 头的nal 长度，从第一个00000001到下一个000000001的长度
+    unsigned int   max_size;            // 做多一个nal 的长度
+    unsigned char* buf;                 // 包含nal 头的nal 数据
+    unsigned int   lost_packets;        // 预留
 } NALU_t;
 
 
