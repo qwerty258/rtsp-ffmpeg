@@ -153,6 +153,7 @@ public:
     int type;//code type: 1: h264, 2: mpeg, 3: FLV
     void *userBuffer;
     bool nHWAcceleration;
+    char* m_BMP_buffer;
 };
 
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);

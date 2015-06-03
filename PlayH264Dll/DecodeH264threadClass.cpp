@@ -163,18 +163,12 @@ int CDecode::InputParam(myparamInput *p1)
 
 int CDecode::freeParam(void)
 {
-    try
-    {
-        paramUser.stopPlay = STOPVIDEO;
-        dataNode * m_dataNode = new dataNode;
-        m_dataNode->size = STOPVIDEO;
-        m_dataNode->data = NULL;
-        m_DataQueue.push(m_dataNode);
-    }
-    catch(...)
-    {
-        return -1;
-    }
+    paramUser.stopPlay = STOPVIDEO;
+    dataNode * m_dataNode = new dataNode;
+    m_dataNode->size = STOPVIDEO;
+    m_dataNode->data = NULL;
+    m_DataQueue.push(m_dataNode);
+    return 0;
 }
 
 int CDecode::playVideo()
@@ -196,28 +190,25 @@ int CDecode::playResize(int newWidth, int newHeight)
 }
 CDecode::CDecode()
 {
-    //for(int i=0;i<ListCount;i++)
-    //{
-    //        BuffList[i]=new netBuf;
-    //	 BuffList[i]->fileSize=0;
-    //	 BuffList[i]->FrameNum=0;
-    //	 BuffList[i]->readPos=0;
-    //}
+    m_BMP_buffer = new char[1920 * 1080 * 3 + 1024];
+    if(NULL == m_BMP_buffer)
+    {
+        MessageBox(NULL, L"memory new error", NULL, MB_OK);
+    }
+
     readNetBufIndex = 0;
     writeNetBufIndex = 0;
-    bpp = 24;//24 colors
-    //writewait=CreateEvent(NULL,TRUE,FALSE,NULL);
+    bpp = 24; //24 colors
+
     nHWAcceleration = false;
 }
 
 CDecode::~CDecode()
 {
-    //for(int i=0;i<ListCount;i++)
-    //{
-    //        delete BuffList[i]; 
-    //	 //BuffList[i]=NULL;
-    //	 //CloseHandle(hMutex);
-    //}
+    if(NULL != m_BMP_buffer)
+    {
+        delete[] m_BMP_buffer;
+    }
 }
 //void WriteLog(char * LogFileName,int writeIndex,int readIndex)
 //{
@@ -281,22 +272,14 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     AVCodec* codec;
     AVCodecContext* cocec_context = NULL;
-    int /*bufsize,*/ len;
+    int len;
     dataNode* p_data_node_temp;
     int got_picture;
     AVFrame *picture, *picRGB;
     AVFrame *pFrameYUV = NULL;
 
-    // av_register_all();
     int PictureSize;
     uint8_t *buf = NULL;
-    //char *netBuf = new char[PICMAX];
-    char *bmpBuf = new char[1920 * 1080 * 3];
-
-    if(/*NULL == netBuf ||*/ NULL == bmpBuf)
-    {
-        return -1;
-    }
 
     HWND hd = ((CDecode*)lpParam)->paramUser.playHandle;
 
@@ -526,7 +509,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             ((CDecode*)lpParam)->paramUser.playHeight = rect.bottom - rect.top;
             ((CDecode*)lpParam)->paramUser.playWidth = rect.right - rect.left;
 
-            ((CDecode*)lpParam)->playBMPbuf(picRGB, cocec_context->width, cocec_context->height, ((CDecode*)lpParam)->paramUser.playWidth, ((CDecode*)lpParam)->paramUser.playHeight, m_hdc, hmemDC, (uint8_t *)bmpBuf, hd);
+            ((CDecode*)lpParam)->playBMPbuf(picRGB, cocec_context->width, cocec_context->height, ((CDecode*)lpParam)->paramUser.playWidth, ((CDecode*)lpParam)->paramUser.playHeight, m_hdc, hmemDC, (uint8_t*)((CDecode*)lpParam)->m_BMP_buffer, hd);
         }
 
         if(NULL != p_data_node_temp->data)
@@ -569,8 +552,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     }
     av_freep(cocec_context);
     //avcodec_free_context(&cocec_context);
-    //delete[] netBuf;
-    delete[] bmpBuf;
     ((CDecode*)lpParam)->dataQueueClean();
 
     return 0;
