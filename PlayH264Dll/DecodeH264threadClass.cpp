@@ -205,7 +205,7 @@ CDecode::CDecode()
     //}
     readNetBufIndex = 0;
     writeNetBufIndex = 0;
-    bpp = 24;//24ɫ
+    bpp = 24;//24 colors
     //writewait=CreateEvent(NULL,TRUE,FALSE,NULL);
     nHWAcceleration = false;
 }
