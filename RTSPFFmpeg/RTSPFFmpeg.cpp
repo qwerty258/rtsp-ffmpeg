@@ -8,8 +8,9 @@ typedef struct container_client_data
 
 client_data* client_list;
 int          max_client_number;
-HMODULE      hPlayH264Dll;
+HMODULE      hPlayH264DLL;
 
+// function pointers for PlayH264DLL
 setH264CallBack       p_func_setH264CallBack;
 setYUVCallBack        p_func_setYUVCallBack;
 fSetCallBack          p_func_SetCallBack;
@@ -30,7 +31,7 @@ revoHW                p_func_revoHWFunc;
 
 int checkINSTANCE(int instance)
 {
-    if(0 > instance || max_client_number < instance || NULL == client_list || NULL == client_list[instance].pt)
+    if(0 > instance || max_client_number < instance || NULL == client_list)
     {
         return -1;
     }
@@ -42,7 +43,7 @@ int checkINSTANCE(int instance)
 
 RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
 {
-    if(0 > max_number_of_playing_instance)
+    if(0 >= max_number_of_playing_instance)
     {
         return -1;
     }
@@ -57,8 +58,8 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
 
     memset(client_list, 0x0, max_client_number * sizeof(client_data));
 
-    hPlayH264Dll = LoadLibrary(L"PlayH264DLL.dll");
-    if(NULL == hPlayH264Dll)
+    hPlayH264DLL = LoadLibrary(L"PlayH264DLL.dll");
+    if(NULL == hPlayH264DLL)
     {
         TCHAR* temp = new TCHAR[2048];
         wsprintf(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
@@ -67,84 +68,90 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
-    p_func_GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hPlayH264Dll, "GetIdlevideoINSTANCE");
+    p_func_GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hPlayH264DLL, "GetIdlevideoINSTANCE");
     if(NULL == p_func_GetIdlevideoINSTANCE)
     {
         MessageBox(NULL, L"GetProcAddress GetIdlevideoINSTANCE error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_initVideoDLL = (finitVideoDLL)GetProcAddress(hPlayH264Dll, "initVideoDLL");
+    p_func_initVideoDLL = (finitVideoDLL)GetProcAddress(hPlayH264DLL, "initVideoDLL");
     if(NULL == p_func_initVideoDLL)
     {
         MessageBox(0, L"GetProcAddress initVideoDLL error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_InitVideoParam = (fInitVideoParam)GetProcAddress(hPlayH264Dll, "InitVideoParam");
+    p_func_InitVideoParam = (fInitVideoParam)GetProcAddress(hPlayH264DLL, "InitVideoParam");
     if(NULL == p_func_InitVideoParam)
     {
         MessageBox(0, L"GetProcAddress InitVideoParam error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetCallBack = (fSetCallBack)GetProcAddress(hPlayH264Dll, "SetCallBack");
+    p_func_SetCallBack = (fSetCallBack)GetProcAddress(hPlayH264DLL, "SetCallBack");
     if(NULL == p_func_SetCallBack)
     {
         MessageBox(0, L"GetProcAddress SetCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hPlayH264Dll, "SetDrawLineCallBack");
+    p_func_SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hPlayH264DLL, "SetDrawLineCallBack");
     if(NULL == p_func_SetDrawLineCallBack)
     {
         MessageBox(0, L"GetProcAddress SetDrawLineCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(hPlayH264Dll, "SetBmpCallBack");
+    p_func_SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(hPlayH264DLL, "SetBmpCallBack");
     if(NULL == p_func_SetBmpCallBack)
     {
         MessageBox(0, L"GetProcAddress SetBmpCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetFillBmpCallBack = (fSetFillBmpCallBack)GetProcAddress(hPlayH264Dll, "SetFillBmpCallBack");
+    p_func_SetFillBmpCallBack = (fSetFillBmpCallBack)GetProcAddress(hPlayH264DLL, "SetFillBmpCallBack");
     if(NULL == p_func_SetFillBmpCallBack)
     {
         MessageBox(0, L"GetProcAddress SetFillBmpCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_setYUVCallBack = (setYUVCallBack)GetProcAddress(hPlayH264Dll, "SetYUVCallBack");
+    p_func_setYUVCallBack = (setYUVCallBack)GetProcAddress(hPlayH264DLL, "SetYUVCallBack");
     if(NULL == p_func_setYUVCallBack)
     {
         MessageBox(0, L"GetProcAddress SetYUVCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_setH264CallBack = (setH264CallBack)GetProcAddress(hPlayH264Dll, "SetH264CallBack");
+    p_func_setH264CallBack = (setH264CallBack)GetProcAddress(hPlayH264DLL, "SetH264CallBack");
     if(NULL == p_func_setH264CallBack)
     {
         MessageBox(0, L"GetProcAddress SetH264CallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_revoHWFunc = (revoHW)GetProcAddress(hPlayH264Dll, "RevoHWAcceleration");
+    p_func_revoHWFunc = (revoHW)GetProcAddress(hPlayH264DLL, "RevoHWAcceleration");
     if(NULL == p_func_revoHWFunc)
     {
         MessageBox(0, L"GetProcAddress RevoHWAcceleration error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_freeVideos = (ffreeVideos)GetProcAddress(hPlayH264Dll, "freeVideos");
+    p_func_freeVideos = (ffreeVideos)GetProcAddress(hPlayH264DLL, "freeVideos");
     if(NULL == p_func_freeVideos)
     {
         MessageBox(0, L"GetProcAddress freeVideos error", NULL, MB_OK);
         exit(-1);
     }
 
-    if(0 > p_func_initVideoDLL())
+    p_func_exitdll = (fexitdll)GetProcAddress(hPlayH264DLL, "exitdll");
+    if(NULL == p_func_exitdll)
+    {
+        MessageBox(NULL, L"GetProcAddress exitdll error", NULL, MB_OK);
+    }
+
+    if(0 > p_func_initVideoDLL(max_client_number))
     {
         return -1;
     }
@@ -173,7 +180,7 @@ RTSPFFMPEG_API int FreeRtspDLL(void)
 
     delete[] client_list;
 
-    FreeLibrary(hPlayH264Dll);
+    FreeLibrary(hPlayH264DLL);
 
     return 0;
 }

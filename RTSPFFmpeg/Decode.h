@@ -25,7 +25,7 @@ typedef int(_cdecl *setYUVCallBack)(int, TYUVCallBack, void *);
 typedef int(_cdecl *setH264CallBack)(int, TH264CallBack);
 typedef int(_cdecl *fSetCallBack)(int INSTANCE, PFCALLBACK f1);
 typedef void(_cdecl *fDecodeVideo)(int num, unsigned char * pInBuffer, int size);
-typedef int(_cdecl *finitVideoDLL)();
+typedef int(_cdecl *finitVideoDLL)(int max_number_of_playing_instance);
 typedef int(_cdecl *fGetIdlevideoINSTANCE)();
 typedef int(_cdecl *fInitVideoParam)(int INSTANCE, myparamInput *Myparam, int);
 typedef int(_cdecl *fInitVideoParamNew)(int, myparamInput *, int, int);

@@ -13,7 +13,7 @@ extern "C" {
 
     PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1);
     PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size);
-    PLAYH264DLL_API int initVideoDLL();
+    PLAYH264DLL_API int initVideoDLL(int max_number_of_playing_instance);
     PLAYH264DLL_API int GetIdlevideoINSTANCE();
     PLAYH264DLL_API int InitVideoParam(int INSTANCE, myparamInput *Myparam, int type);
     PLAYH264DLL_API int pauseVideos(int INSTANCE);

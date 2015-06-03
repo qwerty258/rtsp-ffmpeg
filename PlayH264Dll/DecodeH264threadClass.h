@@ -154,6 +154,11 @@ public:
     void *userBuffer;
     bool nHWAcceleration;
     char* m_BMP_buffer;
+public:
+    AVCodecContext* m_pCodecContext;
+    AVFrame * m_pFrame;
+    AVCodecParserContext* m_parser;
+
 };
 
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
