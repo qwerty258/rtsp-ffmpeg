@@ -57,7 +57,7 @@ typedef int(*lpFuncConnect)(int INSTANCE);
 typedef int(*lpFuncPlay)(int INSTANCE, HWND hd);
 typedef int(*lpFuncPause)(int INSTANCE);
 typedef int(*lpFuncDisConnect)(int INSTANCE);
-typedef int(*lpFuncInitRtspDLL)(void);
+typedef int(*lpFuncInitRtspDLL)(int max_number_of_playing_instance);
 typedef int(*lpFuncFreeRtspDll)(void);
 typedef int(*lpFuncFreeRtspDLL0000)(int INSTANCE);
 typedef int(*lpFuncRevoHWAcceleration)(int INSTANCE, bool acceleration);

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 //data struct for decode and play
-typedef struct
+typedef struct container_myparam_input
 {
     int width;             //The actual width
     int height;            //The actual height

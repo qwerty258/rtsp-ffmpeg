@@ -6,25 +6,6 @@
 #include "Rtcp.h"
 #include <Windows.h>
 
-bool inited = false;
-setH264CallBack p_func_setH264CallBack;
-setYUVCallBack p_func_setYUVCallBack;
-fSetCallBack p_func_SetCallBack;
-finitVideoDLL p_func_initVideoDLL;
-fGetIdlevideoINSTANCE p_func_GetIdlevideoINSTANCE;
-fInitVideoParamNew p_func_InitVideoParamNew;
-fInitVideoParam p_func_InitVideoParam;
-fpauseVideos p_func_pauseVideos;
-fplayVideos p_func_playVideos;
-ffreeVideos p_func_freeVideos;
-finputBuf p_func_inputBuf;
-fresize p_func_resize;
-fexitdll p_func_exitdll;
-fSetDrawLineCallBack p_func_SetDrawLineCallBack;
-fSetBmpCallBack p_func_SetBmpCallBack;
-fSetFillBmpCallBack p_func_SetFillBmpCallBack;
-revoHW p_func_revoHWFunc;
-
 // thread function
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
@@ -60,18 +41,18 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     Sleep(10);
-    p_func_InitVideoParam(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
+    ((CRTSPCLient*)lpParam)->m_p_func_InitVideoParam(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
     // set callback
-    p_func_SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
-    p_func_SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
-    p_func_SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
-    p_func_SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
-    p_func_setYUVCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
-    p_func_setH264CallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
+    ((CRTSPCLient*)lpParam)->m_p_func_SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
+    ((CRTSPCLient*)lpParam)->m_p_func_SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
+    ((CRTSPCLient*)lpParam)->m_p_func_SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
+    ((CRTSPCLient*)lpParam)->m_p_func_SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
+    ((CRTSPCLient*)lpParam)->m_p_func_setYUVCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
+    ((CRTSPCLient*)lpParam)->m_p_func_setH264CallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
 
     if(!((CRTSPCLient*)lpParam)->nHWAcceleration)
     {
-        p_func_revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
+        ((CRTSPCLient*)lpParam)->m_p_func_revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
     }
 
     ((CRTSPCLient*)lpParam)->m_RTSPRequest->ID = ((CRTSPCLient*)lpParam)->m_INSTANCE;
@@ -181,7 +162,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     // close decode
-    int ret = p_func_freeVideos(((CRTSPCLient*)lpParam)->m_INSTANCE);
+    int ret = ((CRTSPCLient*)lpParam)->m_p_func_freeVideos(((CRTSPCLient*)lpParam)->m_INSTANCE);
     if(ret < 0)
         return -1;
 
@@ -228,103 +209,6 @@ CRTSPCLient::CRTSPCLient()
     H264Func = NULL;
     YUVEx = NULL;
     nHWAcceleration = false;
-
-    if(!inited)
-    {
-        load_PlayH264DLL();
-        p_func_initVideoDLL();
-        inited = true;
-    }
-}
-
-void CRTSPCLient::load_PlayH264DLL()
-{
-    m_hDLL = LoadLibrary(L"PlayH264DLL.dll");
-    if(NULL == m_hDLL)
-    {
-        TCHAR* temp = new TCHAR[2048];
-        wsprintf(temp, L"LoadLibrary PlayH24DLL.dll error, error code: %d", GetLastError());
-        MessageBox(0, temp, NULL, MB_OK);
-        delete[] temp;
-        exit(-1);
-    }
-
-    p_func_GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(m_hDLL, "GetIdlevideoINSTANCE");
-    if(NULL == p_func_GetIdlevideoINSTANCE)
-    {
-        MessageBox(NULL, L"GetProcAddress GetIdlevideoINSTANCE error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_initVideoDLL = (finitVideoDLL)GetProcAddress(m_hDLL, "initVideoDLL");
-    if(NULL == p_func_initVideoDLL)
-    {
-        MessageBox(0, L"GetProcAddress initVideoDLL error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_InitVideoParam = (fInitVideoParam)GetProcAddress(m_hDLL, "InitVideoParam");
-    if(NULL == p_func_InitVideoParam)
-    {
-        MessageBox(0, L"GetProcAddress InitVideoParam error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_SetCallBack = (fSetCallBack)GetProcAddress(m_hDLL, "SetCallBack");
-    if(NULL == p_func_SetCallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetCallBack error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(m_hDLL, "SetDrawLineCallBack");
-    if(NULL == p_func_SetDrawLineCallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetDrawLineCallBack error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(m_hDLL, "SetBmpCallBack");
-    if(NULL == p_func_SetBmpCallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetBmpCallBack error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_SetFillBmpCallBack = (fSetFillBmpCallBack)GetProcAddress(m_hDLL, "SetFillBmpCallBack");
-    if(NULL == p_func_SetFillBmpCallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetFillBmpCallBack error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_setYUVCallBack = (setYUVCallBack)GetProcAddress(m_hDLL, "SetYUVCallBack");
-    if(NULL == p_func_setYUVCallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetYUVCallBack error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_setH264CallBack = (setH264CallBack)GetProcAddress(m_hDLL, "SetH264CallBack");
-    if(NULL == p_func_setH264CallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetH264CallBack error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_revoHWFunc = (revoHW)GetProcAddress(m_hDLL, "RevoHWAcceleration");
-    if(NULL == p_func_revoHWFunc)
-    {
-        MessageBox(0, L"GetProcAddress RevoHWAcceleration error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_freeVideos = (ffreeVideos)GetProcAddress(m_hDLL, "freeVideos");
-    if(NULL == p_func_freeVideos)
-    {
-        MessageBox(0, L"GetProcAddress freeVideos error", NULL, MB_OK);
-        exit(-1);
-    }
 }
 
 CRTSPCLient::~CRTSPCLient()
@@ -383,7 +267,7 @@ int CRTSPCLient::connect()
         return -1;
     }
 
-    m_INSTANCE = p_func_GetIdlevideoINSTANCE();
+    m_INSTANCE = m_p_func_GetIdlevideoINSTANCE();
 
     // set up communication port
     string setupName = "";

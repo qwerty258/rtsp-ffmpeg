@@ -13,7 +13,7 @@ extern "C" {
 
     // function    : initial RTSPFFmpeg.dll
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int InitRtspDLL(void);
+    RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance);
 
 
     // function    : uninitial RTSPFFmpeg.dll, release resource

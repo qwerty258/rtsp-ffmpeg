@@ -10,7 +10,6 @@
 class CRTSPCLient
 {
 private:
-    void load_PlayH264DLL();
     bool m_bInitURI;
     bool m_bConnected;
     bool m_bPlaying;
@@ -48,6 +47,24 @@ public:
     TH264CallBack H264Func;
     void * YUVEx;
     bool nHWAcceleration;
+
+    // function pointer for PlayH264DLL
+public:
+    setH264CallBack       m_p_func_setH264CallBack;
+    setYUVCallBack        m_p_func_setYUVCallBack;
+    fSetCallBack          m_p_func_SetCallBack;
+    fGetIdlevideoINSTANCE m_p_func_GetIdlevideoINSTANCE;
+    fInitVideoParamNew    m_p_func_InitVideoParamNew;
+    fInitVideoParam       m_p_func_InitVideoParam;
+    fpauseVideos          m_p_func_pauseVideos;
+    fplayVideos           m_p_func_playVideos;
+    ffreeVideos           m_p_func_freeVideos;
+    finputBuf             m_p_func_inputBuf;
+    fresize               m_p_func_resize;
+    fSetDrawLineCallBack  m_p_func_SetDrawLineCallBack;
+    fSetBmpCallBack       m_p_func_SetBmpCallBack;
+    fSetFillBmpCallBack   m_p_func_SetFillBmpCallBack;
+    revoHW                m_p_func_revoHWFunc;
 };
 
 DWORD WINAPI RTSPVideo(LPVOID lpParam);

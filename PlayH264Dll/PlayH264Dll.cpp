@@ -19,7 +19,7 @@ using namespace std;
 #endif
 #endif // _DEBUG
 
-#define MACPL 100
+#define MACPL 20
 int debug = 0;
 struct DecodeList
 {

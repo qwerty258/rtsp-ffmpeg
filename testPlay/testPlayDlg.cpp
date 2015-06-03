@@ -109,7 +109,7 @@ BOOL CtestPlayDlg::OnInitDialog()
         AfxMessageBox(L"GetProcAddress GetRtspINSTANCE error");
     }
 
-    if(0 != InitRtspDLL())
+    if(0 != InitRtspDLL(20))
     {
         AfxMessageBox(L"InitRtspDLL error");
     }
