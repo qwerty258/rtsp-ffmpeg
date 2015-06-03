@@ -30,7 +30,7 @@ revoHW                p_func_revoHWFunc;
 
 int checkINSTANCE(int instance)
 {
-    if(0 > instance || max_client_number < instance || NULL == client_list)
+    if(0 > instance || max_client_number < instance || NULL == client_list || NULL == client_list[instance].pt)
     {
         return -1;
     }

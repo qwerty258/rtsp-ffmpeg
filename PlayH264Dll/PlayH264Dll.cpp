@@ -21,18 +21,17 @@ using namespace std;
 
 #define MACPL 20
 int debug = 0;
-struct DecodeList
+typedef struct container_decode_data
 {
     CDecode *pt;
-    CRITICAL_SECTION cs;
     int idle; //1 enable 0 disable 2 lock
-};
+}decode_list;
 
 AVCodecContext* m_pCodecContext[MACPL];
 AVFrame * m_pFrame[MACPL];
 AVCodecParserContext * m_parser[MACPL];
 
-DecodeList deList[MACPL];
+decode_list deList[MACPL];
 
 
 
@@ -43,6 +42,19 @@ int checkINSTANCE(int INSTANCE)
     {
         return -1;
     }
+    return 0;
+}
+
+PLAYH264DLL_API int initVideoDLL()
+{
+    av_register_all();
+
+    for(int i = 0; i < MACPL; i++)
+    {
+        deList[i].idle = 0;
+        deList[i].pt = new CDecode;
+    }
+
     return 0;
 }
 
@@ -102,47 +114,6 @@ PLAYH264DLL_API void DecodeVideo(int num, uint8_t * pInBuffer, int size)
     //     //   CDecode *DC=(CDecode *)deList[num].pt;
     //     //   while(DC->writeNetBuf(num,NULL,0));
     //}
-}
-
-PLAYH264DLL_API int initVideoDLL()
-{
-    //  	char sdl_var[64];
-    //sprintf(sdl_var, "SDL_WINDOWID=%d", hd);
-    //SDL_putenv(sdl_var);
-    /*FILE *fp;
-    fp = fopen("c:\\20150205.txt","a+");
-    fputs("initial success",fp);
-    fclose(fp);*/
-
-    if(debug == 1)
-    WriteLog("C:\\1.log", "initVideoDLL");
-    //InitializeCriticalSection( & cs);
-    av_register_all();
-
-    //     for (int i=0;i<2;i++)
-    //     {
-    //         m_pCodecContext[i]=avcodec_alloc_context();
-    //         m_pFrame[i]=avcodec_alloc_frame();
-    //         m_parser[i]=av_parser_init(CODEC_ID_H264);
-    //     }
-    //en or de?
-    //for(int i=0;i<MACPL;i++)
-    //  {
-    //     AVCodec *codec;   
-    //  codec = avcodec_find_decoder(CODEC_ID_H264);
-    //  m_pCodecContext[i]=avcodec_alloc_context3(codec);
-    //     m_pFrame[i]=avcodec_alloc_frame();
-    //     m_parser[i]=av_parser_init(CODEC_ID_H264);
-    //  }
-
-    for(int i = 0; i < MACPL; i++)
-    {
-        deList[i].idle = 0;
-        deList[i].pt = new CDecode;
-        deList[i].cs = {0};
-    }
-
-    return 0;
 }
 
 PLAYH264DLL_API int GetIdlevideoINSTANCE()
