@@ -338,9 +338,12 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     HWND hd = ((playH264VideoClass*)lpParam)->paramUser.playHandle;
 
-    HDC m_hdc = ::GetDC(hd);
+    HDC m_hdc = GetDC(hd);
     HDC hmemDC = CreateCompatibleDC(m_hdc);
-    if(m_hdc == NULL) return 0;
+    if(NULL == hmemDC)
+    {
+        return 0;
+    }
 
     picture = avcodec_alloc_frame();
     picRGB = avcodec_alloc_frame();
@@ -379,8 +382,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         {
             break;
         }
-        if(bufsize <= 0)
+
+        if(0 >= bufsize)
         {
+            Sleep(30);
             continue;
         }
 

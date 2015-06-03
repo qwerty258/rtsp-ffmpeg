@@ -117,11 +117,8 @@ PLAYH264DLL_API int initVideoDLL()
     if(debug == 1)
     WriteLog("C:\\1.log", "initVideoDLL");
     //InitializeCriticalSection( & cs);
-    avcodec_register_all();
     av_register_all();
 
-    //	avcodec_register_all();
-    //  av_register_all();
     //     for (int i=0;i<2;i++)
     //     {
     //         m_pCodecContext[i]=avcodec_alloc_context();

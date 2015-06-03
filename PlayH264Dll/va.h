@@ -21,6 +21,8 @@ extern "C" {
 }
 #endif
 
+#pragma warning(disable: 4996)
+
 struct va_sys_t;
 typedef struct dxva_t dxva_t;
 typedef struct va_sys_t va_dxva2_t;
