@@ -21,7 +21,7 @@ using namespace std;
 #endif
 #endif // _DEBUG
 
-#define PICMAX (500000) //每一帧图片数据最大值
+#define PICMAX (500000) // the maximum data buffer size per frame
 int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
 {
     bufptr = BMPbuf;
@@ -56,9 +56,7 @@ int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, in
 
 
 //////////////////////////////////////////////////////////////////
-//功能：将buf写入netbuf链表，等待解码
-//输入：buf 
-//输出：写入netbuf链表
+//function: write buf into netbuf link list, waiting for decode
 ///////////////////////////////////////////////////////////////////
 int CDecode::writeNetBuf(int num, unsigned char *buf, int bufsize)
 {
@@ -163,11 +161,6 @@ int CDecode::InputParam(myparamInput *p1)
 
 }
 
-//////////////////////////////////////////////////////////////////
-//功能：将buf写入netbuf链表，等待解码
-//输入：buf 
-//输出：写入链表
-///////////////////////////////////////////////////////////////////
 int CDecode::freeParam(void)
 {
     try
@@ -184,21 +177,12 @@ int CDecode::freeParam(void)
     }
 }
 
-//////////////////////////////////////////////////////////////////
-//功能：将buf写入netbuf链表，等待解码
-//输入：buf 
-//输出：写入链表
-///////////////////////////////////////////////////////////////////
 int CDecode::playVideo()
 {
     paramUser.stopPlay = 0;
     return 0;
 }
-//////////////////////////////////////////////////////////////////
-//功能：将buf写入netbuf链表，等待解码
-//输入：buf 
-//输出：写入链表
-///////////////////////////////////////////////////////////////////
+
 int CDecode::pauseVideo()
 {
     paramUser.stopPlay = 0;
@@ -247,13 +231,13 @@ CDecode::~CDecode()
 
 //int id = 0;
 
-//关于GPU的全局变量
+// golbal variables about GPU
 bool init = false;
-LPDIRECTDRAW lpDD = NULL;// DirectDraw 对象指针
-DDSURFACEDESC ddsd; // DirectDraw 表面描述
-LPDIRECTDRAWSURFACE lpPrimary = NULL;// DirectDraw 主表面指针
+LPDIRECTDRAW lpDD = NULL; // pointer to DirectDraw object
+DDSURFACEDESC ddsd;       // DirectDraw surface description
+LPDIRECTDRAWSURFACE lpPrimary = NULL; //primary pointer to DirectDraw surface
 
-//硬件加速模块
+// hardware acceleration module
 extern enum PixelFormat DxGetFormat(AVCodecContext *avctx, const enum PixelFormat *pi_fmt);
 extern int DxGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
 extern int  DxReGetFrameBuf(struct AVCodecContext *avctx, AVFrame *pic);
@@ -266,7 +250,7 @@ int mAVCodecContextInit(AVCodecContext *avct)
     avct->reget_buffer = DxReGetFrameBuf;
     avct->release_buffer = DxReleaseFrameBuf;
     avct->opaque = NULL;
-    //能否硬解
+    // support for hardware decode
     if(avct->codec_id == CODEC_ID_MPEG1VIDEO || avct->codec_id == CODEC_ID_MPEG2VIDEO ||
             //avctx->codec_id == CODEC_ID_MPEG4 ||
             avct->codec_id == CODEC_ID_H264 ||
@@ -284,7 +268,7 @@ int mAVCodecContextInit(AVCodecContext *avct)
 //
 
 
-//效率GDI版本
+// efficient GDI version
 HWND gPlayWnd = NULL;
 int bGPlayWnd = 0;
 DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
@@ -292,7 +276,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     bool fir = TRUE;
     int height = 0;
     int width = 0;
-    //启用编码器 
+    // enable encoder
     AVPacket avp;
 
     AVCodec* codec;
@@ -381,7 +365,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         avp.data = (uint8_t*)p_data_node_temp->data;
         avp.size = p_data_node_temp->size;
 
-        //h264输出
+        // h264 output
         int nWH = 0;
         if(((CDecode*)lpParam)->H264Func&&nWH)
         {
@@ -408,11 +392,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(fir && ((CDecode*)lpParam)->nHWAcceleration)
         {
-            //GT620总值1000
-            //1080,GPU消耗300
-            //960,GPU 250
-            //720,GPU 140
-            //D1，GPU 60
+            //GT620 total number: 1000
+            // 1080, GPU consume: 300
+            //  960, GPU consume: 250
+            //  720, GPU consume: 140
+            //   D1, GPU consume: 60
 
             if(picture->height >= 1080)
                 availableGPU[currentGPU] += 300;
@@ -433,14 +417,14 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 int numBytes = avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height);
                 avpicture_fill((AVPicture *)pFrameYUV, (uint8_t *)av_malloc(numBytes), PIX_FMT_YUV420P, picture->width, picture->height);
             }
-            bGPlayWnd = 0;//打开开关
+            bGPlayWnd = 0;// open switch
             fir = false;
         }
-        if(!cocec_context->opaque && ((CDecode*)lpParam)->nHWAcceleration)//p_va失败
+        if(!cocec_context->opaque && ((CDecode*)lpParam)->nHWAcceleration)//p_va failure
         {
             continue;
         }
-        //h264输出
+        //h264 output
         if(((CDecode*)lpParam)->H264Func)
         {
             ((CDecode*)lpParam)->H264Func(((CDecode*)lpParam)->INSTANCE, (char *)avp.data, avp.size, picture->width, picture->height);
@@ -448,7 +432,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             continue;
         }
         if(((CDecode*)lpParam)->nHWAcceleration)
-            DxPictureCopy(cocec_context, picture, pFrameYUV, ((CDecode*)lpParam)->yuvFunc);//内部代码改为直接显示
+            DxPictureCopy(cocec_context, picture, pFrameYUV, ((CDecode*)lpParam)->yuvFunc);// internal code change to display directly
 
 
 
@@ -534,9 +518,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             picture->data[2] += picture->linesize[2] * (cocec_context->height / 2 - 1);
             picture->linesize[2] *= -1;
 
-            sws_scale(pSwsCtx, picture->data, picture->linesize, 0, cocec_context->height, picRGB->data, picRGB->linesize);//效率？
+            sws_scale(pSwsCtx, picture->data, picture->linesize, 0, cocec_context->height, picRGB->data, picRGB->linesize);// efficint ???
 
-            SetStretchBltMode(m_hdc, COLORONCOLOR);//这种模式依然不行
+            SetStretchBltMode(m_hdc, COLORONCOLOR);// this pattern still does not work
             RECT rect;
             GetWindowRect(((CDecode*)lpParam)->paramUser.playHandle, &rect);
             ((CDecode*)lpParam)->paramUser.playHeight = rect.bottom - rect.top;
