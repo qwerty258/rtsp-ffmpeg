@@ -68,10 +68,6 @@ PLAYH264DLL_API int free_decode_DLL(void)
 {
     for(int i = 0; i < max_decode_number; i++)
     {
-        if(NULL != decode_list[i].p_CDecode)
-        {
-            delete decode_list[i].p_CDecode;
-        }
         free_decode_instance(i);
     }
 
@@ -191,6 +187,11 @@ PLAYH264DLL_API int free_decode_instance(int instance)
     {
         Sleep(200);
         GetExitCodeProcess(decode_list[instance].p_CDecode->hThreadDecode, &exit_code);
+    }
+
+    if(NULL != decode_list[instance].p_CDecode)
+    {
+        delete decode_list[instance].p_CDecode;
     }
 
     decode_list[instance].idle = 0;// release lock
