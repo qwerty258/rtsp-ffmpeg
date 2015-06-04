@@ -41,7 +41,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     Sleep(10);
-    ((CRTSPCLient*)lpParam)->m_p_func_InitVideoParam(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
+    ((CRTSPCLient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
     // set callback
     ((CRTSPCLient*)lpParam)->m_p_func_SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
     ((CRTSPCLient*)lpParam)->m_p_func_SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
@@ -162,7 +162,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     // close decode
-    int ret = ((CRTSPCLient*)lpParam)->m_p_func_freeVideos(((CRTSPCLient*)lpParam)->m_INSTANCE);
+    int ret = ((CRTSPCLient*)lpParam)->m_p_function_free_decode_instance(((CRTSPCLient*)lpParam)->m_INSTANCE);
     if(ret < 0)
         return -1;
 
@@ -267,7 +267,7 @@ int CRTSPCLient::connect()
         return -1;
     }
 
-    m_INSTANCE = m_p_func_GetIdlevideoINSTANCE();
+    m_INSTANCE = m_p_function_get_idle_instance();
 
     // set up communication port
     string setupName = "";

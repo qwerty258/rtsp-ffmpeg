@@ -201,6 +201,12 @@ CDecode::CDecode()
     bpp = 24; //24 colors
 
     nHWAcceleration = false;
+    func = NULL;
+    funcD = NULL;
+    bmpFunc = NULL;
+    fillbmp = NULL;
+    yuvFunc = NULL;
+    H264Func = NULL;
 }
 
 CDecode::~CDecode()

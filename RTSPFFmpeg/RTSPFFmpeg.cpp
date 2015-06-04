@@ -11,19 +11,19 @@ int          max_client_number;
 HMODULE      hPlayH264DLL;
 
 // function pointers for PlayH264DLL
+function_initial_decode_DLL       p_function_initial_decode_DLL;
+function_free_decode_DLL          p_function_free_decode_DLL;
+function_get_idle_instance        p_function_get_idle_instance;
+function_initial_decode_parameter p_function_initial_decode_parameter;
+function_decode                   p_function_decode;
+function_free_decode_instance     p_function_free_decode_instance;
 setH264CallBack       p_func_setH264CallBack;
 setYUVCallBack        p_func_setYUVCallBack;
 fSetCallBack          p_func_SetCallBack;
-finitVideoDLL         p_func_initVideoDLL;
-fGetIdlevideoINSTANCE p_func_GetIdlevideoINSTANCE;
-fInitVideoParamNew    p_func_InitVideoParamNew;
-fInitVideoParam       p_func_InitVideoParam;
 fpauseVideos          p_func_pauseVideos;
 fplayVideos           p_func_playVideos;
-ffreeVideos           p_func_freeVideos;
 finputBuf             p_func_inputBuf;
 fresize               p_func_resize;
-fexitdll              p_func_exitdll;
 fSetDrawLineCallBack  p_func_SetDrawLineCallBack;
 fSetBmpCallBack       p_func_SetBmpCallBack;
 fSetFillBmpCallBack   p_func_SetFillBmpCallBack;
@@ -68,24 +68,37 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
-    p_func_GetIdlevideoINSTANCE = (fGetIdlevideoINSTANCE)GetProcAddress(hPlayH264DLL, "GetIdlevideoINSTANCE");
-    if(NULL == p_func_GetIdlevideoINSTANCE)
-    {
-        MessageBox(NULL, L"GetProcAddress GetIdlevideoINSTANCE error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_initVideoDLL = (finitVideoDLL)GetProcAddress(hPlayH264DLL, "initVideoDLL");
-    if(NULL == p_func_initVideoDLL)
+    p_function_initial_decode_DLL = (function_initial_decode_DLL)GetProcAddress(hPlayH264DLL, "initial_decode_DLL");
+    if(NULL == p_function_initial_decode_DLL)
     {
         MessageBox(0, L"GetProcAddress initVideoDLL error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_InitVideoParam = (fInitVideoParam)GetProcAddress(hPlayH264DLL, "InitVideoParam");
-    if(NULL == p_func_InitVideoParam)
+    p_function_free_decode_DLL = (function_free_decode_DLL)GetProcAddress(hPlayH264DLL, "free_decode_DLL");
+    if(NULL == p_function_free_decode_DLL)
+    {
+        MessageBox(NULL, L"GetProcAddress exitdll error", NULL, MB_OK);
+    }
+
+    p_function_get_idle_instance = (function_get_idle_instance)GetProcAddress(hPlayH264DLL, "get_idle_instance");
+    if(NULL == p_function_get_idle_instance)
+    {
+        MessageBox(NULL, L"GetProcAddress GetIdlevideoINSTANCE error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_function_initial_decode_parameter = (function_initial_decode_parameter)GetProcAddress(hPlayH264DLL, "initial_decode_parameter");
+    if(NULL == p_function_initial_decode_parameter)
     {
         MessageBox(0, L"GetProcAddress InitVideoParam error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_function_free_decode_instance = (function_free_decode_instance)GetProcAddress(hPlayH264DLL, "free_decode_instance");
+    if(NULL == p_function_free_decode_instance)
+    {
+        MessageBox(0, L"GetProcAddress freeVideos error", NULL, MB_OK);
         exit(-1);
     }
 
@@ -138,20 +151,7 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
-    p_func_freeVideos = (ffreeVideos)GetProcAddress(hPlayH264DLL, "freeVideos");
-    if(NULL == p_func_freeVideos)
-    {
-        MessageBox(0, L"GetProcAddress freeVideos error", NULL, MB_OK);
-        exit(-1);
-    }
-
-    p_func_exitdll = (fexitdll)GetProcAddress(hPlayH264DLL, "exitdll");
-    if(NULL == p_func_exitdll)
-    {
-        MessageBox(NULL, L"GetProcAddress exitdll error", NULL, MB_OK);
-    }
-
-    if(0 > p_func_initVideoDLL(max_client_number))
+    if(0 > p_function_initial_decode_DLL(max_client_number))
     {
         return -1;
     }
@@ -176,7 +176,7 @@ RTSPFFMPEG_API int FreeRtspDLL(void)
         }
     }
 
-    p_func_exitdll();
+    p_function_free_decode_DLL();
 
     delete[] client_list;
 
@@ -200,10 +200,11 @@ RTSPFFMPEG_API int GetRtspINSTANCE(void)
                     MessageBox(NULL, L"memory new error", NULL, MB_OK);
                     return -1;
                 }
-                client_list[i].pt->m_p_func_freeVideos = p_func_freeVideos;
-                client_list[i].pt->m_p_func_GetIdlevideoINSTANCE = p_func_GetIdlevideoINSTANCE;
-                client_list[i].pt->m_p_func_InitVideoParam = p_func_InitVideoParam;
-                client_list[i].pt->m_p_func_InitVideoParamNew = p_func_InitVideoParamNew;
+                client_list[i].pt->m_p_function_get_idle_instance = p_function_get_idle_instance;
+                client_list[i].pt->m_p_function_initial_decode_parameter = p_function_initial_decode_parameter;
+                client_list[i].pt->m_p_function_decode = p_function_decode;
+                client_list[i].pt->m_p_function_free_decode_instance = p_function_free_decode_instance;
+
                 client_list[i].pt->m_p_func_inputBuf = p_func_inputBuf;
                 client_list[i].pt->m_p_func_pauseVideos = p_func_pauseVideos;
                 client_list[i].pt->m_p_func_playVideos = p_func_playVideos;

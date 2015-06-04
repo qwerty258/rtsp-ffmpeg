@@ -50,15 +50,16 @@ public:
 
     // function pointer for PlayH264DLL
 public:
+    function_get_idle_instance        m_p_function_get_idle_instance;
+    function_initial_decode_parameter m_p_function_initial_decode_parameter;
+    function_decode                   m_p_function_decode;
+    function_free_decode_instance     m_p_function_free_decode_instance;
+
     setH264CallBack       m_p_func_setH264CallBack;
     setYUVCallBack        m_p_func_setYUVCallBack;
     fSetCallBack          m_p_func_SetCallBack;
-    fGetIdlevideoINSTANCE m_p_func_GetIdlevideoINSTANCE;
-    fInitVideoParamNew    m_p_func_InitVideoParamNew;
-    fInitVideoParam       m_p_func_InitVideoParam;
     fpauseVideos          m_p_func_pauseVideos;
     fplayVideos           m_p_func_playVideos;
-    ffreeVideos           m_p_func_freeVideos;
     finputBuf             m_p_func_inputBuf;
     fresize               m_p_func_resize;
     fSetDrawLineCallBack  m_p_func_SetDrawLineCallBack;

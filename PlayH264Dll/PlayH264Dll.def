@@ -1,19 +1,20 @@
 LIBRARY "PlayH264Dll"
 EXPORTS
-	GetIdlevideoINSTANCE	@1
-	InitVideoParam			@2
-	pauseVideos				@3
-	playVideos				@4
-	freeVideos				@5
-	inputBuf				@6
-	initVideoDLL			@7
-	SetCallBack				@8
-	DecodeVideo				@9
-	exitdll					@10
-	SetDrawLineCallBack		@11
-	SetBmpCallBack			@12
-	SetFillBmpCallBack		@13
-	resize					@14
-	SetYUVCallBack			@16
-	SetH264CallBack			@17
-	RevoHWAcceleration		@18
+	initial_decode_DLL			@1
+	free_decode_DLL				@2
+	get_idle_instance			@3
+	initial_decode_parameter	@4
+	decode						@5
+	free_decode_instance		@6
+
+	pauseVideos					@7
+	SetCallBack					@8
+	inputBuf					@9
+	playVideos					@10
+	SetDrawLineCallBack			@11
+	SetBmpCallBack				@12
+	SetFillBmpCallBack			@13
+	resize						@14
+	SetYUVCallBack				@16
+	SetH264CallBack				@17
+	RevoHWAcceleration			@18

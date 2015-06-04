@@ -271,7 +271,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
     }
     FreeNALU(n);
 
-    fDecodeVideo DecodeVideo;
+    function_decode p_function_decode;
 
     HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
     if(NULL == hdll)
@@ -279,8 +279,8 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
         MessageBox(NULL, L"LoadLibrary PlayH264DLL.dll error", L"", MB_OK);
         return;
     }
-    DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
-    DecodeVideo(ID, poutfile, total_bytes);
+    p_function_decode = (function_decode)GetProcAddress(hdll, "decode");
+    p_function_decode(ID, poutfile, total_bytes);
 
     return;
 }
@@ -300,7 +300,7 @@ void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
         *nfirst = false;
     }
 
-    fDecodeVideo DecodeVideo;
+    function_decode p_function_decode;
 
     HMODULE hdll = LoadLibrary(L"PlayH264DLL.dll");
     if(NULL == hdll)
@@ -308,7 +308,7 @@ void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
         MessageBox(NULL, L"LoadLibrary PlayH264DLL.dll error", L"", MB_OK);
         return;
     }
-    DecodeVideo = (fDecodeVideo)GetProcAddress(hdll, "DecodeVideo");
-    DecodeVideo(ID, recvbuf + 12, len - 12);
+    p_function_decode = (function_decode)GetProcAddress(hdll, "decode");
+    p_function_decode(ID, recvbuf + 12, len - 12);
 }
 
