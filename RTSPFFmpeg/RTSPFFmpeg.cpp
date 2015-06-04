@@ -17,8 +17,8 @@ function_get_idle_instance        p_function_get_idle_instance;
 function_initial_decode_parameter p_function_initial_decode_parameter;
 function_decode                   p_function_decode;
 function_free_decode_instance     p_function_free_decode_instance;
+function_set_YUV420_callback      p_function_set_YUV420_callback;
 setH264CallBack       p_func_setH264CallBack;
-setYUVCallBack        p_func_setYUVCallBack;
 fSetCallBack          p_func_SetCallBack;
 fpauseVideos          p_func_pauseVideos;
 fplayVideos           p_func_playVideos;
@@ -41,7 +41,7 @@ int checkINSTANCE(int instance)
     }
 }
 
-RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
+RTSPFFMPEG_API int initial_RTSP_DLL(int max_number_of_playing_instance)
 {
     if(0 >= max_number_of_playing_instance)
     {
@@ -102,6 +102,13 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
+    p_function_set_YUV420_callback = (function_set_YUV420_callback)GetProcAddress(hPlayH264DLL, "set_YUV420_callback");
+    if(NULL == p_function_set_YUV420_callback)
+    {
+        MessageBox(0, L"GetProcAddress SetYUVCallBack error", NULL, MB_OK);
+        exit(-1);
+    }
+
     p_func_SetCallBack = (fSetCallBack)GetProcAddress(hPlayH264DLL, "SetCallBack");
     if(NULL == p_func_SetCallBack)
     {
@@ -130,12 +137,6 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
-    p_func_setYUVCallBack = (setYUVCallBack)GetProcAddress(hPlayH264DLL, "SetYUVCallBack");
-    if(NULL == p_func_setYUVCallBack)
-    {
-        MessageBox(0, L"GetProcAddress SetYUVCallBack error", NULL, MB_OK);
-        exit(-1);
-    }
 
     p_func_setH264CallBack = (setH264CallBack)GetProcAddress(hPlayH264DLL, "SetH264CallBack");
     if(NULL == p_func_setH264CallBack)
@@ -159,7 +160,7 @@ RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance)
     return 0;
 }
 
-RTSPFFMPEG_API int FreeRtspDLL(void)
+RTSPFFMPEG_API int free_RTSP_DLL(void)
 {
     for(int i = 0; i < max_client_number; ++i)
     {
@@ -185,7 +186,7 @@ RTSPFFMPEG_API int FreeRtspDLL(void)
     return 0;
 }
 
-RTSPFFMPEG_API int GetRtspINSTANCE(void)
+RTSPFFMPEG_API int get_idle_instance(void)
 {
     for(int i = 0; i < max_client_number; ++i)
     {
@@ -204,6 +205,8 @@ RTSPFFMPEG_API int GetRtspINSTANCE(void)
                 client_list[i].pt->m_p_function_initial_decode_parameter = p_function_initial_decode_parameter;
                 client_list[i].pt->m_p_function_decode = p_function_decode;
                 client_list[i].pt->m_p_function_free_decode_instance = p_function_free_decode_instance;
+                client_list[i].pt->m_p_function_set_YUV420_callback = p_function_set_YUV420_callback;
+
 
                 client_list[i].pt->m_p_func_inputBuf = p_func_inputBuf;
                 client_list[i].pt->m_p_func_pauseVideos = p_func_pauseVideos;
@@ -215,7 +218,6 @@ RTSPFFMPEG_API int GetRtspINSTANCE(void)
                 client_list[i].pt->m_p_func_SetDrawLineCallBack = p_func_SetDrawLineCallBack;
                 client_list[i].pt->m_p_func_SetFillBmpCallBack = p_func_SetFillBmpCallBack;
                 client_list[i].pt->m_p_func_setH264CallBack = p_func_setH264CallBack;
-                client_list[i].pt->m_p_func_setYUVCallBack = p_func_setYUVCallBack;
                 return i;
             }
         }
@@ -223,33 +225,33 @@ RTSPFFMPEG_API int GetRtspINSTANCE(void)
     return -1;
 }
 
-RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, char* password)
+RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password)
 {
-    if(0 > checkINSTANCE(INSTANCE))
+    if(0 > checkINSTANCE(instance))
     {
         return -1;
     }
 
-    if(NULL == client_list[INSTANCE].pt)
+    if(NULL == client_list[instance].pt)
     {
         MessageBox(NULL, L"InitRtspVideoParam: new error!", NULL, MB_OK);
         return -1;
     }
 
-    return client_list[INSTANCE].pt->input_URI(URI, userName, password);
+    return client_list[instance].pt->input_URI(URI, userName, password);
 }
 
-RTSPFFMPEG_API int Connect(int INSTANCE)
+RTSPFFMPEG_API int RTSP_connect(int instance)
 {
-    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
+    if(0 > checkINSTANCE(instance) || NULL == client_list[instance].pt)
     {
         return -1;
     }
 
-    return client_list[INSTANCE].pt->connect();
+    return client_list[instance].pt->connect();
 }
 
-RTSPFFMPEG_API int Play(int INSTANCE, HWND hWnd)
+RTSPFFMPEG_API int play(int INSTANCE, HWND hWnd)
 {
     if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
     {
@@ -259,7 +261,7 @@ RTSPFFMPEG_API int Play(int INSTANCE, HWND hWnd)
     return client_list[INSTANCE].pt->play(hWnd);
 }
 
-RTSPFFMPEG_API int Pause(int INSTANCE)
+RTSPFFMPEG_API int pause(int INSTANCE)
 {
     if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
     {
@@ -269,7 +271,7 @@ RTSPFFMPEG_API int Pause(int INSTANCE)
     return client_list[INSTANCE].pt->pause();
 }
 
-RTSPFFMPEG_API int DisConnect(int INSTANCE)
+RTSPFFMPEG_API int RTSP_disconnect(int INSTANCE)
 {
     if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
     {
@@ -282,6 +284,20 @@ RTSPFFMPEG_API int DisConnect(int INSTANCE)
 
     delete client_list[INSTANCE].pt;
     client_list[INSTANCE].pt = NULL;
+
+    return 0;
+}
+
+RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)
+{
+    if(0 > checkINSTANCE(instance) || NULL == p_function_YUV420)
+    {
+        return -1;
+    }
+
+    client_list[instance].pt->m_p_function_YUV420 = p_function_YUV420;
+    client_list[instance].pt->m_p_YUV420_extra_data = additional_data;
+    client_list[instance].pt->m_trace_lost_package = trace_lost_package;
 
     return 0;
 }
@@ -300,19 +316,6 @@ RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration)
     return 0;
 }
 
-// set YUV callback function pointer
-RTSPFFMPEG_API int SetYUV420CallBack(int INSTANCE, TYUVCallBack p_func_YUV420Func, void *buffer)
-{
-    if(0 > checkINSTANCE(INSTANCE) || NULL == p_func_YUV420Func)
-    {
-        return -1;
-    }
-
-    client_list[INSTANCE].pt->YUVFunc = p_func_YUV420Func;
-    client_list[INSTANCE].pt->YUVEx = buffer;
-
-    return 0;
-}
 
 RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)
 {

@@ -23,6 +23,8 @@ extern "C" {
 
     PLAYH264DLL_API int free_decode_instance(int instance);
 
+    PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
+
     PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1);
     PLAYH264DLL_API int pauseVideos(int INSTANCE);
     PLAYH264DLL_API int playVideos(int INSTANCE);
@@ -31,7 +33,6 @@ extern "C" {
     PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1);
     PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1);
     PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf);
-    PLAYH264DLL_API int SetYUVCallBack(int INSTANCE, TYUVCallBack yuvf, void *buffer);
     PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf);
     //support hardware acceleration, default is software decode.
     //hardware acceleration support h264 and YUV callback, software decode support all callback functions

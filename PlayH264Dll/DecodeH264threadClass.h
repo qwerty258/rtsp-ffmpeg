@@ -18,13 +18,10 @@ extern "C" {
 }
 #endif
 
-#pragma comment(lib,"Ws2_32.lib")  
+#pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"avcodec.lib")
-#pragma comment(lib,"avdevice.lib")
-#pragma comment(lib,"avfilter.lib")
 #pragma comment(lib,"avformat.lib")
 #pragma comment(lib,"avutil.lib")
-#pragma comment(lib,"swresample.lib")
 #pragma comment(lib,"swscale.lib")
 
 
@@ -37,8 +34,7 @@ extern "C" {
 typedef struct SwsContext SwScaleContext;    //just for convenience
 const int ListCount = 100;
 
-//static SDL_Surface *screen;
-
+typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, int frame_ID, void* userdata, int frame_lost); // YUV420 callback
 typedef int (WINAPI *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, int bufsize, int buftype);//define my CallBack Func
 
 /*Translucent filled polygons callback 半透明填充多边形回调函数(bmp Buffer，bmp width，bmp high)*/
@@ -51,7 +47,7 @@ typedef int (WINAPI *TDrawLineCallBack)(int, HDC);//define my CallBack Func
 typedef int (WINAPI *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
 
 /*TYUVCallBack: yuvbuffer stream, frame width and length*/
-typedef int (WINAPI *TYUVCallBack)(unsigned char *buffer, int width, int length, void *);
+//typedef int (WINAPI *TYUVCallBack)(unsigned char *buffer, int width, int length, void *);
 
 typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);
 // received net packages
@@ -89,11 +85,18 @@ class CDecode
 public:
     CDecode();
     ~CDecode();
-
+    int writeNetBuf(int num, unsigned char *buf, int bufsize);
+    //int getNetBuf(AVCodecContext* m_pCodecContext,AVCodecParserContext * m_parser,char *buf,int bufsize);
+    int setReadPosize(int index, int readsize);
+    dataNode* getNextNetBuf(void);
+    int playResize(int newWidth, int newHeight);
+    //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
+    int playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND);
     void  dataQueueClean();
+
 private:
     //LPnetBuf   BuffList[ListCount];
-    Concurrency::concurrent_queue<dataNode *> m_DataQueue;
+    Concurrency::concurrent_queue<dataNode*> m_DataQueue;
     MEMORYSTATUSEX m_memory_statex;
 
     double m_total_phys_memory;
@@ -104,7 +107,6 @@ private:
     unsigned long int writeNetBufIndex;
     unsigned long int wcount;
     int readNetBufIndexPosize;
-    HANDLE hThreadDecode, writewait;
     DWORD threadID;
     BITMAPFILEHEADER bmpheader;
 
@@ -113,30 +115,26 @@ private:
     HBITMAP  OldBitmap;
     uint8_t *bufptr;
 
-
-public:
-    int writeNetBuf(int num, unsigned char *buf, int bufsize);
-    //int getNetBuf(AVCodecContext* m_pCodecContext,AVCodecParserContext * m_parser,char *buf,int bufsize);
-    int setReadPosize(int index, int readsize);
-    dataNode* getNextNetBuf(void);
-    int playResize(int newWidth, int newHeight);
-    //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
-    int playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND);
 public:
     myparamInput paramUser;
     int InputParam(myparamInput *p1);
     int freeParam(void);
     int playVideo();
     int pauseVideo();
+
+    HANDLE hThreadDecode, writewait;
+
+    // function pointer for callback begin
+    function_YUV420 m_p_function_YUV420;
+    void* m_p_YUV420_extra_data;
     PFCALLBACK func;
     TDrawLineCallBack funcD;
     TBmpCallBack bmpFunc;
     TDrawRectCallBack fillbmp;
-    TYUVCallBack yuvFunc;
     TH264CallBack H264Func;
+    // function pointer for callback end
 
     BITMAPINFOHEADER bmpinfo;
-    int INSTANCE;
     void abc()
     {
         writeNetBufIndex++;
@@ -151,14 +149,16 @@ public:
     }
 public:
     int type;//code type: 1: h264, 2: mpeg, 3: FLV
-    void *userBuffer;
     bool nHWAcceleration;
-    char* m_BMP_buffer;
-public:
-    AVCodecContext* m_pCodecContext;
-    AVFrame * m_pFrame;
-    AVCodecParserContext* m_parser;
 
+    char* m_BMP_buffer;
+    int m_decode_instance;
+
+    // for FFmpeg
+    AVCodecContext*       m_p_AVCodecContext;
+    AVFrame*              m_p_AVFrame;
+    AVCodecParserContext* m_p_AVCodecParserContext;
+    AVCodec*              m_p_AVCodec;
 };
 
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);

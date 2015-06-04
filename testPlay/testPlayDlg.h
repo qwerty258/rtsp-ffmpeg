@@ -34,15 +34,14 @@ protected:
 private:
     HMODULE m_hDll;
 
-    lpFuncInitRtspDLL        InitRtspDLL;
-    lpFuncFreeRtspDll        FreeRtspDll;
-    lpFuncConnect            Connect;
-    lpFuncPlay               Play;
-    lpFuncPause              Pause;
-    lpFuncDisConnect         DisConnect;
-    lpFuncInitRtspVideoParam InitRtspVideoParam;
-    lpFuncRevoHWAcceleration RevoHWAcceleration;
-    lpFuncGetRtspINSTANCE    GetRtspINSTANCE;
+    p_function_initial_RTSP_DLL       initial_RTSP_DLL;
+    p_function_free_RTSP_DLL          free_RTSP_DLL;
+    p_function_get_idle_instance      get_idle_instance;
+    p_function_initial_RTSP_parameter initial_RTSP_parameter;
+    p_function_RTSP_connect           RTSP_connect;
+    p_function_play                   play;
+    p_function_pause                  pause;
+    p_function_RTSP_disconnect        RTSP_disconnect;
 
     int m_INSTANCE;
 

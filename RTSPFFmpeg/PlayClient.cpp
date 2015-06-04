@@ -43,11 +43,12 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     Sleep(10);
     ((CRTSPCLient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
     // set callback
+    ((CRTSPCLient*)lpParam)->m_p_function_set_YUV420_callback(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_p_function_YUV420, ((CRTSPCLient*)lpParam)->m_p_YUV420_extra_data, ((CRTSPCLient*)lpParam)->m_trace_lost_package);
+
     ((CRTSPCLient*)lpParam)->m_p_func_SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
     ((CRTSPCLient*)lpParam)->m_p_func_SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
     ((CRTSPCLient*)lpParam)->m_p_func_SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
     ((CRTSPCLient*)lpParam)->m_p_func_SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
-    ((CRTSPCLient*)lpParam)->m_p_func_setYUVCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->YUVFunc, ((CRTSPCLient*)lpParam)->YUVEx);
     ((CRTSPCLient*)lpParam)->m_p_func_setH264CallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
 
     if(!((CRTSPCLient*)lpParam)->nHWAcceleration)
@@ -205,9 +206,8 @@ CRTSPCLient::CRTSPCLient()
     funcD = NULL;
     bmpFunc = NULL;
     fillbmp = NULL;
-    YUVFunc = NULL;
     H264Func = NULL;
-    YUVEx = NULL;
+    m_p_YUV420_extra_data = NULL;
     nHWAcceleration = false;
 }
 

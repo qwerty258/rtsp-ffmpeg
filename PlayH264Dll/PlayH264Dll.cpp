@@ -68,15 +68,11 @@ PLAYH264DLL_API int free_decode_DLL(void)
 {
     for(int i = 0; i < max_decode_number; i++)
     {
-        if(0 != decode_list[i].idle)
-        {
-            decode_list[i].idle = 0;
-        }
         if(NULL != decode_list[i].p_CDecode)
         {
-            decode_list[i].p_CDecode->paramUser.stopPlay = -2;
             delete decode_list[i].p_CDecode;
         }
+        free_decode_instance(i);
     }
 
     delete[] decode_list;
@@ -94,7 +90,7 @@ PLAYH264DLL_API int get_idle_instance(void)
             {
                 decode_list[i].idle = 2;
                 decode_list[i].p_CDecode = new CDecode;
-                decode_list[i].p_CDecode->INSTANCE = i;
+                decode_list[i].p_CDecode->m_decode_instance = i;
                 return i;
             }
         }
@@ -112,20 +108,25 @@ PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam
 
     decode_list[instance].p_CDecode->type = type;
 
-    if(1 == decode_list[instance].p_CDecode->type)
+    AVCodecID codeType;
+
+    switch(decode_list[instance].p_CDecode->type)
     {
-        AVCodec* codec = avcodec_find_decoder(CODEC_ID_H264);
-        decode_list[instance].p_CDecode->m_pCodecContext = avcodec_alloc_context3(codec);
-        decode_list[instance].p_CDecode->m_pFrame = avcodec_alloc_frame();
-        decode_list[instance].p_CDecode->m_parser = av_parser_init(CODEC_ID_H264);
+        case 1:
+            codeType = CODEC_ID_H264;
+            break;
+        case 2:
+            codeType = CODEC_ID_MPEG4;
+            break;
+        case 3:
+            codeType = CODEC_ID_FLV1;
+            break;
+        default:
+            break;
     }
-    if(2 == decode_list[instance].p_CDecode->type)
-    {
-        AVCodec* codec = avcodec_find_decoder(CODEC_ID_MPEG4);
-        decode_list[instance].p_CDecode->m_pCodecContext = avcodec_alloc_context3(codec);
-        decode_list[instance].p_CDecode->m_pFrame = avcodec_alloc_frame();
-        decode_list[instance].p_CDecode->m_parser = av_parser_init(CODEC_ID_MPEG4);
-    }
+
+    decode_list[instance].p_CDecode->m_p_AVCodecParserContext = av_parser_init(codeType);
+
     decode_list[instance].idle = 1;
 
     return decode_list[instance].p_CDecode->InputParam(Myparam);
@@ -133,7 +134,7 @@ PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam
 
 PLAYH264DLL_API int decode(int instance, uint8_t* pInBuffer, int size)
 {
-    if(0 > check_instance(instance) || 1 != decode_list[instance].idle || NULL == decode_list[instance].p_CDecode->m_parser)
+    if(0 > check_instance(instance) || 1 != decode_list[instance].idle || NULL == decode_list[instance].p_CDecode->m_p_AVCodecParserContext)
     {
         return -1;
     }
@@ -147,7 +148,7 @@ PLAYH264DLL_API int decode(int instance, uint8_t* pInBuffer, int size)
 
     do
     {
-        len = av_parser_parse2(decode_list[instance].p_CDecode->m_parser, decode_list[instance].p_CDecode->m_pCodecContext, &pout, &pout_len, pInBuffer + pos, size - pos, pts, dts, AV_NOPTS_VALUE);
+        len = av_parser_parse2(decode_list[instance].p_CDecode->m_p_AVCodecParserContext, decode_list[instance].p_CDecode->m_p_AVCodecContext, &pout, &pout_len, pInBuffer + pos, size - pos, pts, dts, AV_NOPTS_VALUE);
 
         pos += len;
 
@@ -173,22 +174,44 @@ PLAYH264DLL_API int free_decode_instance(int instance)
     decode_list[instance].idle = 2;//ensure locks
     decode_list[instance].p_CDecode->freeParam();
 
-    avcodec_close(decode_list[instance].p_CDecode->m_pCodecContext);
+    //avcodec_close(decode_list[instance].p_CDecode->m_p_AVCodecContext);
 
-    av_freep(&decode_list[instance].p_CDecode->m_pCodecContext);
+    //av_freep(&decode_list[instance].p_CDecode->m_p_AVCodecContext);
 
-    av_frame_free(&decode_list[instance].p_CDecode->m_pFrame);
+    //av_frame_free(&decode_list[instance].p_CDecode->m_p_AVFrame);
 
-    av_parser_close(decode_list[instance].p_CDecode->m_parser);
+    av_parser_close(decode_list[instance].p_CDecode->m_p_AVCodecParserContext);
 
-    decode_list[instance].p_CDecode->m_pCodecContext = NULL;
-    decode_list[instance].p_CDecode->m_pFrame = NULL;
-    decode_list[instance].p_CDecode->m_parser = NULL;
+    //decode_list[instance].p_CDecode->m_p_AVCodecContext = NULL;
+    //decode_list[instance].p_CDecode->m_p_AVFrame = NULL;
+    //decode_list[instance].p_CDecode->m_p_AVCodecParserContext = NULL;
+
+    DWORD exit_code = STILL_ACTIVE;
+    while(STILL_ACTIVE == exit_code)
+    {
+        Sleep(200);
+        GetExitCodeProcess(decode_list[instance].p_CDecode->hThreadDecode, &exit_code);
+    }
 
     decode_list[instance].idle = 0;// release lock
 
     return 0;
 }
+
+PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)
+{
+    if(NULL == p_function_YUV420 || 0 > check_instance(instance))
+    {
+        return -1;
+    }
+
+    decode_list[instance].p_CDecode->m_p_function_YUV420 = p_function_YUV420;
+    decode_list[instance].p_CDecode->m_p_YUV420_extra_data = additional_data;
+
+    return 0;
+}
+
+
 
 PLAYH264DLL_API int SetCallBack(int instance, PFCALLBACK f1) //depreated
 {
@@ -272,17 +295,6 @@ PLAYH264DLL_API int SetFillBmpCallBack(int instance, TDrawRectCallBack bmpf)//de
         return -1;
     }
     decode_list[instance].p_CDecode->fillbmp = bmpf;
-    return 0;
-}
-
-PLAYH264DLL_API int SetYUVCallBack(int instance, TYUVCallBack yuvf, void *buffer)
-{
-    if(NULL == yuvf || 0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->yuvFunc = yuvf;
-    decode_list[instance].p_CDecode->userBuffer = buffer;
     return 0;
 }
 

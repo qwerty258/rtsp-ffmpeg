@@ -13,17 +13,17 @@ extern "C" {
 
     // function    : initial RTSPFFmpeg.dll
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int InitRtspDLL(int max_number_of_playing_instance);
+    RTSPFFMPEG_API int initial_RTSP_DLL(int max_number_of_playing_instance);
 
 
     // function    : uninitial RTSPFFmpeg.dll, release resource
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int FreeRtspDLL(void);
+    RTSPFFMPEG_API int free_RTSP_DLL(void);
 
 
     // function    : return idle instance
     // return value: idle instance number on success, -1 on failure
-    RTSPFFMPEG_API int GetRtspINSTANCE(void);
+    RTSPFFMPEG_API int get_idle_instance(void);
 
 
     // function    : set IPC's URI, username and password
@@ -33,14 +33,14 @@ extern "C" {
     //// userName  : IPC's username
     //// password  : IPC's password
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int InitRtspVideoParam(int INSTANCE, char* URI, char* userName, char* password);
+    RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password);
 
 
     // function    : connect to the IPC, you must have idle instance and initial IPC's video parameter
     // input       :
     //// INSTANCE  : the idle instance return by GetRtspINSTANCE
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int Connect(int INSTANCE);
+    RTSPFFMPEG_API int RTSP_connect(int instance);
 
 
     // function    : play realtime feedback of the IPC
@@ -48,33 +48,44 @@ extern "C" {
     //// INSTANCE  : the idle instance return by GetRtspINSTANCE
     //// hWnd      : handle to the display window
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int Play(int INSTANCE, HWND hWnd);
+    RTSPFFMPEG_API int play(int instance, HWND hWnd);
 
 
     // function    : pause realtime play
     // input       :
     //// INSTANCE  : the instance playing
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int Pause(int INSTANCE);
+    RTSPFFMPEG_API int pause(int instance);
 
 
     // function    : disconnect from IPC
     // input       : 
     //// INSTANCE  : the instance you get from GetRtspINSTANCE
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int DisConnect(int INSTANCE);
+    RTSPFFMPEG_API int RTSP_disconnect(int instance);
 
-    RTSPFFMPEG_API int FreeRtspDLL0000(int INSTANCE);
-    RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1);
-    RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1);
-    RTSPFFMPEG_API int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2);
-    RTSPFFMPEG_API int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3);
+
+    // function    : set YUV420 callback function
+    // input       :
+    //// instacne          : the instance you want to set callback function
+    //// p_function_YUV420 : the function address
+    //// buffer            : additional data, give back to you when the callback funciton is called
+    //// trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    // return value: 0 success, -1 failure
+    RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
+
     //获取YUV数据
-    RTSPFFMPEG_API int pSetYUVCallBack(int INSTANCE, TYUVCallBack f3, void *buffer);
+    RTSPFFMPEG_API int SetYUVCallBack(int instance, TYUVCallBack f3, void *buffer);
+
+    RTSPFFMPEG_API int FreeRtspDLL0000(int instance);
+    RTSPFFMPEG_API int pSetDrawLineCallBack(int instance, TDrawLineCallBack f1);
+    RTSPFFMPEG_API int pSetPFCALLBACK(int instance, PFCALLBACK f1);
+    RTSPFFMPEG_API int pSetBmpCallBack(int instance, TBmpCallBack f2);
+    RTSPFFMPEG_API int pSetFillBmpCallBack(int instance, TDrawRectCallBack f3);
     //获取H264数据
-    RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3);
+    RTSPFFMPEG_API int pSetH264CallBack(int instance, TH264CallBack f3);
     //设置是否取消硬解
-    RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration = false);
+    RTSPFFMPEG_API int RevoHWAcceleration(int instance, bool acceleration = false);
 
 #ifdef __cplusplus
 }
