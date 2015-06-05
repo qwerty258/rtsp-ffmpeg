@@ -263,7 +263,7 @@ RTSPFFMPEG_API int free_RTSP_instance(int instance)
         while(STILL_ACTIVE == exit_code)
         {
             Sleep(200);
-            GetExitCodeProcess(client_list[instance].p_CRTSPClient->m_hThread, &exit_code);
+            GetExitCodeThread(client_list[instance].p_CRTSPClient->m_hThread, &exit_code);
         }
 
         CloseHandle(client_list[instance].p_CRTSPClient->m_hThread);

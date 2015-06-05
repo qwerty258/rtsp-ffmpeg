@@ -395,8 +395,6 @@ CDecode::~CDecode()
     {
         delete[] m_BMP_buffer;
     }
-
-    CloseHandle(hThreadDecode);
 }
 
 int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)

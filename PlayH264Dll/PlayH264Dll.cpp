@@ -176,7 +176,7 @@ PLAYH264DLL_API int free_decode_instance(int instance)
     while(STILL_ACTIVE == exit_code)
     {
         Sleep(200);
-        GetExitCodeProcess(decode_list[instance].p_CDecode->hThreadDecode, &exit_code);
+        GetExitCodeThread(decode_list[instance].p_CDecode->hThreadDecode, &exit_code);
     }
 
     CloseHandle(decode_list[instance].p_CDecode->hThreadDecode);
