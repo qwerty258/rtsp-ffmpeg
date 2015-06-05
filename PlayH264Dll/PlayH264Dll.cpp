@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 #include "PlayH264Dll.h"
-#include <fstream>
-#include  "Gunit.h"
 #pragma warning(disable: 4996)
 
 using namespace std;

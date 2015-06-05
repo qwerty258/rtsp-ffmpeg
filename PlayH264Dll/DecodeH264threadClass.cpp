@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "DecodeH264threadClass.h"
 #include <atlimage.h>
-//#include <fstream>
-#include  "Gunit.h"
 #include <ddraw.h>
 #include "va.h"
 #include <d3d9.h>

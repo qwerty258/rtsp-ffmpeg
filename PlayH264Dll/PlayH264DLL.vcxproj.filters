@@ -36,9 +36,6 @@
     <ClInclude Include="va.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Gunit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -57,9 +54,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="va.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Gunit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
