@@ -122,6 +122,8 @@ PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam
     }
 
     decode_list[instance].p_CDecode->m_p_AVCodecParserContext = av_parser_init(codeType);
+    decode_list[instance].p_CDecode->m_p_AVCodec = avcodec_find_decoder(codeType);
+    decode_list[instance].p_CDecode->m_p_AVCodecContext = avcodec_alloc_context3(decode_list[instance].p_CDecode->m_p_AVCodec);
 
     decode_list[instance].idle = 1;
 
@@ -170,24 +172,18 @@ PLAYH264DLL_API int free_decode_instance(int instance)
     decode_list[instance].idle = 2;//ensure locks
     decode_list[instance].p_CDecode->freeParam();
 
-    //avcodec_close(decode_list[instance].p_CDecode->m_p_AVCodecContext);
-
-    //av_freep(&decode_list[instance].p_CDecode->m_p_AVCodecContext);
-
-    //av_frame_free(&decode_list[instance].p_CDecode->m_p_AVFrame);
-
-    av_parser_close(decode_list[instance].p_CDecode->m_p_AVCodecParserContext);
-
-    //decode_list[instance].p_CDecode->m_p_AVCodecContext = NULL;
-    //decode_list[instance].p_CDecode->m_p_AVFrame = NULL;
-    //decode_list[instance].p_CDecode->m_p_AVCodecParserContext = NULL;
-
     DWORD exit_code = STILL_ACTIVE;
     while(STILL_ACTIVE == exit_code)
     {
         Sleep(200);
         GetExitCodeProcess(decode_list[instance].p_CDecode->hThreadDecode, &exit_code);
     }
+
+    CloseHandle(decode_list[instance].p_CDecode->hThreadDecode);
+
+    av_parser_close(decode_list[instance].p_CDecode->m_p_AVCodecParserContext);
+    avcodec_close(decode_list[instance].p_CDecode->m_p_AVCodecContext);
+    av_freep(decode_list[instance].p_CDecode->m_p_AVCodecContext);
 
     if(NULL != decode_list[instance].p_CDecode)
     {
@@ -212,17 +208,84 @@ PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function
     return 0;
 }
 
-
-
-PLAYH264DLL_API int SetCallBack(int instance, PFCALLBACK f1) //depreated
+PLAYH264DLL_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
 {
-    if(NULL == f1 || 0 > check_instance(instance))
+    if(NULL == p_function_YV12 || 0 > check_instance(instance))
     {
         return -1;
     }
-    decode_list[instance].p_CDecode->func = f1;
+
+    decode_list[instance].p_CDecode->m_p_function_YV12 = p_function_YV12;
+    decode_list[instance].p_CDecode->m_p_YV12_extra_data = additional_data;
+
     return 0;
 }
+
+PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package)
+{
+    if(NULL == p_function_H264 || 0 > check_instance(instance))
+    {
+        return -1;
+    }
+
+    decode_list[instance].p_CDecode->m_p_function_H264 = p_function_H264;
+    decode_list[instance].p_CDecode->m_p_H264_extra_data = additional_data;
+
+    return 0;
+}
+
+//support hardware acceleration, default is software decode.
+//hardware acceleration support h264 and YUV callback, software decode support all callback functions
+PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration)
+{
+    if(0 > check_instance(instance))
+    {
+        return -1;
+    }
+
+    decode_list[instance].p_CDecode->nHWAcceleration = acceleration;
+
+    return 0;
+}
+
+/*
+//depreated
+PLAYH264DLL_API int SetDrawLineCallBack(int instance, TDrawLineCallBack f1)
+{
+if(NULL == f1 || 0 > check_instance(instance))
+{
+return -1;
+}
+decode_list[instance].p_CDecode->funcD = f1;
+return 0;
+}
+*/
+
+/*
+//depreated
+PLAYH264DLL_API int SetBmpCallBack(int instance, TBmpCallBack bmp1)
+{
+if(NULL == bmp1 || 0 > check_instance(instance))
+{
+return -1;
+}
+decode_list[instance].p_CDecode->bmpFunc = bmp1;
+return 0;
+}
+*/
+
+/*
+//depreated
+PLAYH264DLL_API int SetFillBmpCallBack(int instance, TDrawRectCallBack bmpf)//depreated
+{
+if(NULL == bmpf || 0 > check_instance(instance))
+{
+return -1;
+}
+decode_list[instance].p_CDecode->fillbmp = bmpf;
+return 0;
+}
+*/
 
 PLAYH264DLL_API int pauseVideos(int instance)
 {
@@ -266,57 +329,5 @@ PLAYH264DLL_API int resize(int instance, int width, int height)
         return -1;
     }
     decode_list[instance].p_CDecode->playResize(width, height);
-    return 0;
-}
-
-PLAYH264DLL_API int SetDrawLineCallBack(int instance, TDrawLineCallBack f1)//depreated
-{
-    if(NULL == f1 || 0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->funcD = f1;
-    return 0;
-}
-
-PLAYH264DLL_API int SetBmpCallBack(int instance, TBmpCallBack bmp1)//depreated
-{
-    if(NULL == bmp1 || 0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->bmpFunc = bmp1;
-    return 0;
-}
-
-PLAYH264DLL_API int SetFillBmpCallBack(int instance, TDrawRectCallBack bmpf)//depreated
-{
-    if(NULL == bmpf || 0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->fillbmp = bmpf;
-    return 0;
-}
-
-PLAYH264DLL_API int SetH264CallBack(int instance, TH264CallBack yuvf)
-{
-    if(NULL == yuvf || 0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->H264Func = yuvf;
-    return 0;
-}
-
-//support hardware acceleration, default is software decode.
-//hardware acceleration support h264 and YUV callback, software decode support all callback functions
-PLAYH264DLL_API int RevoHWAcceleration(int instance)
-{
-    if(0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->nHWAcceleration = true;
     return 0;
 }

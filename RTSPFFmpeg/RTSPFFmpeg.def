@@ -1,4 +1,4 @@
-LIBRARY RTSPFFmpeg
+LIBRARY "RTSPFFmpeg"
 EXPORTS
 	initial_RTSP_DLL		@1
 	free_RTSP_DLL			@2
@@ -9,12 +9,6 @@ EXPORTS
 	pause					@7
 	RTSP_disconnect			@8
 	set_YUV420_callback		@9
-
-	pSetPFCALLBACK			@10
-	pSetYUVCallBack			@11
-	pSetH264CallBack		@12
-	RevoHWAcceleration		@13
-	FreeRtspDLL0000			@14
-	pSetDrawLineCallBack	@15
-	pSetBmpCallBack			@16
-	pSetFillBmpCallBack		@17
+	set_YV12_callback		@10
+	set_H264_callback		@11
+	FreeRtspDLL0000			@12

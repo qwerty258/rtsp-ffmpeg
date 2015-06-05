@@ -6,15 +6,11 @@ EXPORTS
 	initial_decode_parameter	@4
 	decode						@5
 	free_decode_instance		@6
-
-	pauseVideos					@7
-	SetCallBack					@8
-	inputBuf					@9
-	playVideos					@10
-	SetDrawLineCallBack			@11
-	SetBmpCallBack				@12
-	SetFillBmpCallBack			@13
+	set_YUV420_callback			@7
+	set_YV12_callback			@8
+	set_H264_callback			@9
+	set_hardware_acceleration	@10
+	pauseVideos					@11
+	playVideos					@12
+	inputBuf					@13
 	resize						@14
-	SetYUVCallBack				@16
-	SetH264CallBack				@17
-	RevoHWAcceleration			@18

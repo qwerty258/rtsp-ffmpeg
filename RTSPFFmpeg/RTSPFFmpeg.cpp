@@ -2,7 +2,7 @@
 
 typedef struct container_client_data
 {
-    CRTSPCLient* pt;
+    CRTSPClient* p_CRTSPClient;
     int idle;
 }client_data;
 
@@ -10,24 +10,22 @@ client_data* client_list;
 int          max_client_number;
 HMODULE      hPlayH264DLL;
 
-// function pointers for PlayH264DLL
-function_initial_decode_DLL       p_function_initial_decode_DLL;
-function_free_decode_DLL          p_function_free_decode_DLL;
-function_get_idle_instance        p_function_get_idle_instance;
-function_initial_decode_parameter p_function_initial_decode_parameter;
-function_decode                   p_function_decode;
-function_free_decode_instance     p_function_free_decode_instance;
-function_set_YUV420_callback      p_function_set_YUV420_callback;
-setH264CallBack       p_func_setH264CallBack;
-fSetCallBack          p_func_SetCallBack;
-fpauseVideos          p_func_pauseVideos;
-fplayVideos           p_func_playVideos;
-finputBuf             p_func_inputBuf;
-fresize               p_func_resize;
-fSetDrawLineCallBack  p_func_SetDrawLineCallBack;
-fSetBmpCallBack       p_func_SetBmpCallBack;
-fSetFillBmpCallBack   p_func_SetFillBmpCallBack;
-revoHW                p_func_revoHWFunc;
+// function pointers for PlayH264DLL begin
+function_initial_decode_DLL         p_function_initial_decode_DLL;
+function_free_decode_DLL            p_function_free_decode_DLL;
+function_get_idle_instance          p_function_get_idle_instance;
+function_initial_decode_parameter   p_function_initial_decode_parameter;
+function_decode                     p_function_decode;
+function_free_decode_instance       p_function_free_decode_instance;
+function_set_YUV420_callback        p_function_set_YUV420_callback;
+function_set_YV12_callback          p_function_set_YV12_callback;
+function_set_H264_callback          p_function_set_H264_callback;
+function_set_hardware_acceleration  p_function_set_hardware_acceleration;
+function_pauseVideos                p_function_pauseVideos;
+function_playVideos                 p_function_playVideos;
+function_inputBuf                   p_function_inputBuf;
+function_resize                     p_function_resize;
+// function pointers for PlayH264DLL end
 
 int checkINSTANCE(int instance)
 {
@@ -95,6 +93,13 @@ RTSPFFMPEG_API int initial_RTSP_DLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
+    p_function_decode = (function_decode)GetProcAddress(hPlayH264DLL, "decode");
+    if(NULL == p_function_decode)
+    {
+        MessageBox(0, L"GetProcAddress decode error", NULL, MB_OK);
+        exit(-1);
+    }
+
     p_function_free_decode_instance = (function_free_decode_instance)GetProcAddress(hPlayH264DLL, "free_decode_instance");
     if(NULL == p_function_free_decode_instance)
     {
@@ -109,48 +114,56 @@ RTSPFFMPEG_API int initial_RTSP_DLL(int max_number_of_playing_instance)
         exit(-1);
     }
 
-    p_func_SetCallBack = (fSetCallBack)GetProcAddress(hPlayH264DLL, "SetCallBack");
-    if(NULL == p_func_SetCallBack)
+    p_function_set_YV12_callback = (function_set_YV12_callback)GetProcAddress(hPlayH264DLL, "set_YV12_callback");
+    if(NULL == p_function_set_YV12_callback)
     {
         MessageBox(0, L"GetProcAddress SetCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetDrawLineCallBack = (fSetDrawLineCallBack)GetProcAddress(hPlayH264DLL, "SetDrawLineCallBack");
-    if(NULL == p_func_SetDrawLineCallBack)
+    p_function_set_H264_callback = (function_set_H264_callback)GetProcAddress(hPlayH264DLL, "set_H264_callback");
+    if(NULL == p_function_set_H264_callback)
     {
         MessageBox(0, L"GetProcAddress SetDrawLineCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetBmpCallBack = (fSetBmpCallBack)GetProcAddress(hPlayH264DLL, "SetBmpCallBack");
-    if(NULL == p_func_SetBmpCallBack)
+    p_function_set_hardware_acceleration = (function_set_hardware_acceleration)GetProcAddress(hPlayH264DLL, "set_hardware_acceleration");
+    if(NULL == p_function_set_hardware_acceleration)
+    {
+        MessageBox(0, L"GetProcAddress RevoHWAcceleration error", NULL, MB_OK);
+        exit(-1);
+    }
+
+    p_function_pauseVideos = (function_pauseVideos)GetProcAddress(hPlayH264DLL, "pauseVideos");
+    if(NULL == p_function_pauseVideos)
     {
         MessageBox(0, L"GetProcAddress SetBmpCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_SetFillBmpCallBack = (fSetFillBmpCallBack)GetProcAddress(hPlayH264DLL, "SetFillBmpCallBack");
-    if(NULL == p_func_SetFillBmpCallBack)
+    p_function_playVideos = (function_playVideos)GetProcAddress(hPlayH264DLL, "playVideos");
+    if(NULL == p_function_playVideos)
     {
         MessageBox(0, L"GetProcAddress SetFillBmpCallBack error", NULL, MB_OK);
         exit(-1);
     }
 
 
-    p_func_setH264CallBack = (setH264CallBack)GetProcAddress(hPlayH264DLL, "SetH264CallBack");
-    if(NULL == p_func_setH264CallBack)
+    p_function_inputBuf = (function_inputBuf)GetProcAddress(hPlayH264DLL, "inputBuf");
+    if(NULL == p_function_inputBuf)
     {
         MessageBox(0, L"GetProcAddress SetH264CallBack error", NULL, MB_OK);
         exit(-1);
     }
 
-    p_func_revoHWFunc = (revoHW)GetProcAddress(hPlayH264DLL, "RevoHWAcceleration");
-    if(NULL == p_func_revoHWFunc)
+    p_function_resize = (function_resize)GetProcAddress(hPlayH264DLL, "resize");
+    if(NULL == p_function_resize)
     {
-        MessageBox(0, L"GetProcAddress RevoHWAcceleration error", NULL, MB_OK);
+        MessageBox(0, L"GetProcAddress resize error", NULL, MB_OK);
         exit(-1);
     }
+
 
     if(0 > p_function_initial_decode_DLL(max_client_number))
     {
@@ -169,11 +182,11 @@ RTSPFFMPEG_API int free_RTSP_DLL(void)
             client_list[i].idle = 0;
         }
 
-        if(NULL != client_list[i].pt)
+        if(NULL != client_list[i].p_CRTSPClient)
         {
-            client_list[i].pt->disconnect();
-            delete client_list[i].pt;
-            client_list[i].pt = NULL;
+            client_list[i].p_CRTSPClient->disconnect();
+            delete client_list[i].p_CRTSPClient;
+            client_list[i].p_CRTSPClient = NULL;
         }
     }
 
@@ -195,29 +208,28 @@ RTSPFFMPEG_API int get_idle_instance(void)
             if(0 == checkINSTANCE(i))
             {
                 client_list[i].idle = 1;
-                client_list[i].pt = new CRTSPCLient;
-                if(NULL == client_list[i].pt)
+                client_list[i].p_CRTSPClient = new CRTSPClient;
+                if(NULL == client_list[i].p_CRTSPClient)
                 {
                     MessageBox(NULL, L"memory new error", NULL, MB_OK);
                     return -1;
                 }
-                client_list[i].pt->m_p_function_get_idle_instance = p_function_get_idle_instance;
-                client_list[i].pt->m_p_function_initial_decode_parameter = p_function_initial_decode_parameter;
-                client_list[i].pt->m_p_function_decode = p_function_decode;
-                client_list[i].pt->m_p_function_free_decode_instance = p_function_free_decode_instance;
-                client_list[i].pt->m_p_function_set_YUV420_callback = p_function_set_YUV420_callback;
 
+                client_list[i].p_CRTSPClient->m_p_function_initial_decode_DLL = p_function_initial_decode_DLL;
+                client_list[i].p_CRTSPClient->m_p_function_free_decode_DLL = p_function_free_decode_DLL;
+                client_list[i].p_CRTSPClient->m_p_function_get_idle_instance = p_function_get_idle_instance;
+                client_list[i].p_CRTSPClient->m_p_function_initial_decode_parameter = p_function_initial_decode_parameter;
+                client_list[i].p_CRTSPClient->m_p_function_decode = p_function_decode;
+                client_list[i].p_CRTSPClient->m_p_function_free_decode_instance = p_function_free_decode_instance;
+                client_list[i].p_CRTSPClient->m_p_function_set_YUV420_callback = p_function_set_YUV420_callback;
+                client_list[i].p_CRTSPClient->m_p_function_set_YV12_callback = p_function_set_YV12_callback;
+                client_list[i].p_CRTSPClient->m_p_function_set_H264_callback = p_function_set_H264_callback;
+                client_list[i].p_CRTSPClient->m_p_function_set_hardware_acceleration = p_function_set_hardware_acceleration;
+                client_list[i].p_CRTSPClient->m_p_function_pauseVideos = p_function_pauseVideos;
+                client_list[i].p_CRTSPClient->m_p_function_playVideos = p_function_playVideos;
+                client_list[i].p_CRTSPClient->m_p_function_inputBuf = p_function_inputBuf;
+                client_list[i].p_CRTSPClient->m_p_function_resize = p_function_resize;
 
-                client_list[i].pt->m_p_func_inputBuf = p_func_inputBuf;
-                client_list[i].pt->m_p_func_pauseVideos = p_func_pauseVideos;
-                client_list[i].pt->m_p_func_playVideos = p_func_playVideos;
-                client_list[i].pt->m_p_func_resize = p_func_resize;
-                client_list[i].pt->m_p_func_revoHWFunc = p_func_revoHWFunc;
-                client_list[i].pt->m_p_func_SetBmpCallBack = p_func_SetBmpCallBack;
-                client_list[i].pt->m_p_func_SetCallBack = p_func_SetCallBack;
-                client_list[i].pt->m_p_func_SetDrawLineCallBack = p_func_SetDrawLineCallBack;
-                client_list[i].pt->m_p_func_SetFillBmpCallBack = p_func_SetFillBmpCallBack;
-                client_list[i].pt->m_p_func_setH264CallBack = p_func_setH264CallBack;
                 return i;
             }
         }
@@ -232,58 +244,70 @@ RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userNam
         return -1;
     }
 
-    if(NULL == client_list[instance].pt)
+    if(NULL == client_list[instance].p_CRTSPClient)
     {
         MessageBox(NULL, L"InitRtspVideoParam: new error!", NULL, MB_OK);
         return -1;
     }
 
-    return client_list[instance].pt->input_URI(URI, userName, password);
+    return client_list[instance].p_CRTSPClient->input_URI(URI, userName, password);
 }
 
 RTSPFFMPEG_API int RTSP_connect(int instance)
 {
-    if(0 > checkINSTANCE(instance) || NULL == client_list[instance].pt)
+    if(0 > checkINSTANCE(instance) || NULL == client_list[instance].p_CRTSPClient)
     {
         return -1;
     }
 
-    return client_list[instance].pt->connect();
+    return client_list[instance].p_CRTSPClient->connect();
 }
 
 RTSPFFMPEG_API int play(int INSTANCE, HWND hWnd)
 {
-    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].p_CRTSPClient)
     {
         return -1;
     }
 
-    return client_list[INSTANCE].pt->play(hWnd);
+    return client_list[INSTANCE].p_CRTSPClient->play(hWnd);
 }
 
 RTSPFFMPEG_API int pause(int INSTANCE)
 {
-    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].p_CRTSPClient)
     {
         return -1;
     }
 
-    return client_list[INSTANCE].pt->pause();
+    return client_list[INSTANCE].p_CRTSPClient->pause();
 }
 
 RTSPFFMPEG_API int RTSP_disconnect(int INSTANCE)
 {
-    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
+    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].p_CRTSPClient)
     {
         return -1;
     }
 
-    client_list[INSTANCE].pt->disconnect();
+    client_list[INSTANCE].p_CRTSPClient->disconnect();
 
     client_list[INSTANCE].idle = 0;
 
-    delete client_list[INSTANCE].pt;
-    client_list[INSTANCE].pt = NULL;
+    delete client_list[INSTANCE].p_CRTSPClient;
+    client_list[INSTANCE].p_CRTSPClient = NULL;
+
+    return 0;
+}
+
+RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration)
+{
+    if(0 > checkINSTANCE(instance) || NULL == client_list[instance].p_CRTSPClient)
+    {
+        return -1;
+    }
+
+    client_list[instance].p_CRTSPClient->nHWAcceleration = acceleration;
 
     return 0;
 }
@@ -295,110 +319,88 @@ RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_
         return -1;
     }
 
-    client_list[instance].pt->m_p_function_YUV420 = p_function_YUV420;
-    client_list[instance].pt->m_p_YUV420_extra_data = additional_data;
-    client_list[instance].pt->m_trace_lost_package = trace_lost_package;
+    client_list[instance].p_CRTSPClient->m_p_function_YUV420 = p_function_YUV420;
+    client_list[instance].p_CRTSPClient->m_p_YUV420_extra_data = additional_data;
+    client_list[instance].p_CRTSPClient->m_b_YUV420_trace_lost_package = trace_lost_package;
 
     return 0;
 }
 
-// set hardware acceleration
-// acceleration: true: use hardware acceleration, false: use software decode
-RTSPFFMPEG_API int RevoHWAcceleration(int INSTANCE, bool acceleration)
+RTSPFFMPEG_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
 {
-    if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].pt)
+    if(0 > checkINSTANCE(instance) || NULL == p_function_YV12)
     {
         return -1;
     }
 
-    client_list[INSTANCE].pt->nHWAcceleration = acceleration;
+    client_list[instance].p_CRTSPClient->m_p_function_YV12 = p_function_YV12;
+    client_list[instance].p_CRTSPClient->m_p_YV12_extra_data = additional_data;
+    client_list[instance].p_CRTSPClient->m_b_YV12_trace_lost_package = trace_lost_package;
 
     return 0;
 }
 
-
-RTSPFFMPEG_API int pSetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1)
+RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package)
 {
-    if(NULL == f1)
+    if(0 > checkINSTANCE(instance) || NULL == p_function_H264)
     {
         return -1;
     }
 
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    client_list[INSTANCE].pt->funcD = f1;
+    client_list[instance].p_CRTSPClient->m_p_function_H264 = p_function_H264;
+    client_list[instance].p_CRTSPClient->m_p_H264_extra_data = additional_data;
+    client_list[instance].p_CRTSPClient->m_b_H264_trace_lost_package = trace_lost_package;
 
     return 0;
 }
 
-RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1)
-{
-    if(NULL == f1)
-    {
-        return -1;
-    }
-
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    client_list[INSTANCE].pt->func = f1;
-
-    return 0;
-}
-
-RTSPFFMPEG_API int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2)
-{
-    if(NULL == f2)
-    {
-        return -1;
-    }
-
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    client_list[INSTANCE].pt->bmpFunc = f2;
-
-    return 0;
-}
-
-RTSPFFMPEG_API int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3)
-{
-    if(NULL == f3)
-    {
-        return -1;
-    }
-
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    client_list[INSTANCE].pt->fillbmp = f3;
-
-    return 0;
-}
-
-//获取H264数据
-RTSPFFMPEG_API int pSetH264CallBack(int INSTANCE, TH264CallBack f3)
-{
-    if(NULL == f3)
-    {
-        return -1;
-    }
-
-    if(checkINSTANCE(INSTANCE) < 0)
-    {
-        return -1;
-    }
-
-    client_list[INSTANCE].pt->H264Func = f3;
-
-    return 0;
-}
+//RTSPFFMPEG_API int pSetPFCALLBACK(int INSTANCE, PFCALLBACK f1)
+//{
+//    if(NULL == f1)
+//    {
+//        return -1;
+//    }
+//
+//    if(checkINSTANCE(INSTANCE) < 0)
+//    {
+//        return -1;
+//    }
+//
+//    client_list[INSTANCE].pt->func = f1;
+//
+//    return 0;
+//}
+//
+//RTSPFFMPEG_API int pSetBmpCallBack(int INSTANCE, TBmpCallBack f2)
+//{
+//    if(NULL == f2)
+//    {
+//        return -1;
+//    }
+//
+//    if(checkINSTANCE(INSTANCE) < 0)
+//    {
+//        return -1;
+//    }
+//
+//    client_list[INSTANCE].pt->bmpFunc = f2;
+//
+//    return 0;
+//}
+//
+//RTSPFFMPEG_API int pSetFillBmpCallBack(int INSTANCE, TDrawRectCallBack f3)
+//{
+//    if(NULL == f3)
+//    {
+//        return -1;
+//    }
+//
+//    if(checkINSTANCE(INSTANCE) < 0)
+//    {
+//        return -1;
+//    }
+//
+//    client_list[INSTANCE].pt->fillbmp = f3;
+//
+//    return 0;
+//}

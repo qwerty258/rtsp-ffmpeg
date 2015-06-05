@@ -15,14 +15,35 @@ typedef struct container_myparam_input
 }myparamInput;
 
 //call back functions begin
-typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, int frame_ID, void* userdata, int frame_lost); // YUV420 callback
 
-typedef int(_cdecl *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, int bufsize, int buftype);
-typedef int(_cdecl *TDrawRectCallBack)(char*, int, int);
-typedef int(_cdecl *TDrawLineCallBack)(int, HDC);//define my CallBack Func
-typedef int(_cdecl *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
-typedef int(_cdecl *TYUVCallBack)(char *, int len, int wid, void *);//YUV callback
-typedef int(_cdecl *TH264CallBack)(int, char *, int len, int wid, int height);//H264 callback
+typedef int(*function_YUV420)(
+    int instance,
+    char* frame_buffer,
+    int frame_buffer_size,
+    int frame_width,
+    int frame_height,
+    int frame_ID,
+    void* userdata,
+    int frame_lost); // YUV420 callback
+
+typedef int(*function_YV12)(
+    int instance,
+    char* frame_buff,
+    int frame_buffer_size,
+    int frame_width,
+    int frame_height,
+    void* userdata,
+    int frame_lost); // YV12 callback
+
+typedef int(*function_H264)(
+    int instance,
+    char* frame_buff,
+    int frame_buffer_size,
+    int frame_width,
+    int frame_height,
+    void* userdata,
+    int frame_lost); // h264 callback
+
 //call back functions end
 
 //PlayH264DLL functions begin
@@ -33,18 +54,13 @@ typedef int(*function_initial_decode_parameter)(int instance, myparamInput* Mypa
 typedef int(*function_decode)(int instance, unsigned char* pInBuffer, int size);
 typedef int(*function_free_decode_instance)(int instance);
 typedef int(*function_set_YUV420_callback)(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
-
-typedef int(_cdecl *setYUVCallBack)(int, TYUVCallBack, void *);
-typedef int(_cdecl *setH264CallBack)(int, TH264CallBack);
-typedef int(_cdecl *fSetCallBack)(int INSTANCE, PFCALLBACK f1);
-typedef int(_cdecl *fpauseVideos)(int INSTANCE);
-typedef int(_cdecl *fplayVideos)(int INSTANCE);
-typedef int(_cdecl *finputBuf)(int INSTANCE, char *buf, int bufsize);
-typedef int(_cdecl *fresize)(int INSTANCE, int width, int height);
-typedef int(_cdecl *fSetDrawLineCallBack)(int INSTANCE, TDrawLineCallBack f1);
-typedef int(_cdecl *fSetBmpCallBack)(int INSTANCE, TBmpCallBack bmp1);
-typedef int(_cdecl *fSetFillBmpCallBack)(int INSTANCE, TDrawRectCallBack bmpf);
-typedef int(_cdecl *revoHW)(int INSTANCE);
+typedef int(*function_set_YV12_callback)(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
+typedef int(*function_set_H264_callback)(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
+typedef int(*function_set_hardware_acceleration)(int instance, bool acceleration);
+typedef int(*function_pauseVideos)(int instance);
+typedef int(*function_playVideos)(int instance);
+typedef int(*function_inputBuf)(int instance, char *buf, int bufsize);
+typedef int(*function_resize)(int instance, int width, int height);
 //PlayH264DLL functions end
 
 

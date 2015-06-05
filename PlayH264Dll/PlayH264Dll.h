@@ -25,18 +25,21 @@ extern "C" {
 
     PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 
-    PLAYH264DLL_API int SetCallBack(int INSTANCE, PFCALLBACK f1);
-    PLAYH264DLL_API int pauseVideos(int INSTANCE);
-    PLAYH264DLL_API int playVideos(int INSTANCE);
-    PLAYH264DLL_API int inputBuf(int INSTANCE, char *buf, int bufsize);
-    PLAYH264DLL_API int resize(int INSTANCE, int width, int height);
-    PLAYH264DLL_API int SetDrawLineCallBack(int INSTANCE, TDrawLineCallBack f1);
-    PLAYH264DLL_API int SetBmpCallBack(int INSTANCE, TBmpCallBack bmp1);
-    PLAYH264DLL_API int SetFillBmpCallBack(int INSTANCE, TDrawRectCallBack bmpf);
-    PLAYH264DLL_API int SetH264CallBack(int INSTANCE, TH264CallBack yuvf);
+    PLAYH264DLL_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
+
+    PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
+
     //support hardware acceleration, default is software decode.
     //hardware acceleration support h264 and YUV callback, software decode support all callback functions
-    PLAYH264DLL_API int RevoHWAcceleration(int instance);
+    PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration = false);
+
+    PLAYH264DLL_API int pauseVideos(int instance);
+
+    PLAYH264DLL_API int playVideos(int instance);
+
+    PLAYH264DLL_API int inputBuf(int instance, char *buf, int bufsize);
+
+    PLAYH264DLL_API int resize(int instance, int width, int height);
 
 #ifdef __cplusplus
 }

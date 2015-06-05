@@ -11,18 +11,18 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
     // prepare data for decode
     RECT *rect = new RECT; // delete when play end
-    GetWindowRect(((CRTSPCLient*)lpParam)->m_hWnd, rect);
-    ((CRTSPCLient*)lpParam)->m_myparamInput->playHandle = ((CRTSPCLient*)lpParam)->m_hWnd; // get controls' window handle
-    ((CRTSPCLient*)lpParam)->m_myparamInput->stopPlay = 0;
-    ((CRTSPCLient*)lpParam)->m_myparamInput->playChannle = 1;
-    ((CRTSPCLient*)lpParam)->m_myparamInput->fps = 25;
-    ((CRTSPCLient*)lpParam)->m_myparamInput->isDecode = true;
-    ((CRTSPCLient*)lpParam)->m_myparamInput->playHeight = rect->bottom - rect->top;
-    ((CRTSPCLient*)lpParam)->m_myparamInput->playWidth = rect->right - rect->left;
+    GetWindowRect(((CRTSPClient*)lpParam)->m_hWnd, rect);
+    ((CRTSPClient*)lpParam)->m_myparamInput->playHandle = ((CRTSPClient*)lpParam)->m_hWnd; // get controls' window handle
+    ((CRTSPClient*)lpParam)->m_myparamInput->stopPlay = 0;
+    ((CRTSPClient*)lpParam)->m_myparamInput->playChannle = 1;
+    ((CRTSPClient*)lpParam)->m_myparamInput->fps = 25;
+    ((CRTSPClient*)lpParam)->m_myparamInput->isDecode = true;
+    ((CRTSPClient*)lpParam)->m_myparamInput->playHeight = rect->bottom - rect->top;
+    ((CRTSPClient*)lpParam)->m_myparamInput->playWidth = rect->right - rect->left;
 
     //RTSPCLient->m_SetupName_audio = "";
     //RTSPCLient->m_SetupName_video = "";
-    if(!((CRTSPCLient*)lpParam)->m_RTSPRequest->RequestPlay())
+    if(!((CRTSPClient*)lpParam)->m_RTSPRequest->RequestPlay())
     {
         //clean up on failure
         if(rect != NULL)
@@ -31,54 +31,67 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             rect = NULL;
         }
 
-        ((CRTSPCLient*)lpParam)->m_ans = 4;
+        ((CRTSPClient*)lpParam)->m_ans = 4;
         return -1;
     }
 
-    if(((CRTSPCLient*)lpParam)->m_RTSPRequest->frame != -1)
+    if(((CRTSPClient*)lpParam)->m_RTSPRequest->frame != -1)
     {
-        ((CRTSPCLient*)lpParam)->m_myparamInput->fps = ((CRTSPCLient*)lpParam)->m_RTSPRequest->frame;
+        ((CRTSPClient*)lpParam)->m_myparamInput->fps = ((CRTSPClient*)lpParam)->m_RTSPRequest->frame;
     }
 
     Sleep(10);
-    ((CRTSPCLient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_myparamInput, ((CRTSPCLient*)lpParam)->m_RTSPRequest->Decode);
-    // set callback
-    ((CRTSPCLient*)lpParam)->m_p_function_set_YUV420_callback(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->m_p_function_YUV420, ((CRTSPCLient*)lpParam)->m_p_YUV420_extra_data, ((CRTSPCLient*)lpParam)->m_trace_lost_package);
 
-    ((CRTSPCLient*)lpParam)->m_p_func_SetCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->func);
-    ((CRTSPCLient*)lpParam)->m_p_func_SetDrawLineCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->funcD);
-    ((CRTSPCLient*)lpParam)->m_p_func_SetBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->bmpFunc);
-    ((CRTSPCLient*)lpParam)->m_p_func_SetFillBmpCallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->fillbmp);
-    ((CRTSPCLient*)lpParam)->m_p_func_setH264CallBack(((CRTSPCLient*)lpParam)->m_INSTANCE, ((CRTSPCLient*)lpParam)->H264Func);
+    ((CRTSPClient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->m_myparamInput, ((CRTSPClient*)lpParam)->m_RTSPRequest->Decode);
 
-    if(!((CRTSPCLient*)lpParam)->nHWAcceleration)
+    // set callback begin
+    ((CRTSPClient*)lpParam)->m_p_function_set_YUV420_callback(
+        ((CRTSPClient*)lpParam)->m_INSTANCE,
+        ((CRTSPClient*)lpParam)->m_p_function_YUV420,
+        ((CRTSPClient*)lpParam)->m_p_YUV420_extra_data,
+        ((CRTSPClient*)lpParam)->m_b_YUV420_trace_lost_package);
+
+    ((CRTSPClient*)lpParam)->m_p_function_set_YV12_callback(
+        ((CRTSPClient*)lpParam)->m_INSTANCE,
+        ((CRTSPClient*)lpParam)->m_p_function_YV12,
+        ((CRTSPClient*)lpParam)->m_p_YV12_extra_data,
+        ((CRTSPClient*)lpParam)->m_b_YV12_trace_lost_package);
+
+    ((CRTSPClient*)lpParam)->m_p_function_set_H264_callback(
+        ((CRTSPClient*)lpParam)->m_INSTANCE,
+        ((CRTSPClient*)lpParam)->m_p_function_H264,
+        ((CRTSPClient*)lpParam)->m_p_H264_extra_data,
+        ((CRTSPClient*)lpParam)->m_b_H264_trace_lost_package);
+    // set callback end
+
+    if(!((CRTSPClient*)lpParam)->nHWAcceleration)
     {
-        ((CRTSPCLient*)lpParam)->m_p_func_revoHWFunc(((CRTSPCLient*)lpParam)->m_INSTANCE);
+        ((CRTSPClient*)lpParam)->m_p_function_set_hardware_acceleration(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->nHWAcceleration);
     }
 
-    ((CRTSPCLient*)lpParam)->m_RTSPRequest->ID = ((CRTSPCLient*)lpParam)->m_INSTANCE;
-    ((CRTSPCLient*)lpParam)->m_RTSPRequest->nfirst = true;
-    ((CRTSPCLient*)lpParam)->m_RTSPRequest->initS = 0;
+    ((CRTSPClient*)lpParam)->m_RTSPRequest->ID = ((CRTSPClient*)lpParam)->m_INSTANCE;
+    ((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst = true;
+    ((CRTSPClient*)lpParam)->m_RTSPRequest->initS = 0;
 
-    if(((CRTSPCLient*)lpParam)->m_circulation)
+    if(((CRTSPClient*)lpParam)->m_circulation)
     {
         return -1; // already playing
     }
 
-    ((CRTSPCLient*)lpParam)->m_circulation = true;
+    ((CRTSPClient*)lpParam)->m_circulation = true;
     DWORD time1 = GetTickCount();
     DWORD time2 = GetTickCount();
 
-    ((CRTSPCLient*)lpParam)->m_RTSPRequest->initSdt();
+    ((CRTSPClient*)lpParam)->m_RTSPRequest->initSdt();
 
-    while(((CRTSPCLient*)lpParam)->m_circulation)
+    while(((CRTSPClient*)lpParam)->m_circulation)
     {
-        ((CRTSPCLient*)lpParam)->m_ans = 1;
+        ((CRTSPClient*)lpParam)->m_ans = 1;
 
         int type = 0;
         short int size = 0;
 
-        int rs = ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_Start(type, &size);
+        int rs = ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_Start(type, &size);
 
 
         if(rs == -1)
@@ -88,15 +101,15 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             continue;
         if(type == 0)
         {
-            int i = ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
+            int i = ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
         }
         else if(type == 2 || type == 3) // discard rest of streams(2-3)
         {
-            ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_Leave(size);
+            ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_Leave(size);
         }
         else if(type == 1)
         {
-            ((CRTSPCLient*)lpParam)->m_RTSPRequest->Read_RTCPVideo(size);
+            ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_RTCPVideo(size);
         }
 
 
@@ -107,46 +120,46 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             time1 = time2;
             //fraction lost
             char eTmp[2];
-            eTmp[0] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->eSeNum[1];
-            eTmp[1] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->eSeNum[0];
+            eTmp[0] = ((CRTSPClient*)lpParam)->m_RTSPRequest->eSeNum[1];
+            eTmp[1] = ((CRTSPClient*)lpParam)->m_RTSPRequest->eSeNum[0];
 
             char lTmp[2];
-            lTmp[0] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->lSeNum[1];
-            lTmp[1] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->lSeNum[0];
+            lTmp[0] = ((CRTSPClient*)lpParam)->m_RTSPRequest->lSeNum[1];
+            lTmp[1] = ((CRTSPClient*)lpParam)->m_RTSPRequest->lSeNum[0];
 
-            ((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.fractionLost = (UINT)((float)(((UINT16)eTmp - (UINT16)lTmp) - ((CRTSPCLient*)lpParam)->m_RTSPRequest->perGet) / (float)((UINT16)eTmp - (UINT16)lTmp) * 256);
+            ((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.fractionLost = (UINT)((float)(((UINT16)eTmp - (UINT16)lTmp) - ((CRTSPClient*)lpParam)->m_RTSPRequest->perGet) / (float)((UINT16)eTmp - (UINT16)lTmp) * 256);
 
-            ((CRTSPCLient*)lpParam)->m_RTSPRequest->perGet = 0;
-            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->lSeNum, ((CRTSPCLient*)lpParam)->m_RTSPRequest->eSeNum, 2);
+            ((CRTSPClient*)lpParam)->m_RTSPRequest->perGet = 0;
+            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->lSeNum, ((CRTSPClient*)lpParam)->m_RTSPRequest->eSeNum, 2);
             //cumulation lost
             char sTmp[2];
-            sTmp[0] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->sSeNum[1];
-            sTmp[1] = ((CRTSPCLient*)lpParam)->m_RTSPRequest->sSeNum[0];
+            sTmp[0] = ((CRTSPClient*)lpParam)->m_RTSPRequest->sSeNum[1];
+            sTmp[1] = ((CRTSPClient*)lpParam)->m_RTSPRequest->sSeNum[0];
 
-            UINT16 lost = (UINT16)eTmp - (UINT16)sTmp - ((CRTSPCLient*)lpParam)->m_RTSPRequest->allGet;
+            UINT16 lost = (UINT16)eTmp - (UINT16)sTmp - ((CRTSPClient*)lpParam)->m_RTSPRequest->allGet;
 
             char l[2];
 
             memcpy(l + 1, &lost, 1);
             memcpy(l, &lost + 1, 1);
 
-            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.cumulationLost + 1, l, 2);
+            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.cumulationLost + 1, l, 2);
             //interarrival jitter
             char jit[4];
-            memcpy(jit, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 3, 1);
-            memcpy(jit + 1, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 2, 1);
-            memcpy(jit + 2, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 1, 1);
-            memcpy(jit + 3, &((CRTSPCLient*)lpParam)->m_RTSPRequest->jitter + 0, 1);
+            memcpy(jit, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 3, 1);
+            memcpy(jit + 1, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 2, 1);
+            memcpy(jit + 2, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 1, 1);
+            memcpy(jit + 3, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 0, 1);
 
-            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.interJitter, jit, 4);
+            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.interJitter, jit, 4);
             //last SR
-            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.LSR, ((CRTSPCLient*)lpParam)->m_RTSPRequest->LSR, 4);
+            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.LSR, ((CRTSPClient*)lpParam)->m_RTSPRequest->LSR, 4);
 
             //DLSR
             time_t nowTime;
             time(&nowTime);
 
-            DWORD delayTime = nowTime - ((CRTSPCLient*)lpParam)->m_RTSPRequest->lTime;
+            DWORD delayTime = nowTime - ((CRTSPClient*)lpParam)->m_RTSPRequest->lTime;
 
             char dTime[4];
             memcpy(dTime, &delayTime + 3, 1);
@@ -154,16 +167,16 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             memcpy(dTime + 2, &delayTime + 1, 1);
             memcpy(dTime + 3, &delayTime, 1);
 
-            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.DLSR, dTime, 4);
+            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.DLSR, dTime, 4);
 
-            memcpy(((CRTSPCLient*)lpParam)->m_RTSPRequest->sdt.RR.SSRC_1, ((CRTSPCLient*)lpParam)->m_RTSPRequest->rcvf.SR.SSRC, 4);
+            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.SSRC_1, ((CRTSPClient*)lpParam)->m_RTSPRequest->rcvf.SR.SSRC, 4);
 
-            ((CRTSPCLient*)lpParam)->m_RTSPRequest->Write_RTCPVideo(0);
+            ((CRTSPClient*)lpParam)->m_RTSPRequest->Write_RTCPVideo(0);
         }
     }
 
     // close decode
-    int ret = ((CRTSPCLient*)lpParam)->m_p_function_free_decode_instance(((CRTSPCLient*)lpParam)->m_INSTANCE);
+    int ret = ((CRTSPClient*)lpParam)->m_p_function_free_decode_instance(((CRTSPClient*)lpParam)->m_INSTANCE);
     if(ret < 0)
         return -1;
 
@@ -173,12 +186,12 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         rect = NULL;
     }
 
-    ((CRTSPCLient*)lpParam)->m_ans = 2;
+    ((CRTSPClient*)lpParam)->m_ans = 2;
 
     return 0;
 }
 
-CRTSPCLient::CRTSPCLient()
+CRTSPClient::CRTSPClient()
 {
     m_bInitURI = false;
     m_bConnected = false;
@@ -202,16 +215,41 @@ CRTSPCLient::CRTSPCLient()
 
     m_myparamInput = new myparamInput;
 
-    func = NULL;
-    funcD = NULL;
-    bmpFunc = NULL;
-    fillbmp = NULL;
-    H264Func = NULL;
+    // funcion pointer for callback begin
+    m_p_function_YUV420 = NULL;
     m_p_YUV420_extra_data = NULL;
+    m_b_YUV420_trace_lost_package = false;
+
+    m_p_function_YV12 = NULL;
+    m_p_YV12_extra_data = NULL;
+    m_b_YV12_trace_lost_package = false;
+
+    m_p_function_H264 = NULL;
+    m_p_H264_extra_data = NULL;
+    m_b_H264_trace_lost_package = false;
+    // funcion pointer for callback end
+
+    // function pointer for PlayH264DLL begin
+    m_p_function_initial_decode_DLL = NULL;
+    m_p_function_free_decode_DLL = NULL;
+    m_p_function_get_idle_instance = NULL;
+    m_p_function_initial_decode_parameter = NULL;
+    m_p_function_decode = NULL;
+    m_p_function_free_decode_instance = NULL;
+    m_p_function_set_YUV420_callback = NULL;
+    m_p_function_set_YV12_callback = NULL;
+    m_p_function_set_H264_callback = NULL;
+    m_p_function_set_hardware_acceleration = NULL;
+    m_p_function_pauseVideos = NULL;
+    m_p_function_playVideos = NULL;
+    m_p_function_inputBuf = NULL;
+    m_p_function_resize = NULL;
+    // function pointer for PlayH264DLL end
+
     nHWAcceleration = false;
 }
 
-CRTSPCLient::~CRTSPCLient()
+CRTSPClient::~CRTSPClient()
 {
     if(NULL != m_URI)
     {
@@ -244,7 +282,7 @@ CRTSPCLient::~CRTSPCLient()
     }
 }
 
-int CRTSPCLient::input_URI(char* URI, char* username, char* password)
+int CRTSPClient::input_URI(char* URI, char* username, char* password)
 {
     if(m_bInitURI || m_bConnected || m_bPlaying || m_RTSPRequest->m_CRTSP_paused || NULL == username || NULL == password || NULL == URI)
     {
@@ -260,7 +298,7 @@ int CRTSPCLient::input_URI(char* URI, char* username, char* password)
     return 0;
 }
 
-int CRTSPCLient::connect()
+int CRTSPClient::connect()
 {
     if(!m_bInitURI || m_bConnected || m_bPlaying || m_RTSPRequest->m_CRTSP_paused)
     {
@@ -368,7 +406,7 @@ int CRTSPCLient::connect()
 //output      :
 //return value: 1 success, -1 failure
 //**************************************************
-int CRTSPCLient::play(HWND hWnd)
+int CRTSPClient::play(HWND hWnd)
 {
     if(!m_bInitURI || !m_bConnected || m_bPlaying)
     {
@@ -403,7 +441,7 @@ int CRTSPCLient::play(HWND hWnd)
     return 0;
 }
 
-int CRTSPCLient::pause()
+int CRTSPClient::pause()
 {
     if(!m_bInitURI || !m_bConnected || !m_bPlaying || m_RTSPRequest->m_CRTSP_paused)
     {
@@ -422,7 +460,7 @@ int CRTSPCLient::pause()
 //output      :
 //return value: 1 success, -1 failure
 //**************************************************
-int CRTSPCLient::disconnect()
+int CRTSPClient::disconnect()
 {
     if(!m_bInitURI || !m_bConnected)
     {

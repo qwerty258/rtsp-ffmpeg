@@ -83,28 +83,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     picture = avcodec_alloc_frame();
     picRGB = avcodec_alloc_frame();
     pFrameYUV = avcodec_alloc_frame();
-
-    AVCodecID codeType;
-
-    switch(((CDecode*)lpParam)->type)
-    {
-        case 1:
-            codeType = CODEC_ID_H264;
-            break;
-        case 2:
-            codeType = CODEC_ID_MPEG4;
-            break;
-        case 3:
-            codeType = CODEC_ID_FLV1;
-            break;
-        default:
-            break;
-    }
-
-    ((CDecode*)lpParam)->m_p_AVCodec = avcodec_find_decoder(codeType);
-    ((CDecode*)lpParam)->m_p_AVCodecContext = avcodec_alloc_context3(((CDecode*)lpParam)->m_p_AVCodec);
-    //((CDecode*)lpParam)->m_p_AVFrame = avcodec_alloc_frame();
-
+    
     if(((CDecode*)lpParam)->nHWAcceleration)
         mAVCodecContextInit(((CDecode*)lpParam)->m_p_AVCodecContext);
 
@@ -149,9 +128,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         // h264 output
         int nWH = 0;
-        if(((CDecode*)lpParam)->H264Func&&nWH)
+        if(NULL != ((CDecode*)lpParam)->m_p_function_H264 && nWH)
         {
-            ((CDecode*)lpParam)->H264Func(((CDecode*)lpParam)->m_decode_instance, (char *)avp.data, avp.size, picture->width, picture->height);
+            ((CDecode*)lpParam)->m_p_function_H264(
+                ((CDecode*)lpParam)->m_decode_instance,
+                (char*)avp.data,
+                avp.size,
+                picture->width,
+                picture->height,
+                ((CDecode*)lpParam)->m_p_H264_extra_data,
+                0);
+
             continue;
         }
 
@@ -206,9 +193,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             continue;
         }
         //h264 output
-        if(((CDecode*)lpParam)->H264Func)
+        if(NULL != ((CDecode*)lpParam)->m_p_function_H264)
         {
-            ((CDecode*)lpParam)->H264Func(((CDecode*)lpParam)->m_decode_instance, (char *)avp.data, avp.size, picture->width, picture->height);
+            ((CDecode*)lpParam)->m_p_function_H264(
+                ((CDecode*)lpParam)->m_decode_instance,
+                (char*)avp.data,
+                avp.size,
+                picture->width,
+                picture->height,
+                ((CDecode*)lpParam)->m_p_H264_extra_data,
+                0);
+
             nWH = 1;
             continue;
         }
@@ -350,19 +345,15 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         availableGPU[currentGPU] -= 60;
     }
 
-    //av_free(&picture->data[0]);
     av_frame_free(&picture);
-    //av_free(&picRGB->data[0]);
 
     av_frame_free(&pFrameYUV);
-    avcodec_close(((CDecode*)lpParam)->m_p_AVCodecContext);
 
     if(((CDecode*)lpParam)->m_p_AVCodecContext->opaque)
     {
         dxva_Delete((dxva_t *)((CDecode*)lpParam)->m_p_AVCodecContext->opaque);
     }
-    av_freep(((CDecode*)lpParam)->m_p_AVCodecContext);
-    //avcodec_free_context(&cocec_context);
+
     ((CDecode*)lpParam)->dataQueueClean();
 
     return 0;
@@ -382,13 +373,14 @@ CDecode::CDecode()
 
     nHWAcceleration = false;
 
-    // initial callback function pointers
+    // function pointer for callback begin
     m_p_function_YUV420 = NULL;
-    func = NULL;
-    funcD = NULL;
-    bmpFunc = NULL;
-    fillbmp = NULL;
-    H264Func = NULL;
+    m_p_YUV420_extra_data = NULL;
+    m_p_function_YV12 = NULL;
+    m_p_YV12_extra_data = NULL;
+    m_p_function_H264 = NULL;
+    m_p_H264_extra_data = NULL;
+    // function pointer for callback end
 
     // initial FFmpeg pointers
     m_p_AVCodec = NULL;
@@ -410,28 +402,28 @@ CDecode::~CDecode()
 int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
 {
     bufptr = BMPbuf;
-    if(fillbmp != NULL)
-    {
-        fillbmp((char*)bufptr, width, height);
-    }
-    if(func != NULL&&paramUser.isDecode)
-    {
-        memcpy(bufptr, &bmpheader, sizeof(bmpheader));
-        memcpy(bufptr + sizeof(bmpheader), &bmpinfo, sizeof(bmpinfo));
-        memcpy(bufptr + sizeof(bmpheader) + sizeof(bmpinfo), pFrameRGB->data[0], width*height*bpp / 8);
-        func(m_decode_instance, width, height, (char*)bufptr, sizeof(bmpheader) + sizeof(bmpinfo) + width*height*bpp / 8, BUFBMP);
-    }
+    //if(fillbmp != NULL)
+    //{
+    //    fillbmp((char*)bufptr, width, height);
+    //}
+    //if(func != NULL&&paramUser.isDecode)
+    //{
+    //    memcpy(bufptr, &bmpheader, sizeof(bmpheader));
+    //    memcpy(bufptr + sizeof(bmpheader), &bmpinfo, sizeof(bmpinfo));
+    //    memcpy(bufptr + sizeof(bmpheader) + sizeof(bmpinfo), pFrameRGB->data[0], width*height*bpp / 8);
+    //    func(m_decode_instance, width, height, (char*)bufptr, sizeof(bmpheader) + sizeof(bmpinfo) + width*height*bpp / 8, BUFBMP);
+    //}
 
     hbit = CreateDIBitmap(playHD, (BITMAPINFOHEADER *)&bmpinfo, CBM_INIT, pFrameRGB->data[0], (BITMAPINFO *)&bmpinfo, DIB_RGB_COLORS);
     OldBitmap = (HBITMAP)SelectObject(hmemDC, hbit);
-    if(funcD != NULL)
-    {
-        funcD(m_decode_instance, hmemDC);
-    }
-    if(bmpFunc != NULL)
-    {
-        bmpFunc((char *)pFrameRGB->data[0], width*height * 3, width, height, 0, 0, 0, hWnd);
-    }
+    //if(funcD != NULL)
+    //{
+    //    funcD(m_decode_instance, hmemDC);
+    //}
+    //if(bmpFunc != NULL)
+    //{
+    //    bmpFunc((char *)pFrameRGB->data[0], width*height * 3, width, height, 0, 0, 0, hWnd);
+    //}
     ::StretchBlt(playHD, 0, 0, playW, playH, hmemDC, 0, 0, width, height, SRCCOPY);
     SelectObject(hmemDC, OldBitmap);
     ::DeleteObject(hbit);

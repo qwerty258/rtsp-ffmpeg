@@ -35,21 +35,9 @@ typedef struct SwsContext SwScaleContext;    //just for convenience
 const int ListCount = 100;
 
 typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, int frame_ID, void* userdata, int frame_lost); // YUV420 callback
-typedef int (WINAPI *PFCALLBACK)(int INSTANCE, int width, int height, char *buf, int bufsize, int buftype);//define my CallBack Func
+typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
+typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
 
-/*Translucent filled polygons callback 半透明填充多边形回调函数(bmp Buffer，bmp width，bmp high)*/
-
-typedef int(WINAPI *TDrawRectCallBack)(char*, int, int);
-typedef int (WINAPI *TDrawLineCallBack)(int, HDC);//define my CallBack Func
-
-/*TBmpCallBack: char*（BMPbufer）,int(buferSize),bmpWidth,bmpHight,int(frame number),int(channel number),int(data type),HWND,handle*/
-
-typedef int (WINAPI *TBmpCallBack)(char*, int, int, int, int, int, int, HWND);
-
-/*TYUVCallBack: yuvbuffer stream, frame width and length*/
-//typedef int (WINAPI *TYUVCallBack)(unsigned char *buffer, int width, int length, void *);
-
-typedef int (WINAPI *TH264CallBack)(int, char *, int len, int wid, int height);
 // received net packages
 typedef struct
 {
@@ -127,11 +115,10 @@ public:
     // function pointer for callback begin
     function_YUV420 m_p_function_YUV420;
     void* m_p_YUV420_extra_data;
-    PFCALLBACK func;
-    TDrawLineCallBack funcD;
-    TBmpCallBack bmpFunc;
-    TDrawRectCallBack fillbmp;
-    TH264CallBack H264Func;
+    function_YV12 m_p_function_YV12;
+    void* m_p_YV12_extra_data;
+    function_H264 m_p_function_H264;
+    void* m_p_H264_extra_data;
     // function pointer for callback end
 
     BITMAPINFOHEADER bmpinfo;

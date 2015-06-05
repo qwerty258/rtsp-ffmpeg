@@ -65,6 +65,10 @@ extern "C" {
     RTSPFFMPEG_API int RTSP_disconnect(int instance);
 
 
+    // function    :set hardware acceleration, default is software decode
+    RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration = false);
+
+
     // function    : set YUV420 callback function
     // input       :
     //// instacne          : the instance you want to set callback function
@@ -74,18 +78,17 @@ extern "C" {
     // return value: 0 success, -1 failure
     RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 
-    //获取YUV数据
-    RTSPFFMPEG_API int SetYUVCallBack(int instance, TYUVCallBack f3, void *buffer);
+    // function    :
+    RTSPFFMPEG_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
+
+    RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
 
     RTSPFFMPEG_API int FreeRtspDLL0000(int instance);
-    RTSPFFMPEG_API int pSetDrawLineCallBack(int instance, TDrawLineCallBack f1);
-    RTSPFFMPEG_API int pSetPFCALLBACK(int instance, PFCALLBACK f1);
-    RTSPFFMPEG_API int pSetBmpCallBack(int instance, TBmpCallBack f2);
-    RTSPFFMPEG_API int pSetFillBmpCallBack(int instance, TDrawRectCallBack f3);
-    //获取H264数据
-    RTSPFFMPEG_API int pSetH264CallBack(int instance, TH264CallBack f3);
-    //设置是否取消硬解
-    RTSPFFMPEG_API int RevoHWAcceleration(int instance, bool acceleration = false);
+    //RTSPFFMPEG_API int pSetDrawLineCallBack(int instance, TDrawLineCallBack f1);
+    //RTSPFFMPEG_API int pSetPFCALLBACK(int instance, PFCALLBACK f1);
+    //RTSPFFMPEG_API int pSetBmpCallBack(int instance, TBmpCallBack f2);
+    //RTSPFFMPEG_API int pSetFillBmpCallBack(int instance, TDrawRectCallBack f3);
+    //RTSPFFMPEG_API int pSetH264CallBack(int instance, TH264CallBack f3);
 
 #ifdef __cplusplus
 }
