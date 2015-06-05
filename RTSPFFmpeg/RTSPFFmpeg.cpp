@@ -177,17 +177,7 @@ RTSPFFMPEG_API int free_RTSP_DLL(void)
 {
     for(int i = 0; i < max_client_number; ++i)
     {
-        if(0 != client_list[i].idle)
-        {
-            client_list[i].idle = 0;
-        }
-
-        if(NULL != client_list[i].p_CRTSPClient)
-        {
-            client_list[i].p_CRTSPClient->disconnect();
-            delete client_list[i].p_CRTSPClient;
-            client_list[i].p_CRTSPClient = NULL;
-        }
+        free_RTSP_instance(i);
     }
 
     p_function_free_decode_DLL();
@@ -253,6 +243,38 @@ RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userNam
     return client_list[instance].p_CRTSPClient->input_URI(URI, userName, password);
 }
 
+RTSPFFMPEG_API int free_RTSP_instance(int instance)
+{
+    if(0 > checkINSTANCE(instance))
+    {
+        return -1;
+    }
+
+    if(0 != client_list[instance].idle)
+    {
+        client_list[instance].idle = 0;
+    }
+
+    if(NULL != client_list[instance].p_CRTSPClient)
+    {
+        client_list[instance].p_CRTSPClient->disconnect();
+
+        DWORD exit_code = STILL_ACTIVE;
+        while(STILL_ACTIVE == exit_code)
+        {
+            Sleep(200);
+            GetExitCodeProcess(client_list[instance].p_CRTSPClient->m_hThread, &exit_code);
+        }
+
+        CloseHandle(client_list[instance].p_CRTSPClient->m_hThread);
+
+        delete client_list[instance].p_CRTSPClient;
+        client_list[instance].p_CRTSPClient = NULL;
+    }
+
+    return 0;
+}
+
 RTSPFFMPEG_API int RTSP_connect(int instance)
 {
     if(0 > checkINSTANCE(instance) || NULL == client_list[instance].p_CRTSPClient)
@@ -289,15 +311,10 @@ RTSPFFMPEG_API int RTSP_disconnect(int INSTANCE)
     {
         return -1;
     }
-
-    client_list[INSTANCE].p_CRTSPClient->disconnect();
-
-    client_list[INSTANCE].idle = 0;
-
-    delete client_list[INSTANCE].p_CRTSPClient;
-    client_list[INSTANCE].p_CRTSPClient = NULL;
-
-    return 0;
+    else
+    {
+        return free_RTSP_instance(INSTANCE);
+    }
 }
 
 RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration)

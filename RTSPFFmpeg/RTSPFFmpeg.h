@@ -36,6 +36,9 @@ extern "C" {
     RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password);
 
 
+    RTSPFFMPEG_API int free_RTSP_instance(int instance);
+
+
     // function    : connect to the IPC, you must have idle instance and initial IPC's video parameter
     // input       :
     //// INSTANCE  : the idle instance return by GetRtspINSTANCE
@@ -83,7 +86,6 @@ extern "C" {
 
     RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
 
-    RTSPFFMPEG_API int FreeRtspDLL0000(int instance);
     //RTSPFFMPEG_API int pSetDrawLineCallBack(int instance, TDrawLineCallBack f1);
     //RTSPFFMPEG_API int pSetPFCALLBACK(int instance, PFCALLBACK f1);
     //RTSPFFMPEG_API int pSetBmpCallBack(int instance, TBmpCallBack f2);

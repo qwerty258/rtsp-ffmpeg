@@ -23,15 +23,19 @@ public:
     int pause();
     int disconnect();
 
+    // windows resource begin
     HMODULE m_hDLL;
+    HANDLE m_hThread;
+    DWORD m_threadID;
     HWND m_hWnd;
+    // windows resource end
+
     int m_INSTANCE;
     int m_ans; // 0: initial state    1: in the cycle    2: exit thread
 
     // state control
     bool m_circulation;
 
-    DWORD m_threadID;
     CRTSPRequest* m_RTSPRequest;
 
     char* m_URI;
