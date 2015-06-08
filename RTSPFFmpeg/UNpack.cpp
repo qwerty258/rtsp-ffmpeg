@@ -318,11 +318,11 @@ CRTPPackage::CRTPPackage()
 
     m_p_buffer_head = NULL;
 
-    m_p_unpack_result = (unsigned char*)malloc(1600);
-    if(NULL == m_p_unpack_result)
-    {
-        MessageBox(NULL, L"memory malloc error", NULL, MB_OK);
-    }
+    //m_p_unpack_result = (unsigned char*)malloc(1600);
+    //if(NULL == m_p_unpack_result)
+    //{
+    //    MessageBox(NULL, L"memory malloc error", NULL, MB_OK);
+    //}
 
     m_p_RTP_header = (RTP_header*)malloc(sizeof(RTP_header));
     if(NULL == m_p_RTP_header)
@@ -360,10 +360,10 @@ CRTPPackage::~CRTPPackage()
         free(m_p_RTP_header);
     }
 
-    if(NULL != m_p_unpack_result)
-    {
-        free(m_p_unpack_result);
-    }
+    //if(NULL != m_p_unpack_result)
+    //{
+    //    free(m_p_unpack_result);
+    //}
 }
 
 void CRTPPackage::unpack_RTP_header(void)
@@ -454,8 +454,8 @@ void CRTPPackage::unpack_H264_NAL_header(bool* bFirst)
 
     //end nal unit header
 
-    // 
-    if(7 != m_p_NALU_t->NAL_unit_type && *bFirst)  // not "sequence parameter set" and the first package
+    // not "sequence parameter set" and the first package
+    if(7 != m_p_NALU_t->NAL_unit_type && *bFirst)
     {
         return;
     }
@@ -471,40 +471,52 @@ void CRTPPackage::unpack_H264_NAL_header(bool* bFirst)
         m_p_unpack_result[3] = 0x1;
         m_unpack_result_size += 4;
 
+        // directly copy header and data to unpack result
         memcpy(m_p_unpack_result + 4, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
         m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
     }
-    // Fragmentation Units A (FU-A), decoding order and transfer order are same
+    // Fragmentation Units A (FU-A), decoding order and net transfer order are same
     else if(28 == m_p_NALU_t->NAL_unit_type)
     {
-        if(1 == m_p_RTP_header->marker)                      // the last package of FU-A
+        // the last package of FU-A, directly copy data to unpack result
+        if(1 == m_p_RTP_header->marker)
         {
             m_p_buffer_current_position += 2;
 
-            memcpy(m_p_unpack_result, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head)); // write NAL unit data
+            memcpy(m_p_unpack_result, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
             m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
         }
-        else if(0 == m_p_RTP_header->marker)                 //Fragmentation Units, but not last package
+        // FU-A, but not last package
+        else if(0 == m_p_RTP_header->marker)
         {
+            unsigned char NAL_header_temp = (((FU_INDICATOR*)m_p_buffer_current_position)->F << 7) | (((FU_INDICATOR*)m_p_buffer_current_position)->NRI << 5);
             m_p_buffer_current_position += 1;
-            if(((FU_HEADER*)m_p_buffer_current_position)->S == 1) // Fragmentation Units and first package
+
+            // FU-A and first package, reconstruct NAL Unit header, then put header and data into unpack result
+            if(((FU_HEADER*)m_p_buffer_current_position)->S == 1)
             {
+                // 0x00000001 for framing
                 m_p_unpack_result[0] = 0x0;
                 m_p_unpack_result[1] = 0x0;
                 m_p_unpack_result[2] = 0x0;
                 m_p_unpack_result[3] = 0x1;
                 m_unpack_result_size += 4;
 
+                NAL_header_temp |= ((FU_HEADER*)m_p_buffer_current_position)->TYPE;
                 m_p_buffer_current_position += 1;
+
+                m_p_unpack_result[4] = NAL_header_temp;
+                m_unpack_result_size += 1;
 
                 memcpy(m_p_unpack_result + 5, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
                 m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
             }
+            // Fragmentation Units A (FU-A) not first package nor last, directly copy data into unpack result
             else
             {
                 m_p_buffer_current_position += 1;
 
-                memcpy(m_p_unpack_result + 5, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+                memcpy(m_p_unpack_result, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
                 m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
             }
         }

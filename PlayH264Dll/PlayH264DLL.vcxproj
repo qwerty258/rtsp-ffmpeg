@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\ffmpeg-2.5.2-win32-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\ffmpeg-2.5.2-win32-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\ffmpeg-20150306-git-c089e72-win32-dev\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\ffmpeg-20150306-git-c089e72-win32-dev\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

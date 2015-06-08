@@ -199,7 +199,7 @@ public:
     int m_buffer_size;
     // need to be initial by user end
 
-    unsigned char* m_p_unpack_result;
+    unsigned char m_p_unpack_result[1600];
     int m_unpack_result_size;
 
     RTP_header* m_p_RTP_header;
