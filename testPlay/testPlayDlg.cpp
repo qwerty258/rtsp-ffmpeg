@@ -48,67 +48,6 @@ BOOL CtestPlayDlg::OnInitDialog()
     SetIcon(m_hIcon, FALSE); // Set small icon
 
     // TODO: Add extra initialization here
-    m_hDll = LoadLibrary(L"RTSPFFmpeg.dll");
-    if(NULL == m_hDll)
-    {
-        AfxMessageBox(L"Load RTSPFFmpeg.dll error");
-        return FALSE;
-    }
-
-    initial_RTSP_DLL = (p_function_initial_RTSP_DLL)GetProcAddress(m_hDll, "initial_RTSP_DLL");
-    if(NULL == initial_RTSP_DLL)
-    {
-        AfxMessageBox(L"GetProcAddress initial_RTSP_DLL error");
-    }
-
-    free_RTSP_DLL = (p_function_free_RTSP_DLL)GetProcAddress(m_hDll, "free_RTSP_DLL");
-    if(NULL == free_RTSP_DLL)
-    {
-        AfxMessageBox(L"GetProcAddress FreeRtspDLL error");
-    }
-
-    RTSP_connect = (p_function_RTSP_connect)GetProcAddress(m_hDll, "RTSP_connect");
-    if(NULL == RTSP_connect)
-    {
-        AfxMessageBox(L"GetProcAddress Connect error");
-    }
-
-    play = (p_function_play)GetProcAddress(m_hDll, "play");
-    if(NULL == play)
-    {
-        AfxMessageBox(L"GetProcAddress Play error");
-    }
-
-    pause = (p_function_pause)GetProcAddress(m_hDll, "pause");
-    if(NULL == pause)
-    {
-        AfxMessageBox(L"GetProcAddress Pause error");
-    }
-
-    RTSP_disconnect = (p_function_RTSP_disconnect)GetProcAddress(m_hDll, "RTSP_disconnect");
-    if(NULL == RTSP_disconnect)
-    {
-        AfxMessageBox(L"GetProcAddress DisConnect error");
-    }
-
-    initial_RTSP_parameter = (p_function_initial_RTSP_parameter)GetProcAddress(m_hDll, "initial_RTSP_parameter");
-    if(NULL == initial_RTSP_parameter)
-    {
-        AfxMessageBox(L"GetProcAddress InitRtspVideoParam error");
-    }
-
-    //RevoHWAcceleration = (lpFuncRevoHWAcceleration)GetProcAddress(m_hDll, "RevoHWAcceleration");
-    //if(NULL == RevoHWAcceleration)
-    //{
-    //    AfxMessageBox(L"GetProcAddress RevoHWAcceleration error");
-    //}
-
-    get_idle_instance = (p_function_get_idle_instance)GetProcAddress(m_hDll, "get_idle_instance");
-    if(NULL == get_idle_instance)
-    {
-        AfxMessageBox(L"GetProcAddress GetRtspINSTANCE error");
-    }
-
     if(0 != initial_RTSP_DLL(20))
     {
         AfxMessageBox(L"InitRtspDLL error");
@@ -166,13 +105,10 @@ void CtestPlayDlg::OnClickedButtonPlay()
 BOOL CtestPlayDlg::DestroyWindow()
 {
     // TODO: Add your specialized code here and/or call the base class
-
     if(0 != free_RTSP_DLL())
     {
         AfxMessageBox(L"FreeRtspDll error");
     }
-
-    FreeLibrary(m_hDll);
 
     return CDialogEx::DestroyWindow();
 }

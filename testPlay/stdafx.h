@@ -51,11 +51,5 @@
 #endif
 #endif
 
-typedef int(*p_function_initial_RTSP_DLL)(int max_number_of_playing_instance);
-typedef int(*p_function_free_RTSP_DLL)(void);
-typedef int(*p_function_get_idle_instance)(void);
-typedef int(*p_function_initial_RTSP_parameter)(int instance, char* URI, char* userName, char* password);
-typedef int(*p_function_RTSP_connect)(int instance);
-typedef int(*p_function_play)(int instance, HWND hWnd);
-typedef int(*p_function_pause)(int instance);
-typedef int(*p_function_RTSP_disconnect)(int instance);
+#include <RTSPFFmpeg.h>
+#pragma comment(lib,"RTSPFFmpeg.lib")
