@@ -2,8 +2,8 @@
 #ifdef _DEBUG
 #include <cstdio>
 #endif
+
 #include <Windows.h>
-#include "Decode.h"
 
 /*
 
@@ -70,8 +70,6 @@ typedef struct
     unsigned int   timestamp;                 // timestamp: 27 MHz for H.264
     unsigned int   synchronization_source;    // synchronization source (SSRC) identifier: chosen randomly
     unsigned int*  contributing_source_list;  // contributing source (CSRC) identifiers: pointer to the array head
-    unsigned char* payload;                   // the payload including payload headers
-    unsigned int   paylen;                    // length of payload in bytes
 }RTP_header;
 
 /*
@@ -168,38 +166,26 @@ typedef struct
     unsigned int   startcodeprefix_len; // prefix bytes
     unsigned int   len;                 // including nal header's length, from first 00000001 to next 000000001
     unsigned int   max_size;            // make more nal's length
-    unsigned char* buf;                 // include nal header's nal data
-    unsigned int   lost_packets;        // resevered
 } NALU_t;
 
 
-#define MAXDATASIZE 1500
-#define BUFFER_SIZE 10
-
-NALU_t *AllocNALU(int buffersize);
-void FreeNALU(NALU_t *n);
-/*
-*bufIn:rtppackage
-*len: the lengthe of rtppackage
-*/
-void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, bool* nfirst);
-void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst);
-
 class CRTPPackage
 {
-public:
-    CRTPPackage();
-    ~CRTPPackage();
-    void unpack_RTP_header(void);
-    void unpack_H264_NAL_header(bool* bFirst);
-
+private:
     // need to be initial by user begin
     unsigned char* m_p_buffer_current_position;
     unsigned char* m_p_buffer_head;
     int m_buffer_size;
     // need to be initial by user end
+public:
+    CRTPPackage();
+    ~CRTPPackage();
+    void set_RTP_package_buffer(unsigned char* p_buffer, int buffer_size);
+    void unpack_RTP_header(void);
+    void unpack_H264_NAL_header(bool* bFirst);
+    void unpack_MPEG(bool* bFirst);
 
-    unsigned char m_p_unpack_result[1600];
+    unsigned char* m_p_unpack_result;
     int m_unpack_result_size;
 
     RTP_header* m_p_RTP_header;

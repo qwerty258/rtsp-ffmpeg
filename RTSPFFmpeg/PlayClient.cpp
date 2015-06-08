@@ -88,15 +88,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             {
                 if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 1)
                 {
-                    //RTP_unpackage(
-                    //    (char*)((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer,
-                    //    size,
-                    //    ((CRTSPClient*)lpParam)->m_INSTANCE,
-                    //    &((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
-
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_buffer_head = ((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer;
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_buffer_current_position = ((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer;
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_buffer_size = size;
+                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer, size);
                     ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
                     ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_H264_NAL_header(&((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
 
@@ -108,11 +100,15 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                 }
                 if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 2)
                 {
-                    RTP_unpackage_mpeg(
-                        (char*)((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer,
-                        size,
+                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer, size);
+                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
+                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_MPEG(&((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+
+                    ((CRTSPClient*)lpParam)->m_p_function_decode(
                         ((CRTSPClient*)lpParam)->m_INSTANCE,
-                        &((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_unpack_result,
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size
+                        );
                 }
             }
         }
