@@ -37,7 +37,7 @@ extern "C" {
     //// userName  : IPC's username
     //// password  : IPC's password
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password);
+    RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password, HWND hWnd);
 
 
     RTSPFFMPEG_API int free_RTSP_instance(int instance);
@@ -55,7 +55,7 @@ extern "C" {
     //// INSTANCE  : the idle instance return by GetRtspINSTANCE
     //// hWnd      : handle to the display window
     // return value: 0 success, -1 failure
-    RTSPFFMPEG_API int play(int instance, HWND hWnd);
+    RTSPFFMPEG_API int play(int instance);
 
 
     // function    : pause realtime play

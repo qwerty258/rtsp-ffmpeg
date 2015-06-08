@@ -96,7 +96,7 @@ void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
     //RevoHWAcceleration(m_INSTANCE, true);
-    if(0 > play(m_INSTANCE, GetDlgItem(IDC_PICTURE_AREA)->m_hWnd))
+    if(0 > play(m_INSTANCE))
     {
         AfxMessageBox(L"Play error");
     }
@@ -136,7 +136,7 @@ void CtestPlayDlg::OnClickedButtonConnect()
         return;
     }
 
-    if(0 > initial_RTSP_parameter(m_INSTANCE, URI, "admin", "12345"))
+    if(0 > initial_RTSP_parameter(m_INSTANCE, URI, "admin", "12345", GetDlgItem(IDC_PICTURE_AREA)->m_hWnd))
     {
         AfxMessageBox(L"InitRtspVideoParam error");
         return;

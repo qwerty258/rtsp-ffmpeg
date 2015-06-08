@@ -20,11 +20,11 @@ public:
 public:
     CRTSPClient();
     ~CRTSPClient();
-    int input_URI(char* URI, char* username, char* password);
-    int connect();
-    int play(HWND hWnd);
-    int pause();
-    int disconnect();
+    int input_URI(char* URI, char* username, char* password, HWND hWnd);
+    int connect(void);
+    int play(void);
+    int pause(void);
+    int disconnect(void);
 
     // windows resource begin
     HMODULE m_hDLL;

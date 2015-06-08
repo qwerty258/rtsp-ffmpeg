@@ -9,28 +9,11 @@
 // thread function
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
-    // prepare data for decode
-    RECT *rect = new RECT; // delete when play end
-    GetWindowRect(((CRTSPClient*)lpParam)->m_hWnd, rect);
-    ((CRTSPClient*)lpParam)->m_myparamInput->playHandle = ((CRTSPClient*)lpParam)->m_hWnd; // get controls' window handle
-    ((CRTSPClient*)lpParam)->m_myparamInput->stopPlay = 0;
-    ((CRTSPClient*)lpParam)->m_myparamInput->playChannle = 1;
-    ((CRTSPClient*)lpParam)->m_myparamInput->fps = 25;
-    ((CRTSPClient*)lpParam)->m_myparamInput->isDecode = true;
-    ((CRTSPClient*)lpParam)->m_myparamInput->playHeight = rect->bottom - rect->top;
-    ((CRTSPClient*)lpParam)->m_myparamInput->playWidth = rect->right - rect->left;
-
     //RTSPCLient->m_SetupName_audio = "";
     //RTSPCLient->m_SetupName_video = "";
     if(!((CRTSPClient*)lpParam)->m_RTSPRequest->RequestPlay())
     {
         //clean up on failure
-        if(rect != NULL)
-        {
-            delete rect;
-            rect = NULL;
-        }
-
         ((CRTSPClient*)lpParam)->m_ans = 4;
         return -1;
     }
@@ -211,12 +194,6 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         return -1;
     }
 
-    if(rect != NULL)
-    {
-        delete rect;
-        rect = NULL;
-    }
-
     ((CRTSPClient*)lpParam)->m_ans = 2;
 
     return 0;
@@ -321,7 +298,7 @@ CRTSPClient::~CRTSPClient()
     }
 }
 
-int CRTSPClient::input_URI(char* URI, char* username, char* password)
+int CRTSPClient::input_URI(char* URI, char* username, char* password, HWND hWnd)
 {
     if(m_bInitURI || m_bConnected || m_bPlaying || m_bPause || NULL == username || NULL == password || NULL == URI)
     {
@@ -332,12 +309,26 @@ int CRTSPClient::input_URI(char* URI, char* username, char* password)
     strncpy(m_userName, username, 256);
     strncpy(m_password, password, 256);
 
+    m_hWnd = hWnd;
+
+    // prepare data for decode
+
+    RECT rect;
+    GetWindowRect(m_hWnd, &rect);
+    m_myparamInput->playHandle = m_hWnd; // get controls' window handle
+    m_myparamInput->stopPlay = 0;
+    m_myparamInput->playChannle = 1;
+    m_myparamInput->fps = 25;
+    m_myparamInput->isDecode = true;
+    m_myparamInput->playHeight = rect.bottom - rect.top;
+    m_myparamInput->playWidth = rect.right - rect.left;
+
     m_bInitURI = true;
 
     return 0;
 }
 
-int CRTSPClient::connect()
+int CRTSPClient::connect(void)
 {
     if(!m_bInitURI || m_bConnected || m_bPlaying || m_bPause)
     {
@@ -445,7 +436,7 @@ int CRTSPClient::connect()
 //output      :
 //return value: 1 success, -1 failure
 //**************************************************
-int CRTSPClient::play(HWND hWnd)
+int CRTSPClient::play(void)
 {
     if(!m_bInitURI || !m_bConnected || m_bPlaying)
     {
@@ -460,7 +451,6 @@ int CRTSPClient::play(HWND hWnd)
     else
     {
         // enter the thread
-        m_hWnd = hWnd;
         m_hThread = CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
 
         m_bPlaying = true;
@@ -475,7 +465,7 @@ int CRTSPClient::play(HWND hWnd)
     return 0;
 }
 
-int CRTSPClient::pause()
+int CRTSPClient::pause(void)
 {
     if(!m_bInitURI || !m_bConnected || !m_bPlaying || m_bPause)
     {
@@ -494,7 +484,7 @@ int CRTSPClient::pause()
 //output      :
 //return value: 1 success, -1 failure
 //**************************************************
-int CRTSPClient::disconnect()
+int CRTSPClient::disconnect(void)
 {
     if(!m_bInitURI || !m_bConnected)
     {

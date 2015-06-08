@@ -228,7 +228,7 @@ RTSPFFMPEG_API int get_idle_instance(void)
     return -1;
 }
 
-RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password)
+RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password, HWND hWnd)
 {
     if(0 > checkINSTANCE(instance))
     {
@@ -241,7 +241,7 @@ RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userNam
         return -1;
     }
 
-    return client_list[instance].p_CRTSPClient->input_URI(URI, userName, password);
+    return client_list[instance].p_CRTSPClient->input_URI(URI, userName, password, hWnd);
 }
 
 RTSPFFMPEG_API int free_RTSP_instance(int instance)
@@ -286,14 +286,14 @@ RTSPFFMPEG_API int RTSP_connect(int instance)
     return client_list[instance].p_CRTSPClient->connect();
 }
 
-RTSPFFMPEG_API int play(int INSTANCE, HWND hWnd)
+RTSPFFMPEG_API int play(int INSTANCE)
 {
     if(0 > checkINSTANCE(INSTANCE) || NULL == client_list[INSTANCE].p_CRTSPClient)
     {
         return -1;
     }
 
-    return client_list[INSTANCE].p_CRTSPClient->play(hWnd);
+    return client_list[INSTANCE].p_CRTSPClient->play();
 }
 
 RTSPFFMPEG_API int pause(int INSTANCE)
