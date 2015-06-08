@@ -5,7 +5,25 @@
 #define PLAYH264DLL_API __declspec(dllimport)
 #endif
 
-#include "DecodeH264threadClass.h"
+typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, int frame_ID, void* userdata, int frame_lost); // YUV420 callback
+typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
+typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
+
+typedef struct
+{
+    int width;             // actual width
+    int height;            // actual hight
+    int playWidth;         // display width
+    int playHeight;        // display hight
+    int fps;               // frame per second
+    HWND playHandle;       // handle to the paly window
+    int stopPlay;          // play control
+    int playChannle;
+    bool isDecode;        // is decode
+    //int  VideoCode;       //code type: 0: H264, 1: mpeg4
+}myparamInput;
+
+typedef unsigned char uint8_t;
 
 #ifdef __cplusplus
 extern "C" {

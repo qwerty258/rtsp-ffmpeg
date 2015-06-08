@@ -24,6 +24,7 @@ extern "C" {
 #pragma comment(lib,"avutil.lib")
 #pragma comment(lib,"swscale.lib")
 
+#include "PlayH264DLL.h"
 
 #define PLAYVIDEO 0
 #define STOPVIDEO -2
@@ -47,19 +48,6 @@ typedef struct
     char picBuffer[1024 * 300];
 }netBuf, *LPnetBuf;
 
-typedef struct
-{
-    int width;             // actual width
-    int height;            // actual hight
-    int playWidth;         // display width
-    int playHeight;        // display hight
-    int fps;               // frame per second
-    HWND playHandle;       // handle to the paly window
-    int stopPlay;          // play control
-    int playChannle;
-    bool isDecode;        // is decode
-    //int  VideoCode;       //code type: 0: H264, 1: mpeg4
-}myparamInput;
 
 typedef struct
 {

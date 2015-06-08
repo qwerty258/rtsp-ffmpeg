@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "PlayH264Dll.h"
+#include "DecodeH264threadClass.h"
 #pragma warning(disable: 4996)
 
 using namespace std;
