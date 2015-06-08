@@ -95,7 +95,7 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
-    //RevoHWAcceleration(m_INSTANCE, true);
+    set_hardware_acceleration(m_INSTANCE, true);
     if(0 > play(m_INSTANCE))
     {
         AfxMessageBox(L"Play error");
