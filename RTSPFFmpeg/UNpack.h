@@ -163,18 +163,17 @@ typedef struct
     // type octet and payload may contain bit errors or other syntax
     // violations.
     unsigned char  forbidden_zero_bit;
-    unsigned char  NAL_reference_idc;   // NALU_PRIORITY_xxxx  
-    unsigned char  NAL_unit_type;       // NALU_TYPE_xxxx    
-    unsigned int   startcodeprefix_len; // 前缀字节数
-    unsigned int   len;                 // 包含nal 头的nal 长度，从第一个00000001到下一个000000001的长度
-    unsigned int   max_size;            // 做多一个nal 的长度
-    unsigned char* buf;                 // 包含nal 头的nal 数据
-    unsigned int   lost_packets;        // 预留
+    unsigned char  NAL_reference_idc;   // NALU_PRIORITY_xxxx
+    unsigned char  NAL_unit_type;       // NALU_TYPE_xxxx
+    unsigned int   startcodeprefix_len; // prefix bytes
+    unsigned int   len;                 // including nal header's length, from first 00000001 to next 000000001
+    unsigned int   max_size;            // make more nal's length
+    unsigned char* buf;                 // include nal header's nal data
+    unsigned int   lost_packets;        // resevered
 } NALU_t;
 
 
 #define MAXDATASIZE 1500
-#define PORT        1234
 #define BUFFER_SIZE 10
 
 NALU_t *AllocNALU(int buffersize);
@@ -185,3 +184,25 @@ void FreeNALU(NALU_t *n);
 */
 void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, bool* nfirst);
 void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst);
+
+class CRTPPackage
+{
+public:
+    CRTPPackage();
+    ~CRTPPackage();
+    void unpack_RTP_header(void);
+    void unpack_H264_NAL_header(bool* bFirst);
+
+    // need to be initial by user begin
+    unsigned char* m_p_buffer_current_position;
+    unsigned char* m_p_buffer_head;
+    int m_buffer_size;
+    // need to be initial by user end
+
+    unsigned char* m_p_unpack_result;
+    int m_unpack_result_size;
+
+    RTP_header* m_p_RTP_header;
+    NALU_t* m_p_NALU_t;
+};
+

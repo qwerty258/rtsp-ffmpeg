@@ -91,17 +91,47 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         int type = 0;
         short int size = 0;
 
-        int rs = ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_Start(type, &size);
-
-
-        if(rs == -1)
+        if(-1 == ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_Start(type, &size))
+        {
             continue;
+        }
 
         if(size < 12)
             continue;
         if(type == 0)
         {
             int i = ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
+            if(!((CRTSPClient*)lpParam)->m_bPause)
+            {
+                if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 1)
+                {
+                    RTP_unpackage(
+                        (char*)((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer,
+                        size,
+                        ((CRTSPClient*)lpParam)->m_INSTANCE,
+                        &((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+
+                    //((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_buffer_head = ((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer;
+                    //((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_buffer_current_position = ((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer;
+                    //((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_buffer_size = size;
+                    //((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
+                    //((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_H264_NAL_header(&((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+
+                    //((CRTSPClient*)lpParam)->m_p_function_decode(
+                    //    ((CRTSPClient*)lpParam)->m_INSTANCE,
+                    //    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_unpack_result,
+                    //    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size
+                    //    );
+                }
+                if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 2)
+                {
+                    RTP_unpackage_mpeg(
+                        (char*)((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer,
+                        size,
+                        ((CRTSPClient*)lpParam)->m_INSTANCE,
+                        &((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+                }
+            }
         }
         else if(type == 2 || type == 3) // discard rest of streams(2-3)
         {
@@ -216,6 +246,8 @@ CRTSPClient::CRTSPClient()
 
     m_myparamInput = new myparamInput;
 
+    m_p_CRTPPackage = new CRTPPackage;
+
     // funcion pointer for callback begin
     m_p_function_YUV420 = NULL;
     m_p_YUV420_extra_data = NULL;
@@ -281,11 +313,17 @@ CRTSPClient::~CRTSPClient()
         delete m_myparamInput;
         m_myparamInput = NULL;
     }
+
+    if(NULL != m_p_CRTPPackage)
+    {
+        delete m_p_CRTPPackage;
+        m_p_CRTPPackage = NULL;
+    }
 }
 
 int CRTSPClient::input_URI(char* URI, char* username, char* password)
 {
-    if(m_bInitURI || m_bConnected || m_bPlaying || m_RTSPRequest->m_CRTSP_paused || NULL == username || NULL == password || NULL == URI)
+    if(m_bInitURI || m_bConnected || m_bPlaying || m_bPause || NULL == username || NULL == password || NULL == URI)
     {
         return -1;
     }
@@ -301,7 +339,7 @@ int CRTSPClient::input_URI(char* URI, char* username, char* password)
 
 int CRTSPClient::connect()
 {
-    if(!m_bInitURI || m_bConnected || m_bPlaying || m_RTSPRequest->m_CRTSP_paused)
+    if(!m_bInitURI || m_bConnected || m_bPlaying || m_bPause)
     {
         return -1;
     }
@@ -414,9 +452,9 @@ int CRTSPClient::play(HWND hWnd)
         return -1;
     }
 
-    if(m_RTSPRequest->m_CRTSP_paused)
+    if(m_bPause)
     {
-        m_RTSPRequest->m_CRTSP_paused = false;
+        m_bPause = false;
         m_bPlaying = true;
     }
     else
@@ -439,12 +477,12 @@ int CRTSPClient::play(HWND hWnd)
 
 int CRTSPClient::pause()
 {
-    if(!m_bInitURI || !m_bConnected || !m_bPlaying || m_RTSPRequest->m_CRTSP_paused)
+    if(!m_bInitURI || !m_bConnected || !m_bPlaying || m_bPause)
     {
         return -1;
     }
 
-    m_RTSPRequest->m_CRTSP_paused = true;
+    m_bPause = true;
     m_bPlaying = false;
 
     return 0;
@@ -473,7 +511,7 @@ int CRTSPClient::disconnect()
     m_bConnected = false;
     m_bInitURI = false;
     m_bPlaying = false;
-    m_RTSPRequest->m_CRTSP_paused = false;
+    m_bPause = false;
 
     return 0;
 }

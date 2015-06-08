@@ -57,7 +57,8 @@ public:
     int Decode;//编码器选择1 h264�? mpeg
     int ID;//解码器号
     bool nfirst;//判断是否为第一个包
-    bool m_CRTSP_paused;
+    //bool m_CRTSP_paused;
+    BYTE* m_p_RTP_package_buffer;
 public:
     Rtsp();
     virtual ~Rtsp();

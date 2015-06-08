@@ -1,3 +1,4 @@
+#include "PlayClient.h"
 #include "RTSPFFmpeg.h"
 
 typedef struct container_client_data

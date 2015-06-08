@@ -12,11 +12,21 @@ Rtsp::Rtsp()
     m_CSeq = 0;
     m_State = 0;
     m_Session[0] = 0;
-    m_CRTSP_paused = false;
+    //m_CRTSP_paused = false;
+    m_p_RTP_package_buffer = new BYTE[1500];
+    if(NULL == m_p_RTP_package_buffer)
+    {
+        MessageBox(NULL, L"memory new error", NULL, MB_OK);
+    }
 }
 
 Rtsp::~Rtsp()
 {
+    if(NULL != m_p_RTP_package_buffer)
+    {
+        delete[] m_p_RTP_package_buffer;
+        m_p_RTP_package_buffer = NULL;
+    }
 }
 int Rtsp::Read_Leave(int len)
 {
@@ -153,8 +163,7 @@ int Rtsp::Read_Head()
 }
 int Rtsp::Read_PlayLoad(short int len)
 {
-    char buffer[1500];
-    int iRead = CSocket::Read((BYTE*)buffer, len);
+    int iRead = CSocket::Read((BYTE*)m_p_RTP_package_buffer, len);
     if(iRead == -1)
         return -1;
 
@@ -164,7 +173,7 @@ int Rtsp::Read_PlayLoad(short int len)
 
     while(tmpLen > 0 && countT < 20)
     {
-        iRead = CSocket::Read((BYTE*)buffer + len - tmpLen, tmpLen);
+        iRead = CSocket::Read((BYTE*)m_p_RTP_package_buffer + len - tmpLen, tmpLen);
         if(iRead == -1)
             return -1;
         tmpLen = tmpLen - iRead;
@@ -224,30 +233,30 @@ int Rtsp::Read_PlayLoad(short int len)
     if(iRead < 0)
         return -1;
 
-    if(!m_CRTSP_paused)
-    {
-        if(Decode == 1)
-            RTP_unpackage(&buffer[0], len, ID, &nfirst);
-        if(Decode == 2)
-            RTP_unpackage_mpeg(buffer, len, ID, &nfirst);
-    }
+    //if(!m_CRTSP_paused)
+    //{
+    //    if(Decode == 1)
+    //        RTP_unpackage(&buffer[0], len, ID, &nfirst);
+    //    if(Decode == 2)
+    //        RTP_unpackage_mpeg(buffer, len, ID, &nfirst);
+    //}
 
     if(tmpLen == 0)
     {
         if(initS == 0)
         {
-            memcpy(sSeNum, buffer + 2, 2);
-            memcpy(lSeNum, buffer + 2, 2);
-            memcpy(eSeNum, buffer + 2, 2);
+            memcpy(sSeNum, m_p_RTP_package_buffer + 2, 2);
+            memcpy(lSeNum, m_p_RTP_package_buffer + 2, 2);
+            memcpy(eSeNum, m_p_RTP_package_buffer + 2, 2);
 
             allGet++;
             perGet++;
 
             DWORD timeTmp;
-            *((char *)&timeTmp) = buffer[7];
-            *((char *)&timeTmp + 1) = buffer[6];
-            *((char *)&timeTmp + 2) = buffer[5];
-            *((char *)&timeTmp + 3) = buffer[4];
+            *((char *)&timeTmp) = m_p_RTP_package_buffer[7];
+            *((char *)&timeTmp + 1) = m_p_RTP_package_buffer[6];
+            *((char *)&timeTmp + 2) = m_p_RTP_package_buffer[5];
+            *((char *)&timeTmp + 3) = m_p_RTP_package_buffer[4];
 
             time_t rawtime;
             time(&rawtime);
@@ -258,15 +267,15 @@ int Rtsp::Read_PlayLoad(short int len)
         }
         else
         {
-            memcpy(eSeNum, buffer + 2, 2);
+            memcpy(eSeNum, m_p_RTP_package_buffer + 2, 2);
             allGet++;
             perGet++;
 
             DWORD timeTmp;
-            *((char *)&timeTmp) = buffer[7];
-            *((char *)&timeTmp + 1) = buffer[6];
-            *((char *)&timeTmp + 2) = buffer[5];
-            *((char *)&timeTmp + 3) = buffer[4];
+            *((char *)&timeTmp) = m_p_RTP_package_buffer[7];
+            *((char *)&timeTmp + 1) = m_p_RTP_package_buffer[6];
+            *((char *)&timeTmp + 2) = m_p_RTP_package_buffer[5];
+            *((char *)&timeTmp + 3) = m_p_RTP_package_buffer[4];
 
             time_t rawtime;
             time(&rawtime);

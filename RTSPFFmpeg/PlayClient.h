@@ -6,6 +6,7 @@
 #include "VBuffer.h"
 
 #include "Decode.h"
+#include "UNpack.h"
 
 class CRTSPClient
 {
@@ -13,6 +14,8 @@ private:
     bool m_bInitURI;
     bool m_bConnected;
     bool m_bPlaying;
+public:
+    bool m_bPause;
 
 public:
     CRTSPClient();
@@ -37,6 +40,8 @@ public:
     bool m_circulation;
 
     CRTSPRequest* m_RTSPRequest;
+
+    CRTPPackage* m_p_CRTPPackage;
 
     char* m_URI;
     char* m_userName;

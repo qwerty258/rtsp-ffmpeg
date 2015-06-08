@@ -21,7 +21,7 @@ public:
     BOOL RequestPause(char*, char*);
     BOOL RequestTeardown();
     BOOL RequestTeardown(char*, char*);
-    //为了看的清楚，以上皆不用重载
+    /*     为了看的清楚，以上皆不用重载        */
     void Close();
 
     string  m_SetupName;
@@ -40,10 +40,10 @@ protected:
     BOOL GenerateTransportField(string *pTransport, int streamingMode, int clientRtpPort, int clientRtcpPort);
 
     string  m_RequestsMrl;
-    string  m_AuUserAPSD;//存用户名密码，暂时不�?
+    string  m_AuUserAPSD;/*      存用户名密码，暂时不�?       */
     vector<string> m_Responses;
 
 public:
 
-    int frame;//帧率
+    int frame;/*          帧率      */
 };

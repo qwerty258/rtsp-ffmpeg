@@ -9,7 +9,8 @@
 //
 //  GetFullBuffer()                                 AddFullBuffer()
 //
-//     ↓                                                  ↑
+//     |                                                 /|\
+//    \|/                                                 |
 //
 //  AddEmptyBuffer()                                GetEmptyBuffer()
 //
@@ -18,7 +19,7 @@
 //
 //  Split the VBuffer:
 //
-//  SetData() → [tail]  ... Buffer Buffer ... [heard]   → GetData()
+//  SetData()   [tail]  ... Buffer Buffer ... [heard]     GetData()
 //
 //
 //////////////////////////////////////////////////////////////////////

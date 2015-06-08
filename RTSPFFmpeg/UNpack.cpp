@@ -167,7 +167,7 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
     *nfirst = false;
 
     // Single NAL Unit Packet
-    if(((NALU_HEADER*)current_buffer_position)->TYPE > 0 && ((NALU_HEADER*)current_buffer_position)->TYPE < 24)
+    if(0 < ((NALU_HEADER*)current_buffer_position)->TYPE && ((NALU_HEADER*)current_buffer_position)->TYPE < 24)
     {
         poutfile[0] = 0x00;
         poutfile[1] = 0x00;
@@ -204,9 +204,9 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
             total_bytes = p_RTP_header->paylen;
             poutfile[total_bytes] = '\0';
         }
-        else if(p_RTP_header->marker == 0)                 //分片包 但不是最后一个包
+        else if(p_RTP_header->marker == 0)                 /*  Fragmentation Units but not the last package    */
         {
-            if(fu_hdr->S == 1)                        //分片的第一个包  
+            if(fu_hdr->S == 1)                        /*   first package of  Fragmentation Units    */
             {
                 unsigned char F;
                 unsigned char NRI;
@@ -221,35 +221,35 @@ void RTP_unpackage(char* RTP_package_buffer, int RTP_package_length, int ID, boo
 
                 F = fu_ind->F << 7;
                 NRI = fu_ind->NRI << 5;
-                TYPE = fu_hdr->TYPE;                                            //应用的是FU_HEADER的TYPE  
-                //nh = n->forbidden_bit|n->nal_reference_idc|n->nal_unit_type;  //二进制文件也是按 大字节序存储  
+                TYPE = fu_hdr->TYPE;                                            /*  use FU_HEADER's TYPE   */
+                //nh = n->forbidden_bit|n->nal_reference_idc|n->nal_unit_type;  /*  store as big endian   */
                 nh = F | NRI | TYPE;
 
-                poutfile[4] = nh;              //写NAL HEADER  
+                poutfile[4] = nh;              //write NAL HEADER  
 
                 total_bytes += 1;
                 memcpy(p_RTP_header->payload, &RTP_package_buffer[14], RTP_package_length - 14);
                 p_RTP_header->paylen = RTP_package_length - 14;
-                memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);  //写NAL数据
+                memcpy(poutfile + 5, p_RTP_header->payload, p_RTP_header->paylen);  /*   write NAL data   */
                 total_bytes += p_RTP_header->paylen;
                 poutfile[total_bytes] = '\0';
             }
-            else                                      //如果不是第一个包
+            else                                      /*  if not the first package     */
             {
                 memcpy(p_RTP_header->payload, &RTP_package_buffer[14], RTP_package_length - 14);
                 p_RTP_header->paylen = RTP_package_length - 14;
-                memcpy(poutfile, p_RTP_header->payload, p_RTP_header->paylen);  //写NAL数据  
+                memcpy(poutfile, p_RTP_header->payload, p_RTP_header->paylen);  /*   write NAL data     */
                 total_bytes = p_RTP_header->paylen;
                 poutfile[total_bytes] = '\0';
             }
         }
     }
-    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 29)                //FU-B分片包，解码顺序和传输顺序相同
+    else if(((NALU_HEADER*)current_buffer_position)->TYPE == 29)                /*     FU-B, decode order is same as net byte order    */
     {
-        //if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 1)                  //分片包最后一个包  
+        //if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 1)                  /*   the last package  */
         //{
         //}
-        //else if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 0)             //分片包 但不是最后一个包
+        //else if(((RTP_FIXED_HEADER*)&bufIn[0])->marker == 0)             /*   Fragmentation Units but not the last package       */
         //{
         //}
     }
@@ -312,3 +312,201 @@ void RTP_unpackage_mpeg(char *bufIn, int len, int ID, bool *nfirst)
     p_function_decode(ID, recvbuf + 12, len - 12);
 }
 
+CRTPPackage::CRTPPackage()
+{
+    m_p_buffer_current_position = NULL;
+
+    m_p_buffer_head = NULL;
+
+    m_p_unpack_result = (unsigned char*)malloc(1600);
+    if(NULL == m_p_unpack_result)
+    {
+        MessageBox(NULL, L"memory malloc error", NULL, MB_OK);
+    }
+
+    m_p_RTP_header = (RTP_header*)malloc(sizeof(RTP_header));
+    if(NULL == m_p_RTP_header)
+    {
+        MessageBox(NULL, L"memory malloc error", NULL, MB_OK);
+    }
+
+    m_p_RTP_header->contributing_source_list = (unsigned int*)malloc(1);
+    if(NULL == m_p_RTP_header->contributing_source_list)
+    {
+        MessageBox(NULL, L"memory malloc error", NULL, MB_OK);
+    }
+
+    m_p_NALU_t = (NALU_t*)malloc(sizeof(NALU_t));
+    if(NULL == m_p_NALU_t)
+    {
+        MessageBox(NULL, L"memory malloc error", NULL, MB_OK);
+    }
+}
+
+CRTPPackage::~CRTPPackage()
+{
+    if(NULL != m_p_NALU_t)
+    {
+        free(m_p_NALU_t);
+    }
+
+    if(NULL != m_p_RTP_header->contributing_source_list)
+    {
+        free(m_p_RTP_header->contributing_source_list);
+    }
+
+    if(NULL != m_p_RTP_header)
+    {
+        free(m_p_RTP_header);
+    }
+
+    if(NULL != m_p_unpack_result)
+    {
+        free(m_p_unpack_result);
+    }
+}
+
+void CRTPPackage::unpack_RTP_header(void)
+{
+    // byte 0:
+    m_p_RTP_header->version = ((RTP_header_byte_0*)m_p_buffer_current_position)->V;
+    m_p_RTP_header->padding = ((RTP_header_byte_0*)m_p_buffer_current_position)->P;
+    m_p_RTP_header->extension = ((RTP_header_byte_0*)m_p_buffer_current_position)->X;
+    m_p_RTP_header->contributing_source_count = ((RTP_header_byte_0*)m_p_buffer_current_position)->CC;
+
+    m_p_buffer_current_position += 1;
+
+    // byte 1:
+    m_p_RTP_header->marker = ((RTP_header_byte_1*)m_p_buffer_current_position)->M;
+    m_p_RTP_header->payload_type = ((RTP_header_byte_1*)m_p_buffer_current_position)->PT;
+
+    m_p_buffer_current_position += 1;
+
+    // byte 2-3: sequence number
+    ((unsigned char*)&(m_p_RTP_header->sequence_number))[0] = m_p_buffer_current_position[1];
+    ((unsigned char*)&(m_p_RTP_header->sequence_number))[1] = m_p_buffer_current_position[0];
+
+    m_p_buffer_current_position += 2;
+
+    // byte 4-7: timestamp
+    ((unsigned char*)&(m_p_RTP_header->timestamp))[0] = (unsigned char)m_p_buffer_current_position[3];
+    ((unsigned char*)&(m_p_RTP_header->timestamp))[1] = (unsigned char)m_p_buffer_current_position[2];
+    ((unsigned char*)&(m_p_RTP_header->timestamp))[2] = (unsigned char)m_p_buffer_current_position[1];
+    ((unsigned char*)&(m_p_RTP_header->timestamp))[3] = (unsigned char)m_p_buffer_current_position[0];
+
+    m_p_buffer_current_position += 4;
+
+    // byte 8-11: synchronization source (SSRC) identifier
+    ((unsigned char*)&(m_p_RTP_header->synchronization_source))[0] = (unsigned char)m_p_buffer_current_position[3];
+    ((unsigned char*)&(m_p_RTP_header->synchronization_source))[1] = (unsigned char)m_p_buffer_current_position[2];
+    ((unsigned char*)&(m_p_RTP_header->synchronization_source))[2] = (unsigned char)m_p_buffer_current_position[1];
+    ((unsigned char*)&(m_p_RTP_header->synchronization_source))[3] = (unsigned char)m_p_buffer_current_position[0];
+
+    m_p_buffer_current_position += 4;
+
+    // contributing source (CSRC) identifiers
+    if(0 != m_p_RTP_header->contributing_source_count)
+    {
+        m_p_RTP_header->contributing_source_list = (unsigned int*)realloc(m_p_RTP_header->contributing_source_list, (m_p_RTP_header->contributing_source_count) * sizeof(unsigned int));
+        if(NULL == m_p_RTP_header->contributing_source_list)
+        {
+            MessageBox(NULL, L"realloc error", NULL, MB_OK);
+        }
+
+        for(unsigned char i = 0; i < m_p_RTP_header->contributing_source_count; ++i)
+        {
+            ((unsigned char*)&m_p_RTP_header->contributing_source_list[i])[0] = m_p_buffer_current_position[3];
+            ((unsigned char*)&m_p_RTP_header->contributing_source_list[i])[1] = m_p_buffer_current_position[2];
+            ((unsigned char*)&m_p_RTP_header->contributing_source_list[i])[2] = m_p_buffer_current_position[1];
+            ((unsigned char*)&m_p_RTP_header->contributing_source_list[i])[3] = m_p_buffer_current_position[0];
+
+            m_p_buffer_current_position += 4;
+        }
+    }
+
+#ifdef NO_DEBUG
+    FILE* p_file_sequence_number = fopen("sequence_number.txt", "ab");
+    FILE* p_file_timestamp = fopen("timestamp.txt", "ab");
+    char* strBuffer = new char[256];
+
+    sprintf(strBuffer, "%05u\n", p_RTP_header->sequence_number);
+    fwrite(strBuffer, strlen(strBuffer), 1, p_file_sequence_number);
+
+    sprintf(strBuffer, "%010u\n", p_RTP_header->timestamp);
+    fwrite(strBuffer, strlen(strBuffer), 1, p_file_timestamp);
+
+    fclose(p_file_sequence_number);
+    fclose(p_file_timestamp);
+    delete[] strBuffer;
+#endif // !_DEBUG
+
+    //end rtp_payload and rtp_header
+}
+
+void CRTPPackage::unpack_H264_NAL_header(bool* bFirst)
+{
+    m_unpack_result_size = 0;
+    memset(m_p_unpack_result, 0x0, 1600);
+
+    m_p_NALU_t->forbidden_zero_bit = ((NALU_HEADER*)m_p_buffer_current_position)->F;
+    m_p_NALU_t->NAL_reference_idc = ((NALU_HEADER*)m_p_buffer_current_position)->NRI;
+    m_p_NALU_t->NAL_unit_type = ((NALU_HEADER*)m_p_buffer_current_position)->TYPE;
+
+    //end nal unit header
+
+    // 
+    if(7 != m_p_NALU_t->NAL_unit_type && *bFirst)  // not "sequence parameter set" and the first package
+    {
+        return;
+    }
+    *bFirst = false;
+
+    // Single NAL Unit Packet
+    if(0 < m_p_NALU_t->NAL_unit_type && m_p_NALU_t->NAL_unit_type < 24)
+    {
+        // 0x00000001 for framing
+        m_p_unpack_result[0] = 0x0;
+        m_p_unpack_result[1] = 0x0;
+        m_p_unpack_result[2] = 0x0;
+        m_p_unpack_result[3] = 0x1;
+        m_unpack_result_size += 4;
+
+        memcpy(m_p_unpack_result + 4, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+        m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+    }
+    // Fragmentation Units A (FU-A), decoding order and transfer order are same
+    else if(28 == m_p_NALU_t->NAL_unit_type)
+    {
+        if(1 == m_p_RTP_header->marker)                      // the last package of FU-A
+        {
+            m_p_buffer_current_position += 2;
+
+            memcpy(m_p_unpack_result, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head)); // write NAL unit data
+            m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+        }
+        else if(0 == m_p_RTP_header->marker)                 //Fragmentation Units, but not last package
+        {
+            m_p_buffer_current_position += 1;
+            if(((FU_HEADER*)m_p_buffer_current_position)->S == 1) // Fragmentation Units and first package
+            {
+                m_p_unpack_result[0] = 0x0;
+                m_p_unpack_result[1] = 0x0;
+                m_p_unpack_result[2] = 0x0;
+                m_p_unpack_result[3] = 0x1;
+                m_unpack_result_size += 4;
+
+                m_p_buffer_current_position += 1;
+
+                memcpy(m_p_unpack_result + 5, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+                m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+            }
+            else
+            {
+                m_p_buffer_current_position += 1;
+
+                memcpy(m_p_unpack_result + 5, m_p_buffer_current_position, m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+                m_unpack_result_size += (m_buffer_size - (m_p_buffer_current_position - m_p_buffer_head));
+            }
+        }
+    }
+}
