@@ -95,8 +95,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     ((CRTSPClient*)lpParam)->m_p_function_decode(
                         ((CRTSPClient*)lpParam)->m_INSTANCE,
                         ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_unpack_result,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size
-                        );
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size,
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
                 }
                 if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 2)
                 {
@@ -107,8 +108,9 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     ((CRTSPClient*)lpParam)->m_p_function_decode(
                         ((CRTSPClient*)lpParam)->m_INSTANCE,
                         ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_unpack_result,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size
-                        );
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size,
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
+                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
                 }
             }
         }

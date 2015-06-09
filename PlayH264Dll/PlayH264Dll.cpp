@@ -129,7 +129,7 @@ PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam
     return decode_list[instance].p_CDecode->InputParam(Myparam);
 }
 
-PLAYH264DLL_API int decode(int instance, uint8_t* pInBuffer, int size)
+PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp)
 {
     if(0 > check_instance(instance) || 1 != decode_list[instance].idle || NULL == decode_list[instance].p_CDecode->m_p_AVCodecParserContext)
     {
@@ -142,6 +142,40 @@ PLAYH264DLL_API int decode(int instance, uint8_t* pInBuffer, int size)
     uint8_t *pout;// a complete frame, if incomplete it's NULL
     int pout_len;// a complete frame's length, if incomplete it's 0
     int len;
+
+    // if trace lost package
+    if(decode_list[instance].p_CDecode->m_trace_lost_package)
+    {
+        // when it is a new frame
+        if(timestamp != decode_list[instance].p_CDecode->m_previous_timestamp)
+        {
+            // save previous frame ID and number of lost package
+            decode_list[instance].p_CDecode->m_previous_frame_ID = decode_list[instance].p_CDecode->m_frame_ID;
+            decode_list[instance].p_CDecode->m_previous_number_of_lost_package = decode_list[instance].p_CDecode->m_number_of_lost_package;
+            // great change in sequence number, lost frame, not packages
+            if(sequence_number - decode_list[instance].p_CDecode->m_previous_sequence_number > 20)
+            {
+                decode_list[instance].p_CDecode->m_frame_ID += ((sequence_number - decode_list[instance].p_CDecode->m_previous_sequence_number) / 6);
+            }
+            // frame ID plus 1
+            else
+            {
+                ++(decode_list[instance].p_CDecode->m_frame_ID);
+            }
+            // set number of lost package back to 0
+            decode_list[instance].p_CDecode->m_number_of_lost_package = 0;
+            // set timestamp and sequence number for new check round
+            decode_list[instance].p_CDecode->m_previous_timestamp = timestamp;
+            decode_list[instance].p_CDecode->m_previous_sequence_number = sequence_number;
+        }
+        // the same frame
+        else
+        {
+            // if there is lost package, calculate how many lost
+            decode_list[instance].p_CDecode->m_number_of_lost_package += (sequence_number - decode_list[instance].p_CDecode->m_previous_sequence_number - 1);
+            decode_list[instance].p_CDecode->m_previous_sequence_number = sequence_number;
+        }
+    }
 
     do
     {
@@ -203,6 +237,7 @@ PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function
 
     decode_list[instance].p_CDecode->m_p_function_YUV420 = p_function_YUV420;
     decode_list[instance].p_CDecode->m_p_YUV420_extra_data = additional_data;
+    decode_list[instance].p_CDecode->m_trace_lost_package = trace_lost_package;
 
     return 0;
 }
@@ -216,6 +251,7 @@ PLAYH264DLL_API int set_YV12_callback(int instance, function_YV12 p_function_YV1
 
     decode_list[instance].p_CDecode->m_p_function_YV12 = p_function_YV12;
     decode_list[instance].p_CDecode->m_p_YV12_extra_data = additional_data;
+    decode_list[instance].p_CDecode->m_trace_lost_package = trace_lost_package;
 
     return 0;
 }
@@ -229,6 +265,7 @@ PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H26
 
     decode_list[instance].p_CDecode->m_p_function_H264 = p_function_H264;
     decode_list[instance].p_CDecode->m_p_H264_extra_data = additional_data;
+    decode_list[instance].p_CDecode->m_trace_lost_package = trace_lost_package;
 
     return 0;
 }
@@ -246,45 +283,6 @@ PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration)
 
     return 0;
 }
-
-/*
-//depreated
-PLAYH264DLL_API int SetDrawLineCallBack(int instance, TDrawLineCallBack f1)
-{
-if(NULL == f1 || 0 > check_instance(instance))
-{
-return -1;
-}
-decode_list[instance].p_CDecode->funcD = f1;
-return 0;
-}
-*/
-
-/*
-//depreated
-PLAYH264DLL_API int SetBmpCallBack(int instance, TBmpCallBack bmp1)
-{
-if(NULL == bmp1 || 0 > check_instance(instance))
-{
-return -1;
-}
-decode_list[instance].p_CDecode->bmpFunc = bmp1;
-return 0;
-}
-*/
-
-/*
-//depreated
-PLAYH264DLL_API int SetFillBmpCallBack(int instance, TDrawRectCallBack bmpf)//depreated
-{
-if(NULL == bmpf || 0 > check_instance(instance))
-{
-return -1;
-}
-decode_list[instance].p_CDecode->fillbmp = bmpf;
-return 0;
-}
-*/
 
 PLAYH264DLL_API int pauseVideos(int instance)
 {
@@ -308,11 +306,6 @@ PLAYH264DLL_API int playVideos(int instance)
 
 PLAYH264DLL_API int inputBuf(int instance, char *buf, int bufsize)
 {
-    // 	FILE *fp;
-    //fp = fopen("c:\\20150205.h264","ab+");
-    //fwrite(buf,1,bufsize,fp);
-    //fclose(fp);
-
     if(0 > check_instance(instance) || 1 != decode_list[instance].idle || NULL == buf || 0 > bufsize)
     {
         return -1;

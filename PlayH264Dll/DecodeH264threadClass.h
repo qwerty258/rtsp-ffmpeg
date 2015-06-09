@@ -35,7 +35,7 @@ extern "C" {
 typedef struct SwsContext SwScaleContext;    //just for convenience
 const int ListCount = 100;
 
-typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, int frame_ID, void* userdata, int frame_lost); // YUV420 callback
+typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, size_t frame_ID, void* userdata, int frame_lost); // YUV420 callback
 typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
 typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
 
@@ -53,6 +53,8 @@ typedef struct
 {
     int size;
     unsigned char * data;
+    size_t frame_ID;
+    int number_of_lost_frame;
 }dataNode;
 
 
@@ -129,11 +131,22 @@ public:
     char* m_BMP_buffer;
     int m_decode_instance;
 
-    // for FFmpeg
+    // for FFmpeg begin
     AVCodecContext*       m_p_AVCodecContext;
     AVFrame*              m_p_AVFrame;
     AVCodecParserContext* m_p_AVCodecParserContext;
     AVCodec*              m_p_AVCodec;
+    // for FFmpeg end
+
+    // for trace lost package begin
+    unsigned short m_previous_sequence_number;
+    unsigned int   m_previous_timestamp;
+    size_t m_previous_frame_ID;
+    int m_previous_number_of_lost_package;
+    size_t m_frame_ID;
+    int m_number_of_lost_package;
+    bool m_trace_lost_package;
+    // for trace lost package end
 };
 
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);

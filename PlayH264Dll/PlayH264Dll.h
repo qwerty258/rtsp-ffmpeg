@@ -5,7 +5,7 @@
 #define PLAYH264DLL_API __declspec(dllimport)
 #endif
 
-typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, int frame_ID, void* userdata, int frame_lost); // YUV420 callback
+typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, size_t frame_ID, void* userdata, int frame_lost); // YUV420 callback
 typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
 typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
 
@@ -37,7 +37,7 @@ extern "C" {
 
     PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam, int type);
 
-    PLAYH264DLL_API int decode(int instance, uint8_t* pInBuffer, int size);
+    PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp);
 
     PLAYH264DLL_API int free_decode_instance(int instance);
 

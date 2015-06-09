@@ -22,7 +22,7 @@ typedef int(*function_YUV420)(
     int frame_buffer_size,
     int frame_width,
     int frame_height,
-    int frame_ID,
+    size_t frame_ID,
     void* userdata,
     int frame_lost); // YUV420 callback
 
@@ -51,7 +51,7 @@ typedef int(*function_initial_decode_DLL)(int max_number_of_decoding_instance);
 typedef int(*function_free_decode_DLL)(void);
 typedef int(*function_get_idle_instance)(void);
 typedef int(*function_initial_decode_parameter)(int instance, myparamInput* Myparam, int type);
-typedef int(*function_decode)(int instance, unsigned char* pInBuffer, int size);
+typedef int(*function_decode)(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp);
 typedef int(*function_free_decode_instance)(int instance);
 typedef int(*function_set_YUV420_callback)(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 typedef int(*function_set_YV12_callback)(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);

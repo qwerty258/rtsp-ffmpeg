@@ -120,6 +120,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             break;
         }
 
+#ifdef _DEBUG
+        if(((CDecode*)lpParam)->m_trace_lost_package)
+        {
+            FILE* pFile = fopen("C:\\frame.txt", "ab");
+            char temp[256];
+            sprintf(temp, "frame ID:%08X, lost: %08X\n", p_data_node_temp->frame_ID, p_data_node_temp->number_of_lost_frame);
+            fwrite(temp, 1, strlen(temp), pFile);
+            fclose(pFile);
+        }
+#endif
+
         av_init_packet(&avp);
         avp.data = (uint8_t*)p_data_node_temp->data;
         avp.size = p_data_node_temp->size;
@@ -135,7 +146,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 picture->width,
                 picture->height,
                 ((CDecode*)lpParam)->m_p_H264_extra_data,
-                0);
+                p_data_node_temp->number_of_lost_frame);
 
             continue;
         }
@@ -200,7 +211,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 picture->width,
                 picture->height,
                 ((CDecode*)lpParam)->m_p_H264_extra_data,
-                0);
+                p_data_node_temp->number_of_lost_frame);
 
             nWH = 1;
             continue;
@@ -225,7 +236,18 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             {
                 memcpy(data + ((CDecode*)lpParam)->m_p_AVCodecContext->width*((CDecode*)lpParam)->m_p_AVCodecContext->height / 4 * 5 + i*((CDecode*)lpParam)->m_p_AVCodecContext->width / 2, pFrameYUV->data[1] + i*pFrameYUV->linesize[1], ((CDecode*)lpParam)->m_p_AVCodecContext->width / 2);
             }
-            ((CDecode*)lpParam)->m_p_function_YUV420(((CDecode*)lpParam)->m_decode_instance, (char*)data, avpicture_get_size(PIX_FMT_YUV420P, ((CDecode*)lpParam)->m_p_AVCodecContext->width, ((CDecode*)lpParam)->m_p_AVCodecContext->height), ((CDecode*)lpParam)->m_p_AVCodecContext->height, ((CDecode*)lpParam)->m_p_AVCodecContext->width, 0, ((CDecode*)lpParam)->m_p_YUV420_extra_data, 0);
+            ((CDecode*)lpParam)->m_p_function_YUV420(
+                ((CDecode*)lpParam)->m_decode_instance,
+                (char*)data,
+                avpicture_get_size(
+                    PIX_FMT_YUV420P,
+                    ((CDecode*)lpParam)->m_p_AVCodecContext->width,
+                    ((CDecode*)lpParam)->m_p_AVCodecContext->height),
+                ((CDecode*)lpParam)->m_p_AVCodecContext->height,
+                ((CDecode*)lpParam)->m_p_AVCodecContext->width,
+                p_data_node_temp->frame_ID,
+                ((CDecode*)lpParam)->m_p_YUV420_extra_data,
+                p_data_node_temp->number_of_lost_frame);
             delete[] data;
         }
         if(((CDecode*)lpParam)->m_p_function_YUV420 != NULL&&!((CDecode*)lpParam)->nHWAcceleration)
@@ -253,9 +275,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                    ((CDecode*)lpParam)->m_p_AVCodecContext->height),
                 ((CDecode*)lpParam)->m_p_AVCodecContext->width,
                 ((CDecode*)lpParam)->m_p_AVCodecContext->height,
-                0,
+                p_data_node_temp->frame_ID,
                 ((CDecode*)lpParam)->m_p_YUV420_extra_data,
-                0);
+                p_data_node_temp->number_of_lost_frame);
 
             delete[] data;
         }
@@ -385,6 +407,8 @@ CDecode::CDecode()
     m_p_AVCodecContext = NULL;
     m_p_AVCodecParserContext = NULL;
     m_p_AVFrame = NULL;
+
+    m_frame_ID = 0;
 }
 
 CDecode::~CDecode()
@@ -448,6 +472,8 @@ int CDecode::writeNetBuf(int num, unsigned char *buf, int bufsize)
 
     memcpy(p_data_node_temp->data, buf, bufsize);
     p_data_node_temp->size = bufsize;
+    p_data_node_temp->frame_ID = m_previous_frame_ID;
+    p_data_node_temp->number_of_lost_frame = m_previous_number_of_lost_package;
 
     m_DataQueue.push(p_data_node_temp);
 

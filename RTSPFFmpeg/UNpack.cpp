@@ -123,9 +123,9 @@ void CRTPPackage::unpack_RTP_header(void)
         }
     }
 
-#ifdef NO_DEBUG
-    FILE* p_file_sequence_number = fopen("sequence_number.txt", "ab");
-    FILE* p_file_timestamp = fopen("timestamp.txt", "ab");
+#ifdef _DEBUG
+    FILE* p_file_sequence_number = fopen("C:\\sequence_number.txt", "ab");
+    FILE* p_file_timestamp = fopen("C:\\timestamp.txt", "ab");
     char* strBuffer = new char[256];
 
     sprintf(strBuffer, "%05u\n", m_p_RTP_header->sequence_number);
@@ -151,7 +151,7 @@ void CRTPPackage::unpack_H264_NAL_header(bool* bFirst)
     m_p_NALU_t->NAL_reference_idc = ((NALU_HEADER*)m_p_buffer_current_position)->NRI;
     m_p_NALU_t->NAL_unit_type = ((NALU_HEADER*)m_p_buffer_current_position)->TYPE;
 
-    //end nal unit header
+    //end NAL unit header
 
     // not "sequence parameter set" and the first package
     if(7 != m_p_NALU_t->NAL_unit_type && *bFirst)
