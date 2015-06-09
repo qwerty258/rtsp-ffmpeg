@@ -32,19 +32,19 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         ((CRTSPClient*)lpParam)->m_INSTANCE,
         ((CRTSPClient*)lpParam)->m_p_function_YUV420,
         ((CRTSPClient*)lpParam)->m_p_YUV420_extra_data,
-        ((CRTSPClient*)lpParam)->m_b_YUV420_trace_lost_package);
+        ((CRTSPClient*)lpParam)->m_b_trace_lost_package);
 
     ((CRTSPClient*)lpParam)->m_p_function_set_YV12_callback(
         ((CRTSPClient*)lpParam)->m_INSTANCE,
         ((CRTSPClient*)lpParam)->m_p_function_YV12,
         ((CRTSPClient*)lpParam)->m_p_YV12_extra_data,
-        ((CRTSPClient*)lpParam)->m_b_YV12_trace_lost_package);
+        ((CRTSPClient*)lpParam)->m_b_trace_lost_package);
 
     ((CRTSPClient*)lpParam)->m_p_function_set_H264_callback(
         ((CRTSPClient*)lpParam)->m_INSTANCE,
         ((CRTSPClient*)lpParam)->m_p_function_H264,
         ((CRTSPClient*)lpParam)->m_p_H264_extra_data,
-        ((CRTSPClient*)lpParam)->m_b_H264_trace_lost_package);
+        ((CRTSPClient*)lpParam)->m_b_trace_lost_package);
     // set callback end
 
     if(!((CRTSPClient*)lpParam)->nHWAcceleration)
@@ -221,19 +221,17 @@ CRTSPClient::CRTSPClient()
 
     m_p_CRTPPackage = new CRTPPackage;
 
-    // funcion pointer for callback begin
+    // function pointer for callback begin
     m_p_function_YUV420 = NULL;
     m_p_YUV420_extra_data = NULL;
-    m_b_YUV420_trace_lost_package = false;
 
     m_p_function_YV12 = NULL;
     m_p_YV12_extra_data = NULL;
-    m_b_YV12_trace_lost_package = false;
 
     m_p_function_H264 = NULL;
     m_p_H264_extra_data = NULL;
-    m_b_H264_trace_lost_package = false;
-    // funcion pointer for callback end
+    // function pointer for callback end
+    m_b_trace_lost_package = false;
 
     // function pointer for PlayH264DLL begin
     m_p_function_initial_decode_DLL = NULL;
