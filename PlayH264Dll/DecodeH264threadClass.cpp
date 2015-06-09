@@ -21,7 +21,7 @@ using namespace std;
 
 #define PICMAX (500000) // the maximum data buffer size per frame
 
-// golbal variables about GPU
+// global variables about GPU
 bool init = false;
 LPDIRECTDRAW lpDD = NULL; // pointer to DirectDraw object
 DDSURFACEDESC ddsd;       // DirectDraw surface description
@@ -81,7 +81,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     picture = avcodec_alloc_frame();
     picRGB = avcodec_alloc_frame();
     pFrameYUV = avcodec_alloc_frame();
-    
+
     if(((CDecode*)lpParam)->nHWAcceleration)
         mAVCodecContextInit(((CDecode*)lpParam)->m_p_AVCodecContext);
 
@@ -305,7 +305,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             picture->data[2] += picture->linesize[2] * (((CDecode*)lpParam)->m_p_AVCodecContext->height / 2 - 1);
             picture->linesize[2] *= -1;
 
-            sws_scale(pSwsCtx, picture->data, picture->linesize, 0, ((CDecode*)lpParam)->m_p_AVCodecContext->height, picRGB->data, picRGB->linesize);// efficint ???
+            sws_scale(pSwsCtx, picture->data, picture->linesize, 0, ((CDecode*)lpParam)->m_p_AVCodecContext->height, picRGB->data, picRGB->linesize);// efficient ???
 
             SetStretchBltMode(m_hdc, COLORONCOLOR);// this pattern still does not work
             RECT rect;

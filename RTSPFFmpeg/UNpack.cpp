@@ -128,10 +128,10 @@ void CRTPPackage::unpack_RTP_header(void)
     FILE* p_file_timestamp = fopen("timestamp.txt", "ab");
     char* strBuffer = new char[256];
 
-    sprintf(strBuffer, "%05u\n", p_RTP_header->sequence_number);
+    sprintf(strBuffer, "%05u\n", m_p_RTP_header->sequence_number);
     fwrite(strBuffer, strlen(strBuffer), 1, p_file_sequence_number);
 
-    sprintf(strBuffer, "%010u\n", p_RTP_header->timestamp);
+    sprintf(strBuffer, "%010u\n", m_p_RTP_header->timestamp);
     fwrite(strBuffer, strlen(strBuffer), 1, p_file_timestamp);
 
     fclose(p_file_sequence_number);

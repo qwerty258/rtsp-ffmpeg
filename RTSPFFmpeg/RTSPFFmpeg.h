@@ -15,86 +15,120 @@ typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_siz
 extern "C" {
 #endif // __cplusplus
 
-    // function    : initial RTSPFFmpeg.dll
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  initial RTSPFFmpeg.dll
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int max_number_of_playing_instance
+    //************************************
     RTSPFFMPEG_API int initial_RTSP_DLL(int max_number_of_playing_instance);
 
 
-    // function    : uninitial RTSPFFmpeg.dll, release resource
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  uninitial RTSPFFmpeg.dll, release resource
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: void
+    //************************************
     RTSPFFMPEG_API int free_RTSP_DLL(void);
 
 
-    // function    : return idle instance
-    // return value: idle instance number on success, -1 on failure
+    //************************************
+    // Function:  return idle instance
+    // Returns:   int: idle instance number on success, -1 on failure
+    // Parameter: void
+    //************************************
     RTSPFFMPEG_API int get_idle_instance(void);
 
 
-    // function    : set IPC's URI, username and password
-    // input       :
-    //// INSTANCE  : the idle instance return by GetRtspINSTANCE
-    //// URI       : IPC's URI(RTSP)
-    //// userName  : IPC's username
-    //// password  : IPC's password
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  set IPC's URI, username and password
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_instance()
+    // Parameter: char * URI: IPC's URI(RTSP)
+    // Parameter: char * userName: IPC's username
+    // Parameter: char * password: IPC's password
+    // Parameter: HWND hWnd: handle of the window to display video
+    //************************************
     RTSPFFMPEG_API int initial_RTSP_parameter(int instance, char* URI, char* userName, char* password, HWND hWnd);
 
 
+    //************************************
+    // Function:  free RTSP instance specified by user
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance
+    //************************************
     RTSPFFMPEG_API int free_RTSP_instance(int instance);
 
 
-    // function    : connect to the IPC, you must have idle instance and initial IPC's video parameter
-    // input       :
-    //// INSTANCE  : the idle instance return by GetRtspINSTANCE
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  connect to the IPC, you must have idle instance and initial IPC's video parameter
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_instance()
+    //************************************
     RTSPFFMPEG_API int RTSP_connect(int instance);
 
 
-    // function    : play realtime feedback of the IPC
-    // input       :
-    //// INSTANCE  : the idle instance return by GetRtspINSTANCE
-    //// hWnd      : handle to the display window
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  play feedback of the IPC in realtime
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_instance()
+    //************************************
     RTSPFFMPEG_API int play(int instance);
 
 
-    // function    : pause realtime play
-    // input       :
-    //// INSTANCE  : the instance playing
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  pause realtime play
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance playing
+    //************************************
     RTSPFFMPEG_API int pause(int instance);
 
 
-    // function    : disconnect from IPC
-    // input       : 
-    //// INSTANCE  : the instance you get from GetRtspINSTANCE
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  disconnect from IPC
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you get from get_idle_instance()
+    //************************************
     RTSPFFMPEG_API int RTSP_disconnect(int instance);
 
 
-    // function    :set hardware acceleration, default is software decode
+    //************************************
+    // Function:  set hardware acceleration, default is software decode
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set whether use hardware acceleration
+    // Parameter: bool acceleration: true: use hardware acceleration, false: use software decode
+    //************************************
     RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration = false);
 
 
-    // function    : set YUV420 callback function
-    // input       :
-    //// instacne          : the instance you want to set callback function
-    //// p_function_YUV420 : the function address
-    //// buffer            : additional data, give back to you when the callback funciton is called
-    //// trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
-    // return value: 0 success, -1 failure
+    //************************************
+    // Function:  set YUV420 callback function
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_YUV420 p_function_YUV420: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
     RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 
-    // function    :
+    //************************************
+    // Function:  set YV12 callback function
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_YV12 p_function_YV12: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
     RTSPFFMPEG_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
 
+    //************************************
+    // Function:  set H264 callback function
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_H264 p_function_H264: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
     RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
-
-    //RTSPFFMPEG_API int pSetDrawLineCallBack(int instance, TDrawLineCallBack f1);
-    //RTSPFFMPEG_API int pSetPFCALLBACK(int instance, PFCALLBACK f1);
-    //RTSPFFMPEG_API int pSetBmpCallBack(int instance, TBmpCallBack f2);
-    //RTSPFFMPEG_API int pSetFillBmpCallBack(int instance, TDrawRectCallBack f3);
-    //RTSPFFMPEG_API int pSetH264CallBack(int instance, TH264CallBack f3);
 
 #ifdef __cplusplus
 }
