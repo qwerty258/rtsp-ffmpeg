@@ -95,7 +95,7 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
-    set_hardware_acceleration(m_INSTANCE, false);
+    set_hardware_acceleration(m_INSTANCE, true);
     set_YUV420_callback(m_INSTANCE, NULL, NULL, true);
     if(0 > play(m_INSTANCE))
     {
