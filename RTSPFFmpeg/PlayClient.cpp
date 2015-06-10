@@ -47,7 +47,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         ((CRTSPClient*)lpParam)->m_b_trace_lost_package);
     // set callback end
 
-    if(!((CRTSPClient*)lpParam)->nHWAcceleration)
+    if(((CRTSPClient*)lpParam)->nHWAcceleration)
     {
         ((CRTSPClient*)lpParam)->m_p_function_set_hardware_acceleration(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->nHWAcceleration);
     }
