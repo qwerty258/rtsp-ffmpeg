@@ -337,9 +337,7 @@ RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_
         return -1;
     }
 
-    client_list[instance].p_CRTSPClient->m_p_function_YUV420 = p_function_YUV420;
-    client_list[instance].p_CRTSPClient->m_p_YUV420_extra_data = additional_data;
-    client_list[instance].p_CRTSPClient->m_b_trace_lost_package = trace_lost_package;
+    p_function_set_YUV420_callback(instance, p_function_YUV420, additional_data, trace_lost_package);
 
     return 0;
 }
@@ -351,9 +349,7 @@ RTSPFFMPEG_API int set_YV12_callback(int instance, function_YV12 p_function_YV12
         return -1;
     }
 
-    client_list[instance].p_CRTSPClient->m_p_function_YV12 = p_function_YV12;
-    client_list[instance].p_CRTSPClient->m_p_YV12_extra_data = additional_data;
-    client_list[instance].p_CRTSPClient->m_b_trace_lost_package = trace_lost_package;
+    p_function_set_YV12_callback(instance, p_function_YV12, additional_data, trace_lost_package);
 
     return 0;
 }
@@ -365,9 +361,7 @@ RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264
         return -1;
     }
 
-    client_list[instance].p_CRTSPClient->m_p_function_H264 = p_function_H264;
-    client_list[instance].p_CRTSPClient->m_p_H264_extra_data = additional_data;
-    client_list[instance].p_CRTSPClient->m_b_trace_lost_package = trace_lost_package;
+    p_function_set_H264_callback(instance, p_function_H264, additional_data, trace_lost_package);
 
     return 0;
 }

@@ -49,20 +49,6 @@ public:
     myparamInput* m_myparamInput;
     bool nHWAcceleration;
 
-    // function pointer for callback begin
-    function_YUV420 m_p_function_YUV420;
-    void* m_p_YUV420_extra_data;
-
-    function_YV12 m_p_function_YV12;
-    void* m_p_YV12_extra_data;
-
-    function_H264 m_p_function_H264;
-    void* m_p_H264_extra_data;
-    // function pointer for callback end
-    bool m_b_trace_lost_package;
-
-
-
     // function pointer for PlayH264DLL begin
     function_initial_decode_DLL         m_p_function_initial_decode_DLL;
     function_free_decode_DLL            m_p_function_free_decode_DLL;
