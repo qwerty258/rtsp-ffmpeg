@@ -279,7 +279,7 @@ PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration)
         return -1;
     }
 
-    decode_list[instance].p_CDecode->nHWAcceleration = acceleration;
+    decode_list[instance].p_CDecode->m_b_hardware_acceleration = acceleration;
 
     return 0;
 }

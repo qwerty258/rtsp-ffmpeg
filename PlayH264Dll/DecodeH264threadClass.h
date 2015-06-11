@@ -126,7 +126,7 @@ public:
     }
 public:
     int type;//code type: 1: h264, 2: mpeg, 3: FLV
-    bool nHWAcceleration;
+    bool m_b_hardware_acceleration;
 
     char* m_BMP_buffer;
     int m_decode_instance;

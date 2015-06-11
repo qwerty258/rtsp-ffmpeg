@@ -104,7 +104,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     codec = avcodec_find_decoder(codeType);
     c = avcodec_alloc_context3(codec);
 
-    if(((CDecode*)lpParam)->nHWAcceleration)
+    if(((CDecode*)lpParam)->m_b_hardware_acceleration)
         mAVCodecContextInit(c);
 
     if(avcodec_open2(c, codec, NULL) < 0)
@@ -173,7 +173,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             continue;
         }
 
-        if(fir && ((CDecode*)lpParam)->nHWAcceleration)
+        if(fir && ((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             while(bGPlayWnd)
                 Sleep(1);
@@ -189,7 +189,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             break;
         }
 
-        if(fir && ((CDecode*)lpParam)->nHWAcceleration)
+        if(fir && ((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             //GT620 total number: 1000
             // 1080, GPU consume: 300
@@ -219,7 +219,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             bGPlayWnd = 0;// open switch
             fir = false;
         }
-        if(!c->opaque && ((CDecode*)lpParam)->nHWAcceleration)//p_va failure
+        if(!c->opaque && ((CDecode*)lpParam)->m_b_hardware_acceleration)//p_va failure
         {
             continue;
         }
@@ -238,12 +238,12 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             nWH = 1;
             continue;
         }
-        if(((CDecode*)lpParam)->nHWAcceleration)
+        if(((CDecode*)lpParam)->m_b_hardware_acceleration)
             DxPictureCopy(c, picture, pFrameYUV, ((CDecode*)lpParam)->m_p_function_YUV420);// internal code change to display directly
 
 
 
-        if(NULL != ((CDecode*)lpParam)->m_p_function_YUV420 && ((CDecode*)lpParam)->nHWAcceleration)
+        if(NULL != ((CDecode*)lpParam)->m_p_function_YUV420 && ((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
             for(int i = 0; i < c->height; i++)
@@ -272,7 +272,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_data_node_temp->number_of_lost_frame);
             delete[] data;
         }
-        if(((CDecode*)lpParam)->m_p_function_YUV420 != NULL&&!((CDecode*)lpParam)->nHWAcceleration)
+        if(((CDecode*)lpParam)->m_p_function_YUV420 != NULL&&!((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
             for(int i = 0; i < c->height; i++)
@@ -304,7 +304,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             delete[] data;
         }
 
-        if(fir&&!((CDecode*)lpParam)->nHWAcceleration)
+        if(fir&&!((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             width = c->width;
             height = c->height;
@@ -319,7 +319,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, c->width, c->height);
         }
 
-        if((width != c->width) || (height != c->height) && !((CDecode*)lpParam)->nHWAcceleration)
+        if((width != c->width) || (height != c->height) && !((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             av_free(buf);
             width = c->width;
@@ -335,12 +335,12 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             avpicture_fill((AVPicture *)picRGB, buf, PIX_FMT_BGR24, c->width, c->height);
         }
 
-        if(!((CDecode*)lpParam)->nHWAcceleration&&fir)
+        if(!((CDecode*)lpParam)->m_b_hardware_acceleration&&fir)
         {
             pSwsCtx = sws_getContext(c->width, c->height, c->pix_fmt, c->width, c->height, PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
             fir = FALSE;
         }
-        if(!((CDecode*)lpParam)->nHWAcceleration)
+        if(!((CDecode*)lpParam)->m_b_hardware_acceleration)
         {
             picture->data[0] += picture->linesize[0] * (c->height - 1);
             picture->linesize[0] *= -1;
@@ -416,7 +416,7 @@ CDecode::CDecode()
     writeNetBufIndex = 0;
     bpp = 24; //24 colors
 
-    nHWAcceleration = false;
+    m_b_hardware_acceleration = false;
 
     // function pointer for callback begin
     m_p_function_YUV420 = NULL;
