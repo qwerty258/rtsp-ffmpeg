@@ -2,26 +2,26 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//为了方便，所以所有的rtp和rtcp通讯全部在rtsp类中完成，代码可读性在后续版本中提�?
+// all rtp and rtcp communication is done in rtsp class for convient
 #pragma once
 
-#define RTCP_PT_START		1
-#define RTCP_PT_SIZE		1
+#define RTCP_PT_START       1
+#define RTCP_PT_SIZE        1
 
-#define RTCP_LENGTH_START	2
-#define RTCP_LENGTH_SIZE	2
+#define RTCP_LENGTH_START   2
+#define RTCP_LENGTH_SIZE    2
 
-#define RTCP_SSRC_START		4
-#define RTCP_SSRC_SIZE		4
+#define RTCP_SSRC_START     4
+#define RTCP_SSRC_SIZE      4
 
 #define RTCP_NTPTIME_START  8
 #define RTCP_NTPTIME_SIZE   8
 
-#define RTCP_RTPTIME_START	16
-#define RTCP_RTPTIME_SIZE	4
+#define RTCP_RTPTIME_START  16
+#define RTCP_RTPTIME_SIZE   4
 
-#define RTCP_PACKET_START	20
-#define RTCP_PACKET_SIZE	4
+#define RTCP_PACKET_START   0
+#define RTCP_PACKET_SIZE    4
 
 #define RTCP_PLAYLOAD_START 24
 #define RTCP_PLAYLOAD_SIZE  4
@@ -54,10 +54,9 @@ static const int MAX_FIELDS_COUNT = 256;
 class Rtsp : public Tcp
 {
 public:
-    int Decode;//编码器选择1 h264�? mpeg
-    int ID;//解码器号
-    bool nfirst;//判断是否为第一个包
-    //bool m_CRTSP_paused;
+    int encoding_type;  // encoding type: 1: h264, 2: mpeg
+    int ID;      // decode instance
+    bool nfirst; //whether the first package
     BYTE* m_p_RTP_package_buffer;
 public:
     Rtsp();
@@ -99,18 +98,18 @@ protected:
     void copy(recieveSRFrom *des, recieveSRFrom *src);
 
 public:
-    //以下大端格式
-    int initS;//确定第一个包是否被填
-    unsigned char sSeNum[2];//最初的包数
-    unsigned char lSeNum[2];//上一次发送RR的包�?
-    unsigned char eSeNum[2];//最后一次的包数
-    UINT16 allGet;//总接受数
-    UINT8 perGet;//单次接受�?
-    unsigned char LSR[4];//:从reportee端最后收到的Sender Report中NTP timestamp的中32bits.(无则�?) 
+    //big encoding all below
+    int initS; // Determination first package if filled
+    unsigned char sSeNum[2]; // initial package number
+    unsigned char lSeNum[2]; // number of RR packages sent last time
+    unsigned char eSeNum[2]; // number of packages last time
+    UINT16 allGet; // total number of packages received
+    UINT8 perGet; // number of packages single reception
+    unsigned char LSR[4];//从reportee端最后收到的Sender Report中NTP timestamp的中32bits.(无则为0)
     time_t  lTime;//SSRC_n源的上个SR
 
     int R_S;//R-S
-    int jitter;//时间抖动
+    int jitter;// Time Jitter
 
     recieveSRFrom rcvf;
     sendRRTo sdt;

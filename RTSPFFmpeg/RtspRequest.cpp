@@ -316,12 +316,12 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
     //在video码流中寻找解码格�?
     int deTip = pDescribe->find("a=rtpmap:96 MP4V-ES", tip + 1);
     if(deTip >= 0)
-        Decode = 2;
+        encoding_type = 2;
     else if(deTip < 0)
     {
         int deTip = pDescribe->find("a=rtpmap:96 H264", tip + 1);
         if(deTip >= 0)
-            Decode = 1;
+            encoding_type = 1;
         else
             return false;
     }

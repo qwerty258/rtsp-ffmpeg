@@ -25,7 +25,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 
     Sleep(10);
 
-    ((CRTSPClient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->m_myparamInput, ((CRTSPClient*)lpParam)->m_RTSPRequest->Decode);
+    ((CRTSPClient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->m_myparamInput, ((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type);
 
     // set callback begin
     ((CRTSPClient*)lpParam)->m_p_function_set_YUV420_callback(
@@ -86,7 +86,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             int i = ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
             if(!((CRTSPClient*)lpParam)->m_bPause)
             {
-                if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 1)
+                if(((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type == 1)
                 {
                     ((CRTSPClient*)lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer, size);
                     ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
@@ -99,7 +99,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                         ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
                         ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
                 }
-                if(((CRTSPClient*)lpParam)->m_RTSPRequest->Decode == 2)
+                if(((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type == 2)
                 {
                     ((CRTSPClient*)lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer, size);
                     ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
