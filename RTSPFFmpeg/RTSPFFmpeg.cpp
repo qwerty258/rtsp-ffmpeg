@@ -325,7 +325,7 @@ RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration)
         return -1;
     }
 
-    client_list[instance].p_CRTSPClient->nHWAcceleration = acceleration;
+    p_function_set_hardware_acceleration(instance, acceleration);
 
     return 0;
 }

@@ -47,7 +47,6 @@ public:
     char* m_userName;
     char* m_password;
     myparamInput* m_myparamInput;
-    bool nHWAcceleration;
 
     // function pointer for PlayH264DLL begin
     function_initial_decode_DLL         m_p_function_initial_decode_DLL;

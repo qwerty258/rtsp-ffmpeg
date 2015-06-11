@@ -431,7 +431,6 @@ CDecode::CDecode()
     m_p_AVCodec = NULL;
     m_p_AVCodecContext = NULL;
     m_p_AVCodecParserContext = NULL;
-    m_p_AVFrame = NULL;
 
     m_frame_ID = 0;
 }

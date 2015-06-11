@@ -19,14 +19,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         ((CRTSPClient*)lpParam)->m_myparamInput->fps = ((CRTSPClient*)lpParam)->m_RTSPRequest->frame;
     }
 
-    Sleep(10);
-
     ((CRTSPClient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->m_myparamInput, ((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type);
-
-    if(((CRTSPClient*)lpParam)->nHWAcceleration)
-    {
-        ((CRTSPClient*)lpParam)->m_p_function_set_hardware_acceleration(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->nHWAcceleration);
-    }
 
     ((CRTSPClient*)lpParam)->m_RTSPRequest->ID = ((CRTSPClient*)lpParam)->m_INSTANCE;
     ((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst = true;
@@ -215,8 +208,6 @@ CRTSPClient::CRTSPClient()
     m_p_function_inputBuf = NULL;
     m_p_function_resize = NULL;
     // function pointer for PlayH264DLL end
-
-    nHWAcceleration = false;
 }
 
 CRTSPClient::~CRTSPClient()
