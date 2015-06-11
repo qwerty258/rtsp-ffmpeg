@@ -7,6 +7,8 @@
 #include "testPlayDlg.h"
 #include "afxdialogex.h"
 
+#include <cstdio>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -96,7 +98,8 @@ void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
     set_hardware_acceleration(m_INSTANCE, true);
-    set_YUV420_callback(m_INSTANCE, NULL, NULL, true);
+    int i = 1;
+    set_H264_callback(m_INSTANCE, H264_callback, (void*)i, true);
     if(0 > play(m_INSTANCE))
     {
         AfxMessageBox(L"Play error");
@@ -157,4 +160,19 @@ void CtestPlayDlg::OnClickedButtonDisconnect()
     {
         AfxMessageBox(L"DisConnect error");
     }
+}
+
+int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
+{
+    FILE* pFile = fopen("C:\\h264_callback.log", "ab");
+    char* buffer = new char[2048];
+
+    sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
+
+    fwrite(buffer, 1, strlen(buffer), pFile);
+
+    delete[] buffer;
+    fclose(pFile);
+
+    return 0;
 }
