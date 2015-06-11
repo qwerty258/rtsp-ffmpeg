@@ -1,10 +1,6 @@
 #include "PlayClient.h"
 #include <string>
-#include <atlstr.h>
-#include <fstream>
-#include <sstream>
 #include "Rtcp.h"
-#include <Windows.h>
 
 // thread function
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
