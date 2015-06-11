@@ -16,7 +16,7 @@ extern "C" {
 #endif // __cplusplus
 
     //************************************
-    // Function:  initial RTSPFFmpeg.dll
+    // Function:  initial RTSPFFmpeg.dll, call once per process
     // Returns:   int: 0 success, -1 failure
     // Parameter: int max_number_of_playing_instance
     //************************************
@@ -24,7 +24,7 @@ extern "C" {
 
 
     //************************************
-    // Function:  uninitial RTSPFFmpeg.dll, release resource
+    // Function:  uninitial RTSPFFmpeg.dll, release resource, call once per process
     // Returns:   int: 0 success, -1 failure
     // Parameter: void
     //************************************
