@@ -427,12 +427,22 @@ CDecode::CDecode()
     m_p_H264_extra_data = NULL;
     // function pointer for callback end
 
-    // initial FFmpeg pointers
+    // FFmpeg pointers begin
     m_p_AVCodec = NULL;
     m_p_AVCodecContext = NULL;
     m_p_AVCodecParserContext = NULL;
+    // FFmpeg pointers end
 
+    // for trace lost package begin
+    m_previous_sequence_number = 0;
+    m_previous_timestamp = 0;
+    m_previous_frame_ID = 0;
+    m_previous_number_of_lost_package = 0;
     m_frame_ID = 0;
+    m_number_of_lost_package = 0;
+    m_trace_lost_package = false;
+    // for trace lost package end
+
 }
 
 CDecode::~CDecode()

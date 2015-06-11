@@ -332,7 +332,11 @@ RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration)
 
 RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)
 {
+#ifdef _DEBUG
+    if(0 > checkINSTANCE(instance))
+#else
     if(0 > checkINSTANCE(instance) || NULL == p_function_YUV420)
+#endif
     {
         return -1;
     }

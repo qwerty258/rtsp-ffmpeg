@@ -230,7 +230,11 @@ PLAYH264DLL_API int free_decode_instance(int instance)
 
 PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)
 {
-    if(NULL == p_function_YUV420 || 0 > check_instance(instance))
+#ifdef _DEBUG
+    if(0 > check_instance(instance))
+#else
+    if(0 > check_instance(instance) || NULL == p_function_YUV420)
+#endif
     {
         return -1;
     }
