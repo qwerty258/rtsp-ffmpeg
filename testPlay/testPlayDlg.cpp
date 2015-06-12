@@ -97,9 +97,6 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
-    set_hardware_acceleration(m_INSTANCE, true);
-    int i = 1;
-    set_H264_callback(m_INSTANCE, H264_callback, (void*)i, true);
     if(0 > play(m_INSTANCE))
     {
         AfxMessageBox(L"Play error");
@@ -146,6 +143,12 @@ void CtestPlayDlg::OnClickedButtonConnect()
         return;
     }
 
+    set_hardware_acceleration(m_INSTANCE, true);
+    int i = 1;
+    set_H264_callback(m_INSTANCE, H264_callback, (void*)i, true);
+    set_YUV420_callback(m_INSTANCE, YUV420_callback, (void*)i, true);
+    set_YV12_callback(m_INSTANCE, YV12_callback, (void*)i, true);
+
     if(0 > RTSP_connect(m_INSTANCE))
     {
         AfxMessageBox(L"Connect error");
@@ -175,4 +178,35 @@ int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int fra
     fclose(pFile);
 
     return 0;
+}
+
+int YUV420_callback(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, size_t frame_ID, void* userdata, int frame_lost)
+{
+    FILE* pFile = fopen("C:\\YUV420_callback.log", "ab");
+    char* buffer = new char[2048];
+
+    sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buffer, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
+
+    fwrite(buffer, 1, strlen(buffer), pFile);
+
+    delete[] buffer;
+    fclose(pFile);
+
+    return 0;
+}
+
+int YV12_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
+{
+    FILE* pFile = fopen("C:\\YV12_callback.log", "ab");
+    char* buffer = new char[2048];
+
+    sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
+
+    fwrite(buffer, 1, strlen(buffer), pFile);
+
+    delete[] buffer;
+    fclose(pFile);
+
+    return 0;
+
 }

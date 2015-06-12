@@ -348,6 +348,13 @@ int CRTSPClient::connect(void)
         }
     }
 
+#ifdef _DEBUG
+    FILE* pFile = fopen("C:\\sdp.log", "w");
+    fwrite(sdp.c_str(), 1, sdp.length(), pFile);
+    fclose(pFile);
+#endif
+
+
     // video
     if(m_RTSPRequest->m_SetupName_video.length())
     {

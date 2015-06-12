@@ -80,9 +80,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         return 0;
     }
 
-    picture = avcodec_alloc_frame();
-    picRGB = avcodec_alloc_frame();
-    pFrameYUV = avcodec_alloc_frame();
+    picture = av_frame_alloc();
+    picRGB = av_frame_alloc();
+    pFrameYUV = av_frame_alloc();
 
     AVCodecID codeType;
 
@@ -159,7 +159,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         avp.data = (uint8_t*)p_data_node_temp->data;
         avp.size = p_data_node_temp->size;
 
-        // h264 output
+        // h264 callback output
         int nWH = 0;
         if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264)
         {
@@ -223,10 +223,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             {
                 pFrameYUV->width = picture->width;
                 pFrameYUV->height = picture->height;
-                int numBytes = avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height);
                 avpicture_fill(
                     (AVPicture*)pFrameYUV,
-                    (uint8_t *)av_malloc(numBytes),
+                    (uint8_t*)av_malloc(avpicture_get_size(PIX_FMT_YUV420P, picture->width, picture->height)),
                     PIX_FMT_YUV420P,
                     picture->width,
                     picture->height);
@@ -430,6 +429,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     av_frame_free(&picture);
     av_frame_free(&pFrameYUV);
+    av_frame_free(&picRGB);
+
     avcodec_close(p_AVCodecContext);
 
 
