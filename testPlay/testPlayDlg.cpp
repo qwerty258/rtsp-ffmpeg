@@ -132,7 +132,7 @@ void CtestPlayDlg::OnClickedButtonConnect()
 
     m_INSTANCE = get_idle_instance();
 
-    set_hardware_acceleration(m_INSTANCE, false);
+    set_hardware_acceleration(m_INSTANCE, true);
     int i = 1;
     set_H264_callback(m_INSTANCE, H264_callback, (void*)i, true);
     set_YUV420_callback(m_INSTANCE, YUV420_callback, (void*)i, true);

@@ -214,6 +214,8 @@ PLAYH264DLL_API int free_decode_instance(int instance)
 
     CloseHandle(decode_list[instance].p_CDecode->hThreadDecode);
 
+    decode_list[instance].p_CDecode->dataQueueClean();
+
     av_parser_close(decode_list[instance].p_CDecode->m_p_AVCodecParserContext);
     avcodec_close(decode_list[instance].p_CDecode->m_p_AVCodecContext);
     av_freep(decode_list[instance].p_CDecode->m_p_AVCodecContext);

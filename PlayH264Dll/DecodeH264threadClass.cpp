@@ -121,7 +121,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(NULL == p_data_node_temp)
         {
-            Sleep(1000 / (static_cast<CDecode*>(lpParam)->paramUser.fps) - 10);
+            Sleep(30);
             continue;
         }
 
@@ -151,10 +151,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 #endif
 
-        av_init_packet(&avp);
-        avp.data = (uint8_t*)p_data_node_temp->data;
-        avp.size = p_data_node_temp->size;
-
         // h264 callback output
         int nWH = 0;
         if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264)
@@ -175,6 +171,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         {
             continue;
         }
+
+        av_init_packet(&avp);
+        avp.data = (uint8_t*)p_data_node_temp->data;
+        avp.size = p_data_node_temp->size;
 
         if(fir && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
@@ -283,7 +283,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_data_node_temp->number_of_lost_frame);
             delete[] data;
         }
-        if(static_cast<CDecode*>(lpParam)->m_p_function_YUV420 != NULL && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420  && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
             for(int i = 0; i < p_AVCodecContext->height; i++)
@@ -436,8 +436,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     }
 
     avcodec_free_context(&p_AVCodecContext);
-
-    static_cast<CDecode*>(lpParam)->dataQueueClean();
 
     return 0;
 }

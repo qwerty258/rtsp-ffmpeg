@@ -9,7 +9,7 @@
  *****************************************************************************/
 #include "stdafx.h"
 #define inline __inline
-//#define log_GPU
+#define log_GPU
 
 #if _WIN32_WINNT < 0x600
 /* dxva2 needs Vista\win7\win8 support */
@@ -439,10 +439,10 @@ static void Release(va_dxva2_t *va, AVFrame *ff)
 static void Close(va_dxva2_t* va)
 {
     DxDestroyVideoConversion(va);
-    DxDestroyVideoDecoder(va);//减少了内�?
+    DxDestroyVideoDecoder(va);//减少了内存
     DxDestroyVideoService(va);//
     D3dDestroyDeviceManager(va);//
-    D3dDestroyDevice(va);//应该�?
+    D3dDestroyDevice(va);//应该减
 
     //if (va->hdxva2_dll)
     //    FreeLibrary(va->hdxva2_dll);
@@ -456,9 +456,9 @@ static int Open(va_dxva2_t** pva, int codec_id)
 {
 #ifdef log_GPU
     char a[10] = "c:\\";
-    itoa((int)gPlayWnd,a+3,10);
-    FILE *fp = fopen(a,"a+");
-    fputs("进入创建va\n",fp);
+    itoa((int)gPlayWnd, a + 3, 10);
+    FILE *fp = fopen(a, "a+");
+    fputs("进入创建va\n", fp);
     fclose(fp);
 #endif
     va_dxva2_t *va = (va_dxva2_t *)calloc(1, sizeof(*va));
@@ -476,8 +476,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     {
         av_log(NULL, AV_LOG_WARNING, "cannot load d3d9.dll");
 #ifdef log_GPU
-        fp = fopen(a,"a+");
-        fputs("cant load d3d9.dll\n",fp);
+        fp = fopen(a, "a+");
+        fputs("cant load d3d9.dll\n", fp);
         fclose(fp);
 #endif
         goto error;
@@ -487,8 +487,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     {
         av_log(NULL, AV_LOG_WARNING, "cannot load dxva2.dll");
 #ifdef log_GPU
-        fp = fopen(a,"a+");
-        fputs("cannot load dxva2.dll\n",fp);
+        fp = fopen(a, "a+");
+        fputs("cannot load dxva2.dll\n", fp);
         fclose(fp);
 #endif
         goto error;
@@ -500,8 +500,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     {
         av_log(NULL, AV_LOG_ERROR, "Failed to create Direct3D device");
 #ifdef log_GPU
-        fp = fopen(a,"a+");
-        fputs("Failed to create Direct3D device\n",fp);
+        fp = fopen(a, "a+");
+        fputs("Failed to create Direct3D device\n", fp);
         fclose(fp);
 #endif
         goto error;
@@ -512,8 +512,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     {
         av_log(NULL, AV_LOG_ERROR, "D3dCreateDeviceManager failed");
 #ifdef log_GPU
-        fp = fopen(a,"a+");
-        fputs("D3dCreateDeviceManager failed\n",fp);
+        fp = fopen(a, "a+");
+        fputs("D3dCreateDeviceManager failed\n", fp);
         fclose(fp);
 #endif
         goto error;
@@ -523,8 +523,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     {
         av_log(NULL, AV_LOG_ERROR, "DxCreateVideoService failed");
 #ifdef log_GPU
-        fp = fopen(a,"a+");
-        fputs("DxCreateVideoService failed\n",fp);
+        fp = fopen(a, "a+");
+        fputs("DxCreateVideoService failed\n", fp);
         fclose(fp);
 #endif
         goto error;
@@ -535,8 +535,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     {
         av_log(NULL, AV_LOG_ERROR, "DxFindVideoServiceConversion failed");
 #ifdef log_GPU
-        fp = fopen(a,"a+");
-        fputs("DxFindVideoServiceConversion failed\n",fp);
+        fp = fopen(a, "a+");
+        fputs("DxFindVideoServiceConversion failed\n", fp);
         fclose(fp);
 #endif
         goto error;
@@ -550,8 +550,8 @@ static int Open(va_dxva2_t** pva, int codec_id)
     //external->release = Release;
     //external->extract = Extract;
 #ifdef log_GPU
-    fp = fopen(a,"a+");
-    fputs("创建va成功\n",fp);
+    fp = fopen(a, "a+");
+    fputs("创建va成功\n", fp);
     fclose(fp);
 #endif
 
@@ -757,8 +757,8 @@ static int D3dCreateDevice(va_dxva2_t *va)
     //搜索可用GPU
     static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
     static int physGPU = displayCount;
-    FILE * fp = fopen("c:\\numGpu.log", "ab+");
-    fwrite(&physGPU, 1, 4, fp);
+    FILE * pFile = fopen("c:\\numGpu.log", "ab+");
+    fwrite(&physGPU, 1, 4, pFile);
 
 
     //寻找最空闲的GPU
@@ -767,8 +767,8 @@ static int D3dCreateDevice(va_dxva2_t *va)
         if(availableGPU[i] < availableGPU[currentGPU])
             currentGPU = i;
     }
-    fwrite(&currentGPU, 1, 4, fp);
-    fclose(fp);
+    fwrite(&currentGPU, 1, 4, pFile);
+    fclose(pFile);
     //
 
     if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, currentGPU, 0, d3dai)))
@@ -819,13 +819,13 @@ static int D3dCreateDevice(va_dxva2_t *va)
     //}
 #ifdef log_GPU
     char a[10] = "c:\\";
-    itoa((int)d3dpp->hDeviceWindow,a+3,10);
-    FILE *fp = fopen(a,"a+");
-    fputs("开始创建device\n",fp);
+    itoa((int)d3dpp->hDeviceWindow, a + 3, 10);
+    FILE *fp = fopen(a, "a+");
+    fputs("开始创建device\n", fp);
     char b[2];
-    itoa(currentGPU,b,10);
-    fputs(b,fp);
-    fputs("\n",fp);
+    itoa(currentGPU, b, 10);
+    fputs(b, fp);
+    fputs("\n", fp);
     fclose(fp);
 #endif
 
@@ -836,11 +836,11 @@ static int D3dCreateDevice(va_dxva2_t *va)
                                            D3DCREATE_MULTITHREADED,
                                            d3dpp, &d3ddev);
         char cHr[20];
-        itoa(hr,cHr,10);
-        fp = fopen(a,"a+");
-        fputs("创建device失败：\n",fp);
-        fputs(cHr,fp);
-        fputs("\n",fp);
+        itoa(hr, cHr, 10);
+        fp = fopen(a, "a+");
+        fputs("创建device失败：\n", fp);
+        fputs(cHr, fp);
+        fputs("\n", fp);
         fclose(fp);
 #endif
         av_log(NULL, AV_LOG_ERROR, "IDirect3D9_CreateDevice failed");
@@ -1166,14 +1166,14 @@ static int DxCreateVideoDecoder(va_dxva2_t *va, int codec_id, const AVCodecConte
                                                              DXVA2_VideoDecoderRenderTarget,
                                                              surface_list,
                                                              NULL);
-        itoa(hr,cHr,10);
+        itoa(hr, cHr, 10);
 
         char a[10] = "c:\\";
-        itoa((int)gPlayWnd,a+3,10);
-        FILE *fp = fopen(a,"a+");
-        fputs("IDirectXVideoAccelerationService_CreateSurface failed\n",fp);
-        fputs(cHr,fp);
-        fputs("\n",fp);
+        itoa((int)gPlayWnd, a + 3, 10);
+        FILE *fp = fopen(a, "a+");
+        fputs("IDirectXVideoAccelerationService_CreateSurface failed\n", fp);
+        fputs(cHr, fp);
+        fputs("\n", fp);
         fclose(fp);
 #endif
         av_log(NULL, AV_LOG_ERROR, "IDirectXVideoAccelerationService_CreateSurface failed");
