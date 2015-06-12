@@ -1,7 +1,6 @@
 #include "PlayClient.h"
 #include <atlstr.h>
 #include <string>
-#include "Rtcp.h"
 #include <Windows.h>
 
 // thread function
@@ -9,43 +8,46 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
     //RTSPCLient->m_SetupName_audio = "";
     //RTSPCLient->m_SetupName_video = "";
-    if(!((CRTSPClient*)lpParam)->m_RTSPRequest->RequestPlay())
+    if(!static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->RequestPlay())
     {
         //clean up on failure
-        ((CRTSPClient*)lpParam)->m_ans = 4;
+        static_cast<CRTSPClient*>(lpParam)->m_ans = 4;
         return -1;
     }
 
-    if(((CRTSPClient*)lpParam)->m_RTSPRequest->frame != -1)
+    if(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->frame != -1)
     {
-        ((CRTSPClient*)lpParam)->m_myparamInput->fps = ((CRTSPClient*)lpParam)->m_RTSPRequest->frame;
+        static_cast<CRTSPClient*>(lpParam)->m_myparamInput->fps = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->frame;
     }
 
-    ((CRTSPClient*)lpParam)->m_p_function_initial_decode_parameter(((CRTSPClient*)lpParam)->m_INSTANCE, ((CRTSPClient*)lpParam)->m_myparamInput, ((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type);
+    static_cast<CRTSPClient*>(lpParam)->m_p_function_initial_decode_parameter(
+        static_cast<CRTSPClient*>(lpParam)->m_INSTANCE,
+        static_cast<CRTSPClient*>(lpParam)->m_myparamInput,
+        static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->encoding_type);
 
-    ((CRTSPClient*)lpParam)->m_RTSPRequest->ID = ((CRTSPClient*)lpParam)->m_INSTANCE;
-    ((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst = true;
-    ((CRTSPClient*)lpParam)->m_RTSPRequest->initS = 0;
+    static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->ID = static_cast<CRTSPClient*>(lpParam)->m_INSTANCE;
+    static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst = true;
+    static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->initS = 0;
 
-    if(((CRTSPClient*)lpParam)->m_circulation)
+    if(static_cast<CRTSPClient*>(lpParam)->m_circulation)
     {
         return -1; // already playing
     }
 
-    ((CRTSPClient*)lpParam)->m_circulation = true;
+    static_cast<CRTSPClient*>(lpParam)->m_circulation = true;
     DWORD time1 = GetTickCount();
     DWORD time2 = GetTickCount();
 
-    ((CRTSPClient*)lpParam)->m_RTSPRequest->initSdt();
+    static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->initSdt();
 
-    while(((CRTSPClient*)lpParam)->m_circulation)
+    while(static_cast<CRTSPClient*>(lpParam)->m_circulation)
     {
-        ((CRTSPClient*)lpParam)->m_ans = 1;
+        static_cast<CRTSPClient*>(lpParam)->m_ans = 1;
 
         int type = 0;
         short int size = 0;
 
-        if(-1 == ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_Start(type, &size))
+        if(-1 == static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->Read_Start(type, &size))
         {
             continue;
         }
@@ -54,44 +56,50 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             continue;
         if(type == 0)
         {
-            int i = ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_PlayLoad(size);
-            if(!((CRTSPClient*)lpParam)->m_bPause)
+            int i = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->Read_PlayLoad(size);
+            if(!static_cast<CRTSPClient*>(lpParam)->m_bPause)
             {
-                if(((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type == 1)
+                if(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->encoding_type == 1)
                 {
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer, size);
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_H264_NAL_header(&((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+                    static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(
+                        static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->m_p_RTP_package_buffer,
+                        size);
+                    static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->unpack_RTP_header();
+                    static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->unpack_H264_NAL_header(
+                        &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst);
 
-                    ((CRTSPClient*)lpParam)->m_p_function_decode(
-                        ((CRTSPClient*)lpParam)->m_INSTANCE,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_unpack_result,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
+                    static_cast<CRTSPClient*>(lpParam)->m_p_function_decode(
+                        static_cast<CRTSPClient*>(lpParam)->m_INSTANCE,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_unpack_result,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_unpack_result_size,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
                 }
-                if(((CRTSPClient*)lpParam)->m_RTSPRequest->encoding_type == 2)
+                if(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->encoding_type == 2)
                 {
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(((CRTSPClient*)lpParam)->m_RTSPRequest->m_p_RTP_package_buffer, size);
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_RTP_header();
-                    ((CRTSPClient*)lpParam)->m_p_CRTPPackage->unpack_MPEG(&((CRTSPClient*)lpParam)->m_RTSPRequest->nfirst);
+                    static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->set_RTP_package_buffer(
+                        static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->m_p_RTP_package_buffer,
+                        size);
+                    static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->unpack_RTP_header();
+                    static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->unpack_MPEG(
+                        &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst);
 
-                    ((CRTSPClient*)lpParam)->m_p_function_decode(
-                        ((CRTSPClient*)lpParam)->m_INSTANCE,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_unpack_result,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_unpack_result_size,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
-                        ((CRTSPClient*)lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
+                    static_cast<CRTSPClient*>(lpParam)->m_p_function_decode(
+                        static_cast<CRTSPClient*>(lpParam)->m_INSTANCE,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_unpack_result,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_unpack_result_size,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
+                        static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
                 }
             }
         }
         else if(type == 2 || type == 3) // discard rest of streams(2-3)
         {
-            ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_Leave(size);
+            static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->Read_Leave(size);
         }
         else if(type == 1)
         {
-            ((CRTSPClient*)lpParam)->m_RTSPRequest->Read_RTCPVideo(size);
+            static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->Read_RTCPVideo(size);
         }
 
 
@@ -102,46 +110,50 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             time1 = time2;
             //fraction lost
             char eTmp[2];
-            eTmp[0] = ((CRTSPClient*)lpParam)->m_RTSPRequest->eSeNum[1];
-            eTmp[1] = ((CRTSPClient*)lpParam)->m_RTSPRequest->eSeNum[0];
+            eTmp[0] = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->eSeNum[1];
+            eTmp[1] = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->eSeNum[0];
 
             char lTmp[2];
-            lTmp[0] = ((CRTSPClient*)lpParam)->m_RTSPRequest->lSeNum[1];
-            lTmp[1] = ((CRTSPClient*)lpParam)->m_RTSPRequest->lSeNum[0];
+            lTmp[0] = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->lSeNum[1];
+            lTmp[1] = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->lSeNum[0];
 
-            ((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.fractionLost = (UINT)((float)(((UINT16)eTmp - (UINT16)lTmp) - ((CRTSPClient*)lpParam)->m_RTSPRequest->perGet) / (float)((UINT16)eTmp - (UINT16)lTmp) * 256);
+            static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sdt.RR.fractionLost = (UINT)((float)(((UINT16)eTmp - (UINT16)lTmp) - static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->perGet) / (float)((UINT16)eTmp - (UINT16)lTmp) * 256);
 
-            ((CRTSPClient*)lpParam)->m_RTSPRequest->perGet = 0;
-            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->lSeNum, ((CRTSPClient*)lpParam)->m_RTSPRequest->eSeNum, 2);
+            static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->perGet = 0;
+            memcpy(
+                static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->lSeNum,
+                static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->eSeNum,
+                2);
+
             //cumulation lost
             char sTmp[2];
-            sTmp[0] = ((CRTSPClient*)lpParam)->m_RTSPRequest->sSeNum[1];
-            sTmp[1] = ((CRTSPClient*)lpParam)->m_RTSPRequest->sSeNum[0];
+            sTmp[0] = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sSeNum[1];
+            sTmp[1] = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sSeNum[0];
 
-            UINT16 lost = (UINT16)eTmp - (UINT16)sTmp - ((CRTSPClient*)lpParam)->m_RTSPRequest->allGet;
+            UINT16 lost = (UINT16)eTmp - (UINT16)sTmp - static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->allGet;
 
             char l[2];
 
             memcpy(l + 1, &lost, 1);
             memcpy(l, &lost + 1, 1);
 
-            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.cumulationLost + 1, l, 2);
+            memcpy(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sdt.RR.cumulationLost + 1, l, 2);
             //interarrival jitter
             char jit[4];
-            memcpy(jit, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 3, 1);
-            memcpy(jit + 1, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 2, 1);
-            memcpy(jit + 2, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 1, 1);
-            memcpy(jit + 3, &((CRTSPClient*)lpParam)->m_RTSPRequest->jitter + 0, 1);
+            memcpy(jit, &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->jitter + 3, 1);
+            memcpy(jit + 1, &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->jitter + 2, 1);
+            memcpy(jit + 2, &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->jitter + 1, 1);
+            memcpy(jit + 3, &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->jitter + 0, 1);
 
-            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.interJitter, jit, 4);
+            memcpy(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sdt.RR.interJitter, jit, 4);
             //last SR
-            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.LSR, ((CRTSPClient*)lpParam)->m_RTSPRequest->LSR, 4);
+            memcpy(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sdt.RR.LSR, static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->LSR, 4);
 
             //DLSR
             time_t nowTime;
             time(&nowTime);
 
-            DWORD delayTime = nowTime - ((CRTSPClient*)lpParam)->m_RTSPRequest->lTime;
+            DWORD delayTime = nowTime - static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->lTime;
 
             char dTime[4];
             memcpy(dTime, &delayTime + 3, 1);
@@ -149,21 +161,21 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
             memcpy(dTime + 2, &delayTime + 1, 1);
             memcpy(dTime + 3, &delayTime, 1);
 
-            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.DLSR, dTime, 4);
+            memcpy(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sdt.RR.DLSR, dTime, 4);
 
-            memcpy(((CRTSPClient*)lpParam)->m_RTSPRequest->sdt.RR.SSRC_1, ((CRTSPClient*)lpParam)->m_RTSPRequest->rcvf.SR.SSRC, 4);
+            memcpy(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->sdt.RR.SSRC_1, static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->rcvf.SR.SSRC, 4);
 
-            ((CRTSPClient*)lpParam)->m_RTSPRequest->Write_RTCPVideo(0);
+            static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->Write_RTCPVideo(0);
         }
     }
 
     // close decode
-    if(0 > ((CRTSPClient*)lpParam)->m_p_function_free_decode_instance(((CRTSPClient*)lpParam)->m_INSTANCE))
+    if(0 > static_cast<CRTSPClient*>(lpParam)->m_p_function_free_decode_instance(static_cast<CRTSPClient*>(lpParam)->m_INSTANCE))
     {
         return -1;
     }
 
-    ((CRTSPClient*)lpParam)->m_ans = 2;
+    static_cast<CRTSPClient*>(lpParam)->m_ans = 2;
 
     return 0;
 }
