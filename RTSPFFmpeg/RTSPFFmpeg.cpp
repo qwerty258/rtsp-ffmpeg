@@ -221,6 +221,12 @@ RTSPFFMPEG_API int get_idle_instance(void)
                 client_list[i].p_CRTSPClient->m_p_function_inputBuf = p_function_inputBuf;
                 client_list[i].p_CRTSPClient->m_p_function_resize = p_function_resize;
 
+                client_list[i].p_CRTSPClient->m_INSTANCE = p_function_get_idle_instance();
+                if(0 > client_list[i].p_CRTSPClient->m_INSTANCE)
+                {
+                    return -1;
+                }
+
                 return i;
             }
         }

@@ -278,7 +278,7 @@ PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H26
 //hardware acceleration support h264 and YUV callback, software decode support all callback functions
 PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration)
 {
-    if(0 > check_instance(instance))
+    if(0 > check_instance(instance) || NULL == decode_list[instance].p_CDecode)
     {
         return -1;
     }

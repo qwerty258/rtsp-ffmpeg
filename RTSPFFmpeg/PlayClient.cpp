@@ -288,8 +288,6 @@ int CRTSPClient::connect(void)
         return -1;
     }
 
-    m_INSTANCE = m_p_function_get_idle_instance();
-
     // set up communication port
     string setupName = "";
     srand(time(NULL));

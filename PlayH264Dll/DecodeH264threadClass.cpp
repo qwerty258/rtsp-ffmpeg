@@ -64,9 +64,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     dataNode* p_data_node_temp = NULL;
     int got_picture;
-    AVFrame* picture = NULL;
-    AVFrame* picRGB = NULL;
-    AVFrame* pFrameYUV = NULL;
+    AVFrame* picture = av_frame_alloc();
+    AVFrame* picRGB = av_frame_alloc();
+    AVFrame* pFrameYUV = av_frame_alloc();
 
     int PictureSize;
     uint8_t *buf = NULL;
@@ -79,10 +79,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     {
         return 0;
     }
-
-    picture = av_frame_alloc();
-    picRGB = av_frame_alloc();
-    pFrameYUV = av_frame_alloc();
 
     AVCodecID codeType;
 
