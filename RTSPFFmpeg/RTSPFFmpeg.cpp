@@ -273,6 +273,14 @@ RTSPFFMPEG_API int free_RTSP_instance(int instance)
             GetExitCodeThread(client_list[instance].p_CRTSPClient->m_hThread, &exit_code);
         }
 
+#ifdef _DEBUG // thread log
+        FILE* pFile = fopen("C:\\thread.log", "ab");
+        char temp[1024];
+        sprintf(temp, "%p Closed\n", client_list[instance].p_CRTSPClient->m_hThread);
+        fwrite(temp, 1, strlen(temp), pFile);
+        fclose(pFile);
+#endif // thread log end
+
         CloseHandle(client_list[instance].p_CRTSPClient->m_hThread);
 
         delete client_list[instance].p_CRTSPClient;

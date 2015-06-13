@@ -422,7 +422,13 @@ int CRTSPClient::play(void)
     {
         // enter the thread
         m_hThread = CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
-
+#ifdef _DEBUG // thread log
+        FILE* pFile = fopen("C:\\thread.log", "ab");
+        char temp[1024];
+        sprintf(temp, "%p Created\n", m_hThread);
+        fwrite(temp, 1, strlen(temp), pFile);
+        fclose(pFile);
+#endif // thread log end
         m_bPlaying = true;
 
         if(m_threadID == -1 || m_ans == 4)

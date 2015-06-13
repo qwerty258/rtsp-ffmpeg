@@ -623,6 +623,15 @@ int CDecode::InputParam(myparamInput *p1)
         bmpinfo.biClrUsed = 0;
         bmpinfo.biClrImportant = 0;
         hThreadDecode = CreateThread(NULL, 0, videoDecodeQueue, this, 0, &threadID);
+
+#ifdef _DEBUG // thread log
+        FILE* pFile = fopen("C:\\thread.log", "ab");
+        char temp[1024];
+        sprintf(temp, "%p Created\n", hThreadDecode);
+        fwrite(temp, 1, strlen(temp), pFile);
+        fclose(pFile);
+#endif // thread log end
+
         return threadID;
     }
     catch(...)
