@@ -33,7 +33,7 @@ public:
     HWND m_hWnd;
     // windows resource end
 
-    int m_INSTANCE;
+    int m_decode_instance;
     int m_ans; // 0: initial state    1: in the cycle    2: exit thread
 
     // state control

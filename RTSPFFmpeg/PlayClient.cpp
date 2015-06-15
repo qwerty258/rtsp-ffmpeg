@@ -21,11 +21,11 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     static_cast<CRTSPClient*>(lpParam)->m_p_function_initial_decode_parameter(
-        static_cast<CRTSPClient*>(lpParam)->m_INSTANCE,
+        static_cast<CRTSPClient*>(lpParam)->m_decode_instance,
         static_cast<CRTSPClient*>(lpParam)->m_myparamInput,
         static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->encoding_type);
 
-    static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->ID = static_cast<CRTSPClient*>(lpParam)->m_INSTANCE;
+    static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->ID = static_cast<CRTSPClient*>(lpParam)->m_decode_instance;
     static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst = true;
     static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->initS = 0;
 
@@ -69,7 +69,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                         &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst);
 
                     static_cast<CRTSPClient*>(lpParam)->m_p_function_decode(
-                        static_cast<CRTSPClient*>(lpParam)->m_INSTANCE,
+                        static_cast<CRTSPClient*>(lpParam)->m_decode_instance,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_unpack_result,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_unpack_result_size,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
@@ -85,7 +85,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                         &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst);
 
                     static_cast<CRTSPClient*>(lpParam)->m_p_function_decode(
-                        static_cast<CRTSPClient*>(lpParam)->m_INSTANCE,
+                        static_cast<CRTSPClient*>(lpParam)->m_decode_instance,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_unpack_result,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_unpack_result_size,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
@@ -170,7 +170,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     // close decode
-    if(0 > static_cast<CRTSPClient*>(lpParam)->m_p_function_free_decode_instance(static_cast<CRTSPClient*>(lpParam)->m_INSTANCE))
+    if(0 > static_cast<CRTSPClient*>(lpParam)->m_p_function_free_decode_instance(static_cast<CRTSPClient*>(lpParam)->m_decode_instance))
     {
         return -1;
     }
@@ -196,7 +196,7 @@ CRTSPClient::CRTSPClient()
 
     m_threadID = -1;
     m_circulation = false;
-    m_INSTANCE = -1;
+    m_decode_instance = -1;
     m_hWnd = NULL;
     m_ans = 0;
 
