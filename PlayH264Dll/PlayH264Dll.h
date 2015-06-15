@@ -9,7 +9,7 @@ typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer
 typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
 typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
 
-typedef struct
+typedef struct container_myparam_input
 {
     int width;             // actual width
     int height;            // actual hight
@@ -33,7 +33,7 @@ extern "C" {
 
     PLAYH264DLL_API int free_decode_DLL(void);
 
-    PLAYH264DLL_API int get_idle_instance(void);
+    PLAYH264DLL_API int get_idle_decode_instance(void);
 
     PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam, int type);
 
@@ -41,15 +41,15 @@ extern "C" {
 
     PLAYH264DLL_API int free_decode_instance(int instance);
 
-    PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
+    PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 
-    PLAYH264DLL_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
+    PLAYH264DLL_API int set_decode_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
 
-    PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
+    PLAYH264DLL_API int set_decode_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
 
     //support hardware acceleration, default is software decode.
     //hardware acceleration support h264 and YUV callback, software decode support all callback functions
-    PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration = false);
+    PLAYH264DLL_API int set_decode_hardware_acceleration(int instance, bool acceleration = false);
 
     PLAYH264DLL_API int pauseVideos(int instance);
 

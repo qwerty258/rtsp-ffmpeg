@@ -7,6 +7,8 @@
 
 #include "Decode.h"
 #include "UNpack.h"
+#include <PlayH264DLL.h>
+#pragma comment(lib,"PlayH264DLL.lib")
 
 class CRTSPClient
 {
@@ -47,23 +49,6 @@ public:
     char* m_userName;
     char* m_password;
     myparamInput* m_myparamInput;
-
-    // function pointer for PlayH264DLL begin
-    function_initial_decode_DLL         m_p_function_initial_decode_DLL;
-    function_free_decode_DLL            m_p_function_free_decode_DLL;
-    function_get_idle_instance          m_p_function_get_idle_instance;
-    function_initial_decode_parameter   m_p_function_initial_decode_parameter;
-    function_decode                     m_p_function_decode;
-    function_free_decode_instance       m_p_function_free_decode_instance;
-    function_set_YUV420_callback        m_p_function_set_YUV420_callback;
-    function_set_YV12_callback          m_p_function_set_YV12_callback;
-    function_set_H264_callback          m_p_function_set_H264_callback;
-    function_set_hardware_acceleration  m_p_function_set_hardware_acceleration;
-    function_pauseVideos                m_p_function_pauseVideos;
-    function_playVideos                 m_p_function_playVideos;
-    function_inputBuf                   m_p_function_inputBuf;
-    function_resize                     m_p_function_resize;
-    // function pointer for PlayH264DLL end
 };
 
 DWORD WINAPI RTSPVideo(LPVOID lpParam);

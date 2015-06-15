@@ -20,10 +20,11 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
         static_cast<CRTSPClient*>(lpParam)->m_myparamInput->fps = static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->frame;
     }
 
-    static_cast<CRTSPClient*>(lpParam)->m_p_function_initial_decode_parameter(
+    initial_decode_parameter(
         static_cast<CRTSPClient*>(lpParam)->m_decode_instance,
         static_cast<CRTSPClient*>(lpParam)->m_myparamInput,
         static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->encoding_type);
+
 
     static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->ID = static_cast<CRTSPClient*>(lpParam)->m_decode_instance;
     static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst = true;
@@ -68,12 +69,13 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->unpack_H264_NAL_header(
                         &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst);
 
-                    static_cast<CRTSPClient*>(lpParam)->m_p_function_decode(
+                    decode(
                         static_cast<CRTSPClient*>(lpParam)->m_decode_instance,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_unpack_result,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_unpack_result_size,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
+
                 }
                 if(static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->encoding_type == 2)
                 {
@@ -84,12 +86,13 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
                     static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->unpack_MPEG(
                         &static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->nfirst);
 
-                    static_cast<CRTSPClient*>(lpParam)->m_p_function_decode(
+                    decode(
                         static_cast<CRTSPClient*>(lpParam)->m_decode_instance,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_unpack_result,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_unpack_result_size,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->sequence_number,
                         static_cast<CRTSPClient*>(lpParam)->m_p_CRTPPackage->m_p_RTP_header->timestamp);
+
                 }
             }
         }
@@ -170,7 +173,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     // close decode
-    if(0 > static_cast<CRTSPClient*>(lpParam)->m_p_function_free_decode_instance(static_cast<CRTSPClient*>(lpParam)->m_decode_instance))
+    if(0 > free_decode_instance(static_cast<CRTSPClient*>(lpParam)->m_decode_instance))
     {
         return -1;
     }
@@ -205,23 +208,6 @@ CRTSPClient::CRTSPClient()
     m_myparamInput = new myparamInput;
 
     m_p_CRTPPackage = new CRTPPackage;
-
-    // function pointer for PlayH264DLL begin
-    m_p_function_initial_decode_DLL = NULL;
-    m_p_function_free_decode_DLL = NULL;
-    m_p_function_get_idle_instance = NULL;
-    m_p_function_initial_decode_parameter = NULL;
-    m_p_function_decode = NULL;
-    m_p_function_free_decode_instance = NULL;
-    m_p_function_set_YUV420_callback = NULL;
-    m_p_function_set_YV12_callback = NULL;
-    m_p_function_set_H264_callback = NULL;
-    m_p_function_set_hardware_acceleration = NULL;
-    m_p_function_pauseVideos = NULL;
-    m_p_function_playVideos = NULL;
-    m_p_function_inputBuf = NULL;
-    m_p_function_resize = NULL;
-    // function pointer for PlayH264DLL end
 }
 
 CRTSPClient::~CRTSPClient()

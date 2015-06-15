@@ -1,20 +1,5 @@
 #pragma once
 #include <Windows.h>
-//data struct for decode and play
-typedef struct container_myparam_input
-{
-    int width;             //The actual width
-    int height;            //The actual height
-    int playWidth;         //Display width
-    int playHeight;        //Display height
-    int fps;               //frame per second
-    HWND playHandle;       //window handle
-    int stopPlay;          //play control
-    int playChannle;       //play channle
-    bool isDecode;
-}myparamInput;
-
-//call back functions begin
 
 typedef int(*function_YUV420)(
     int instance,
@@ -43,26 +28,6 @@ typedef int(*function_H264)(
     int frame_height,
     void* userdata,
     int frame_lost); // h264 callback
-
-//call back functions end
-
-//PlayH264DLL functions begin
-typedef int(*function_initial_decode_DLL)(int max_number_of_decoding_instance);
-typedef int(*function_free_decode_DLL)(void);
-typedef int(*function_get_idle_instance)(void);
-typedef int(*function_initial_decode_parameter)(int instance, myparamInput* Myparam, int type);
-typedef int(*function_decode)(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp);
-typedef int(*function_free_decode_instance)(int instance);
-typedef int(*function_set_YUV420_callback)(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
-typedef int(*function_set_YV12_callback)(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
-typedef int(*function_set_H264_callback)(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
-typedef int(*function_set_hardware_acceleration)(int instance, bool acceleration);
-typedef int(*function_pauseVideos)(int instance);
-typedef int(*function_playVideos)(int instance);
-typedef int(*function_inputBuf)(int instance, char *buf, int bufsize);
-typedef int(*function_resize)(int instance, int width, int height);
-//PlayH264DLL functions end
-
 
 typedef struct
 {

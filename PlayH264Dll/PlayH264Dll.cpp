@@ -75,7 +75,7 @@ PLAYH264DLL_API int free_decode_DLL(void)
     return 0;
 }
 
-PLAYH264DLL_API int get_idle_instance(void)
+PLAYH264DLL_API int get_idle_decode_instance(void)
 {
     for(int i = 0; i < max_decode_number; ++i)
     {
@@ -238,7 +238,7 @@ PLAYH264DLL_API int free_decode_instance(int instance)
     return 0;
 }
 
-PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)
+PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)
 {
 #ifdef _DEBUG
     if(0 > check_instance(instance))
@@ -256,7 +256,7 @@ PLAYH264DLL_API int set_YUV420_callback(int instance, function_YUV420 p_function
     return 0;
 }
 
-PLAYH264DLL_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
+PLAYH264DLL_API int set_decode_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
 {
     if(NULL == p_function_YV12 || 0 > check_instance(instance))
     {
@@ -270,7 +270,7 @@ PLAYH264DLL_API int set_YV12_callback(int instance, function_YV12 p_function_YV1
     return 0;
 }
 
-PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package)
+PLAYH264DLL_API int set_decode_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package)
 {
     if(NULL == p_function_H264 || 0 > check_instance(instance))
     {
@@ -286,7 +286,7 @@ PLAYH264DLL_API int set_H264_callback(int instance, function_H264 p_function_H26
 
 //support hardware acceleration, default is software decode.
 //hardware acceleration support h264 and YUV callback, software decode support all callback functions
-PLAYH264DLL_API int set_hardware_acceleration(int instance, bool acceleration)
+PLAYH264DLL_API int set_decode_hardware_acceleration(int instance, bool acceleration)
 {
     if(0 > check_instance(instance) || NULL == decode_list[instance].p_CDecode)
     {
