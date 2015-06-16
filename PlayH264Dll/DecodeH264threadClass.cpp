@@ -54,7 +54,7 @@ int mAVCodecContextInit(AVCodecContext* p_AVCodecContext)
 
 DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 {
-    bool fir = TRUE;
+    bool first_round = TRUE; // whether first in loop
     int height = 0;
     int width = 0;
     // enable encoder
@@ -151,20 +151,21 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 #endif
 
-        // h264 callback output
         int nWH = 0;
+        // h264 callback output, give out data directly
         if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264)
         {
             static_cast<CDecode*>(lpParam)->m_p_function_H264(
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
-                (char*)avp.data,
-                avp.size,
+                (char*)p_data_node_temp->data,
+                p_data_node_temp->size,
                 picture->width,
                 picture->height,
                 static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
                 p_data_node_temp->number_of_lost_frame);
         }
 
+        // if YUV420 YV12 and RGB dispaly not set, there is no need to decode anything
         if(NULL == static_cast<CDecode*>(lpParam)->m_p_function_YUV420 &&
            NULL == static_cast<CDecode*>(lpParam)->m_p_function_YV12 &&
            NULL == static_cast<CDecode*>(lpParam)->paramUser.playHandle)
@@ -176,7 +177,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         avp.data = (uint8_t*)p_data_node_temp->data;
         avp.size = p_data_node_temp->size;
 
-        if(fir && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        if(first_round && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             while(bGPlayWnd)
                 Sleep(1);
@@ -190,7 +191,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             break;
         }
 
-        if(fir && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        // count GPU usage
+        if(first_round && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             //GT620 total number: 1000
             // 1080, GPU consume: 300
@@ -227,9 +229,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                     picture->height);
             }
             bGPlayWnd = 0;// open switch
-            fir = false;
+            first_round = false;
         }
-        if(!p_AVCodecContext->opaque && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)//p_va failure
+        if(NULL == p_AVCodecContext->opaque && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)//p_va failure
         {
             continue;
         }
@@ -283,7 +285,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_data_node_temp->number_of_lost_frame);
             delete[] data;
         }
-        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420  && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420 && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
             for(int i = 0; i < p_AVCodecContext->height; i++)
@@ -313,8 +315,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 (char*)data,
                 avpicture_get_size(
                     PIX_FMT_YUV420P,
-                   p_AVCodecContext->width,
-                   p_AVCodecContext->height),
+                    p_AVCodecContext->width,
+                    p_AVCodecContext->height),
                 p_AVCodecContext->width,
                 p_AVCodecContext->height,
                 p_data_node_temp->frame_ID,
@@ -324,7 +326,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             delete[] data;
         }
 
-        if(fir&&!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        if(first_round&&!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             width = p_AVCodecContext->width;
             height = p_AVCodecContext->height;
@@ -355,10 +357,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             avpicture_fill((AVPicture*)picRGB, buf, PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
         }
 
-        if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration&&fir)
+        if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration&&first_round)
         {
             pSwsCtx = sws_getContext(p_AVCodecContext->width, p_AVCodecContext->height, p_AVCodecContext->pix_fmt, p_AVCodecContext->width, p_AVCodecContext->height, PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
-            fir = FALSE;
+            first_round = FALSE;
         }
         if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
