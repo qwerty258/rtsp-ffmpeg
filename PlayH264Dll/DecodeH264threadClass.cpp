@@ -74,8 +74,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     HWND hd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
 
     HDC m_hdc = GetDC(hd);
-    HDC hmemDC = CreateCompatibleDC(m_hdc);
-    if(NULL == hmemDC)
+    HDC hMemoryDC = CreateCompatibleDC(m_hdc);
+    if(NULL == hMemoryDC)
     {
         return 0;
     }
@@ -393,7 +393,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 static_cast<CDecode*>(lpParam)->paramUser.playWidth,
                 static_cast<CDecode*>(lpParam)->paramUser.playHeight,
                 m_hdc,
-                hmemDC,
+                hMemoryDC,
                 (uint8_t*)static_cast<CDecode*>(lpParam)->m_BMP_buffer,
                 hd);
         }
@@ -491,7 +491,7 @@ CDecode::~CDecode()
     }
 }
 
-int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND hWnd)
+int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hMemoryDC, uint8_t *BMPbuf, HWND hWnd)
 {
     bufptr = BMPbuf;
     //if(fillbmp != NULL)
@@ -507,17 +507,17 @@ int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, in
     //}
 
     hbit = CreateDIBitmap(playHD, (BITMAPINFOHEADER *)&bmpinfo, CBM_INIT, pFrameRGB->data[0], (BITMAPINFO *)&bmpinfo, DIB_RGB_COLORS);
-    OldBitmap = (HBITMAP)SelectObject(hmemDC, hbit);
+    OldBitmap = (HBITMAP)SelectObject(hMemoryDC, hbit);
     //if(funcD != NULL)
     //{
-    //    funcD(m_decode_instance, hmemDC);
+    //    funcD(m_decode_instance, hMemoryDC);
     //}
     //if(bmpFunc != NULL)
     //{
     //    bmpFunc((char *)pFrameRGB->data[0], width*height * 3, width, height, 0, 0, 0, hWnd);
     //}
-    ::StretchBlt(playHD, 0, 0, playW, playH, hmemDC, 0, 0, width, height, SRCCOPY);
-    SelectObject(hmemDC, OldBitmap);
+    ::StretchBlt(playHD, 0, 0, playW, playH, hMemoryDC, 0, 0, width, height, SRCCOPY);
+    SelectObject(hMemoryDC, OldBitmap);
     ::DeleteObject(hbit);
     ::DeleteObject(OldBitmap);
     return 0;
