@@ -73,8 +73,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     HWND hd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
 
-    HDC m_hdc = GetDC(hd);
-    HDC hMemoryDC = CreateCompatibleDC(m_hdc);
+    HDC hDC = GetDC(hd);
+    HDC hMemoryDC = CreateCompatibleDC(hDC);
     if(NULL == hMemoryDC)
     {
         return 0;
@@ -380,7 +380,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 picRGB->data,
                 picRGB->linesize);// efficient ???
 
-            SetStretchBltMode(m_hdc, COLORONCOLOR);// this pattern still does not work
+            SetStretchBltMode(hDC, COLORONCOLOR);// this pattern still does not work
             RECT rect;
             GetWindowRect(static_cast<CDecode*>(lpParam)->paramUser.playHandle, &rect);
             static_cast<CDecode*>(lpParam)->paramUser.playHeight = rect.bottom - rect.top;
@@ -392,7 +392,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_AVCodecContext->height,
                 static_cast<CDecode*>(lpParam)->paramUser.playWidth,
                 static_cast<CDecode*>(lpParam)->paramUser.playHeight,
-                m_hdc,
+                hDC,
                 hMemoryDC,
                 (uint8_t*)static_cast<CDecode*>(lpParam)->m_BMP_buffer,
                 hd);
@@ -533,6 +533,7 @@ int CDecode::writeNetBuf(int num, unsigned char *buf, int bufsize)
     if(NULL == p_data_node_temp)
     {
         MessageBox(NULL, L"new memory error", NULL, MB_OK);
+        return -1;
     }
     memset(p_data_node_temp, 0x0, sizeof(dataNode));
 
@@ -540,6 +541,7 @@ int CDecode::writeNetBuf(int num, unsigned char *buf, int bufsize)
     if(NULL == p_data_node_temp->data)
     {
         MessageBox(NULL, L"new memory error", NULL, MB_OK);
+        return -1;
     }
 
     memcpy(p_data_node_temp->data, buf, bufsize);
