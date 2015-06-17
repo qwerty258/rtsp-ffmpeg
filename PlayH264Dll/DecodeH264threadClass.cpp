@@ -450,8 +450,6 @@ CDecode::CDecode()
         MessageBox(NULL, L"memory new error", NULL, MB_OK);
     }
 
-    readNetBufIndex = 0;
-    writeNetBufIndex = 0;
     bpp = 24; //24 colors
 
     m_b_hardware_acceleration = false;
@@ -506,7 +504,7 @@ int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, in
     //    func(m_decode_instance, width, height, (char*)bufptr, sizeof(bmpheader) + sizeof(bmpinfo) + width*height*bpp / 8, BUFBMP);
     //}
 
-    hbit = CreateDIBitmap(playHD, (BITMAPINFOHEADER *)&bmpinfo, CBM_INIT, pFrameRGB->data[0], (BITMAPINFO *)&bmpinfo, DIB_RGB_COLORS);
+    hbit = CreateDIBitmap(playHD, &bmpinfo, CBM_INIT, pFrameRGB->data[0], (BITMAPINFO *)&bmpinfo, DIB_RGB_COLORS);
     OldBitmap = (HBITMAP)SelectObject(hMemoryDC, hbit);
     //if(funcD != NULL)
     //{
@@ -626,7 +624,7 @@ int CDecode::InputParam(myparamInput *p1)
         bmpinfo.biYPelsPerMeter = 100;
         bmpinfo.biClrUsed = 0;
         bmpinfo.biClrImportant = 0;
-        hThreadDecode = CreateThread(NULL, 0, videoDecodeQueue, this, 0, &threadID);
+        hThreadDecode = CreateThread(NULL, 0, videoDecodeQueue, this, 0, &m_decode_thread_ID);
 
 #ifdef _DEBUG // thread log
         FILE* pFile = fopen("C:\\thread.log", "ab");
@@ -636,7 +634,7 @@ int CDecode::InputParam(myparamInput *p1)
         fclose(pFile);
 #endif // thread log end
 
-        return threadID;
+        return m_decode_thread_ID;
     }
     catch(...)
     {
