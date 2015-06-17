@@ -53,3 +53,16 @@
 
 #include <RTSPFFmpeg.h>
 #pragma comment(lib,"RTSPFFmpeg.lib")
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <SDL.h>
+
+#ifdef __cplusplus
+}
+#endif
+
+#pragma comment(lib,"SDL2.lib")
+#pragma comment(lib,"SDL2main.lib")

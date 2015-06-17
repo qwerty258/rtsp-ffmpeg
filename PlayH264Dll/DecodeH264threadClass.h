@@ -17,7 +17,6 @@ extern "C" {
 }
 #endif
 
-#pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"avcodec.lib")
 #pragma comment(lib,"avformat.lib")
 #pragma comment(lib,"avutil.lib")

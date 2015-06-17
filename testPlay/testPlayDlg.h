@@ -32,14 +32,20 @@ protected:
     afx_msg HCURSOR OnQueryDragIcon();
     DECLARE_MESSAGE_MAP()
 private:
-    int m_INSTANCE;
-
+    int m_instance_1;
+    int m_instance_2;
+    SDL_Window* screen;
+    SDL_Renderer* sdlRenderer;
 public:
     afx_msg void OnClickedButtonPlay();
     virtual BOOL DestroyWindow();
     afx_msg void OnClickedButtonPause();
     afx_msg void OnClickedButtonConnect();
     afx_msg void OnClickedButtonDisconnect();
+    afx_msg void OnClickedButtonConnect2();
+    afx_msg void OnClickedButtonPaly2();
+    afx_msg void OnClickedButtonPause2();
+    afx_msg void OnClickedButtonDisconnect2();
 };
 
 int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost);
