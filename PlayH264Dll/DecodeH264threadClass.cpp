@@ -109,14 +109,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
 
 
-    HWND hd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
-    HDC hDC = GetDC(hd);
-    HDC hMemoryDC = CreateCompatibleDC(hDC);
-    if(NULL == hMemoryDC)
-    {
-        return 0;
-    }
-
     AVCodecID codeType;
 
     switch(static_cast<CDecode*>(lpParam)->type)
@@ -217,7 +209,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             while(bGPlayWnd)
                 Sleep(1);
             bGPlayWnd = 1;
-            gPlayWnd = hd;
+            gPlayWnd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
         }
 
 
@@ -399,22 +391,12 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_AVFrame_for_RGB->data,
                 p_AVFrame_for_RGB->linesize);// efficient ???
 
-            SetStretchBltMode(hDC, COLORONCOLOR);// this pattern still does not work
-            RECT rect;
-            GetWindowRect(static_cast<CDecode*>(lpParam)->paramUser.playHandle, &rect);
-            static_cast<CDecode*>(lpParam)->paramUser.playHeight = rect.bottom - rect.top;
-            static_cast<CDecode*>(lpParam)->paramUser.playWidth = rect.right - rect.left;
-
             static_cast<CDecode*>(lpParam)->playBMPbuf(
                 p_AVFrame_for_RGB,
                 p_AVCodecContext->width,
                 p_AVCodecContext->height,
                 static_cast<CDecode*>(lpParam)->paramUser.playWidth,
-                static_cast<CDecode*>(lpParam)->paramUser.playHeight,
-                hDC,
-                hMemoryDC,
-                (uint8_t*)static_cast<CDecode*>(lpParam)->m_BMP_buffer,
-                hd);
+                static_cast<CDecode*>(lpParam)->paramUser.playHeight);
         }
 
         if(NULL != p_data_node_temp->data)
@@ -513,6 +495,9 @@ CDecode::CDecode()
     m_trace_lost_package = false;
     // for trace lost package end
 
+    // for GDI paly begin
+    m_hDC = NULL;
+    // for GDI paly end
 }
 
 CDecode::~CDecode()
@@ -521,20 +506,16 @@ CDecode::~CDecode()
     {
         delete[] m_BMP_buffer;
     }
+
+    if(NULL != paramUser.playHandle)
+    {
+        ReleaseDC(paramUser.playHandle, m_hDC);
+    }
 }
 
-int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hMemoryDC, uint8_t *BMPbuf, HWND hWnd)
+int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH)
 {
-    bufptr = BMPbuf;
-
-    hbit = CreateDIBitmap(playHD, &bmpinfo, CBM_INIT, pFrameRGB->data[0], (BITMAPINFO *)&bmpinfo, DIB_RGB_COLORS);
-    OldBitmap = (HBITMAP)SelectObject(hMemoryDC, hbit);
-
-    ::StretchBlt(playHD, 0, 0, playW, playH, hMemoryDC, 0, 0, width, height, SRCCOPY);
-    SelectObject(hMemoryDC, OldBitmap);
-    ::DeleteObject(hbit);
-    ::DeleteObject(OldBitmap);
-
+    StretchDIBits(m_hDC, 0, 0, playW, playH, 0, 0, width, height, pFrameRGB->data[0], (BITMAPINFO*)&bmpinfo, DIB_RGB_COLORS, SRCCOPY);
     return 0;
 }
 
@@ -641,6 +622,12 @@ int CDecode::InputParam(myparamInput *p1)
         bmpinfo.biYPelsPerMeter = 100;
         bmpinfo.biClrUsed = 0;
         bmpinfo.biClrImportant = 0;
+
+        // for GDI paly begin
+        m_hDC = GetDC(paramUser.playHandle);
+        SetStretchBltMode(m_hDC, COLORONCOLOR);
+        // for GDI paly end
+
         hThreadDecode = CreateThread(NULL, 0, videoDecodeQueue, this, 0, &m_decode_thread_ID);
 
 #ifdef MY_DEBUG // thread log

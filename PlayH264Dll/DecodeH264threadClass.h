@@ -67,8 +67,8 @@ public:
     dataNode* getNextNetBuf(void);
     int playResize(int newWidth, int newHeight);
     //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
-    int playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH, HDC playHD, HDC hmemDC, uint8_t *BMPbuf, HWND);
-    void  dataQueueClean();
+    int playBMPbuf(AVFrame* pFrameRGB, int width, int height, int playW, int playH);
+    void dataQueueClean();
 
 private:
     Concurrency::concurrent_queue<dataNode*> m_DataQueue;
@@ -128,6 +128,10 @@ public:
     int m_number_of_lost_package;
     bool m_trace_lost_package;
     // for trace lost package end
+
+    // for GDI paly begin
+    HDC m_hDC;
+    // for GDI paly end
 };
 
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);

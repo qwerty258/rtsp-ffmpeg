@@ -959,15 +959,15 @@ static int DxCreateVideoService(va_dxva2_t *va)
     HRESULT hr;
 
     HANDLE device;
-    typedef HRESULT(WINAPI *CreateVideoService)(IDirect3DDevice9 *, REFIID riid, void **ppService);
-    CreateVideoService CreateVideoServiceFunc = (CreateVideoService)GetProcAddress(va->hdxva2_dll, "DXVA2CreateVideoService");
+    //typedef HRESULT(WINAPI *CreateVideoService)(IDirect3DDevice9 *, REFIID riid, void **ppService);
+    //CreateVideoService CreateVideoServiceFunc = (CreateVideoService)GetProcAddress(va->hdxva2_dll, "DXVA2CreateVideoService");
 
-    if(!CreateVideoServiceFunc)
-    {
-        av_log(NULL, AV_LOG_ERROR, "cannot load function");
-        return -1;
-    }
-    av_log(NULL, AV_LOG_INFO, "DXVA2CreateVideoService Success!");
+    //if(!CreateVideoServiceFunc)
+    //{
+    //    av_log(NULL, AV_LOG_ERROR, "cannot load function");
+    //    return -1;
+    //}
+    //av_log(NULL, AV_LOG_INFO, "DXVA2CreateVideoService Success!");
 
 
     hr = IDirect3DDeviceManager9_OpenDeviceHandle(va->devmng, &device);

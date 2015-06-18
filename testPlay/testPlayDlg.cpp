@@ -117,6 +117,8 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
     return static_cast<HCURSOR>(m_hIcon);
 }
 
+typedef int(*function_resize)(int instance, int width, int height);
+
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
@@ -124,6 +126,10 @@ void CtestPlayDlg::OnClickedButtonPlay()
     {
         AfxMessageBox(L"Play error");
     }
+    Sleep(2000);
+    HMODULE hDLL = LoadLibrary(L"PlayH264DLL.dll");
+    function_resize resize = (function_resize)GetProcAddress(hDLL, "resize");
+    resize(m_instance_1, 300, 300);
 }
 
 BOOL CtestPlayDlg::DestroyWindow()
