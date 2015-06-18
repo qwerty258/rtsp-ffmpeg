@@ -313,27 +313,21 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             // use number for convenient
             // be ware of this will cause some problem when HD advances beyond 1080
             unsigned char * data = new unsigned char[2000 * 1100 * 6 / 4];
-            for(int i = 0; i < p_AVCodecContext->height; i++)
-            {
-                memcpy(
-                    data + p_AVCodecContext->width * i,
-                    p_AVFrame_for_decode->data[0] + p_AVFrame_for_decode->linesize[0] * i,
-                    p_AVCodecContext->width);
-            }
-            for(int i = 0; i < p_AVCodecContext->height / 2; i++)
-            {
-                memcpy(
-                    data + p_AVCodecContext->width * p_AVCodecContext->height + p_AVCodecContext->width * i / 2,
-                    p_AVFrame_for_decode->data[2] + p_AVFrame_for_decode->linesize[2] * i,
-                    p_AVCodecContext->width / 2);
-            }
-            for(int i = 0; i < p_AVCodecContext->height / 2; i++)
-            {
-                memcpy(
-                    data + p_AVCodecContext->width * p_AVCodecContext->height * 5 / 4 + p_AVCodecContext->width * i / 2,
-                    p_AVFrame_for_decode->data[1] + p_AVFrame_for_decode->linesize[1] * i,
-                    p_AVCodecContext->width / 2);
-            }
+            // copy Y data:
+            memcpy(
+                data,
+                p_AVFrame_for_decode->data[0],
+                p_AVFrame_for_decode->width * p_AVFrame_for_decode->height);
+            // copy U data:
+            memcpy(
+                data + p_AVFrame_for_decode->width * p_AVFrame_for_decode->height,
+                p_AVFrame_for_decode->data[1],
+                p_AVFrame_for_decode->width * p_AVFrame_for_decode->height / 4);
+            // copy V data:
+            memcpy(
+                data + p_AVFrame_for_decode->width * p_AVFrame_for_decode->height * 5 / 4,
+                p_AVFrame_for_decode->data[2],
+                p_AVFrame_for_decode->width * p_AVFrame_for_decode->height / 4);
 
             static_cast<CDecode*>(lpParam)->m_p_function_YUV420(
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
