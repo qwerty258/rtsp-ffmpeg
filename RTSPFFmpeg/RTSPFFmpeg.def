@@ -1,14 +1,14 @@
 LIBRARY "RTSPFFmpeg"
 EXPORTS
-	initial_RTSP_DLL		@1
-	free_RTSP_DLL			@2
-	get_idle_instance		@3
-	initial_RTSP_parameter	@4
-	RTSP_connect			@5
-	play					@6
-	pause					@7
-	RTSP_disconnect			@8
-	set_YUV420_callback		@9
-	set_YV12_callback		@10
-	set_H264_callback		@11
-	FreeRtspDLL0000			@12
+    initial_RTSP_DLL        @1
+    free_RTSP_DLL           @2
+    get_idle_instance       @3
+    initial_RTSP_parameter  @4
+    RTSP_connect            @5
+    play                    @6
+    pause                   @7
+    RTSP_disconnect         @8
+    set_YUV420_callback     @9
+    set_YV12_callback       @10
+    set_H264_callback       @11
+    FreeRtspDLL0000         @12

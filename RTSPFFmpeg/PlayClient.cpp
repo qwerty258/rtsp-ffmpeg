@@ -344,7 +344,7 @@ int CRTSPClient::connect(void)
         }
     }
 
-#ifdef _DEBUG
+#ifdef MY_DEBUG
     FILE* pFile = fopen("C:\\sdp.log", "w");
     fwrite(sdp.c_str(), 1, sdp.length(), pFile);
     fclose(pFile);
@@ -408,7 +408,7 @@ int CRTSPClient::play(void)
     {
         // enter the thread
         m_hThread = CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
-#ifdef _DEBUG // thread log
+#ifdef MY_DEBUG // thread log
         FILE* pFile = fopen("C:\\thread.log", "ab");
         char temp[1024];
         sprintf(temp, "%p Created\n", m_hThread);

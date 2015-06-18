@@ -1,16 +1,16 @@
 LIBRARY "PlayH264Dll"
 EXPORTS
-	initial_decode_DLL					@1
-	free_decode_DLL						@2
-	get_idle_decode_instance			@3
-	initial_decode_parameter			@4
-	decode								@5
-	free_decode_instance				@6
-	set_decode_YUV420_callback			@7
-	set_decode_YV12_callback			@8
-	set_decode_H264_callback			@9
-	set_decode_hardware_acceleration	@10
-	pauseVideos							@11
-	playVideos							@12
-	inputBuf							@13
-	resize								@14
+    initial_decode_DLL                  @1
+    free_decode_DLL                     @2
+    get_idle_decode_instance            @3
+    initial_decode_parameter            @4
+    decode                              @5
+    free_decode_instance                @6
+    set_decode_YUV420_callback          @7
+    set_decode_YV12_callback            @8
+    set_decode_H264_callback            @9
+    set_decode_hardware_acceleration    @10
+    pauseVideos                         @11
+    playVideos                          @12
+    inputBuf                            @13
+    resize                              @14

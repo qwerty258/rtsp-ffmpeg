@@ -175,7 +175,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             break;
         }
 
-#ifdef _DEBUG
+#ifdef MY_DEBUG
         if(static_cast<CDecode*>(lpParam)->m_trace_lost_package)
         {
             FILE* pFile = fopen("C:\\frame.log", "ab");
@@ -643,7 +643,7 @@ int CDecode::InputParam(myparamInput *p1)
         bmpinfo.biClrImportant = 0;
         hThreadDecode = CreateThread(NULL, 0, videoDecodeQueue, this, 0, &m_decode_thread_ID);
 
-#ifdef _DEBUG // thread log
+#ifdef MY_DEBUG // thread log
         FILE* pFile = fopen("C:\\thread.log", "ab");
         char temp[1024];
         sprintf(temp, "%p Created\n", hThreadDecode);
