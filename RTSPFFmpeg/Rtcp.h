@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Udp.h"
-#include "VBuffer.h"
 #include "Decode.h"
 #define RTCP_PT_START		1
 #define RTCP_PT_SIZE		1
