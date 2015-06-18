@@ -308,7 +308,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
                 (char*)buffer_for_YUV420_raw_data,
                 avpicture_get_size(
-                    PIX_FMT_YUV420P,
+                    AV_PIX_FMT_YUV420P,
                     p_AVCodecContext->width,
                     p_AVCodecContext->height),
                 p_AVCodecContext->height,
