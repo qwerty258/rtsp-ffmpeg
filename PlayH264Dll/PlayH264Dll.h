@@ -39,6 +39,8 @@ extern "C" {
 
     PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp);
 
+    PLAYH264DLL_API int playing_windows_RECT_changed_of_decode_DLL(int instance);
+
     PLAYH264DLL_API int free_decode_instance(int instance);
 
     PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
@@ -56,8 +58,6 @@ extern "C" {
     PLAYH264DLL_API int playVideos(int instance);
 
     PLAYH264DLL_API int inputBuf(int instance, char *buf, int bufsize);
-
-    PLAYH264DLL_API int resize(int instance, int width, int height);
 
 #ifdef __cplusplus
 }

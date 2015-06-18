@@ -623,6 +623,8 @@ int CDecode::InputParam(myparamInput *p1)
         bmpinfo.biClrUsed = 0;
         bmpinfo.biClrImportant = 0;
 
+        playResize();
+
         // for GDI paly begin
         m_hDC = GetDC(paramUser.playHandle);
         SetStretchBltMode(m_hDC, COLORONCOLOR);
@@ -668,10 +670,18 @@ int CDecode::pauseVideo()
     paramUser.stopPlay = 0;
     return 0;
 }
-int CDecode::playResize(int newWidth, int newHeight)
+
+int CDecode::playResize(void)
 {
-    paramUser.playWidth = newWidth;
-    paramUser.playHeight = newHeight;
+    RECT RECT_temp;
+    if(!GetWindowRect(paramUser.playHandle, &RECT_temp))
+    {
+        return -1;
+    }
+
+    paramUser.playWidth = RECT_temp.right - RECT_temp.left;
+    paramUser.playHeight = RECT_temp.bottom - RECT_temp.top;
+
     return 0;
 }
 

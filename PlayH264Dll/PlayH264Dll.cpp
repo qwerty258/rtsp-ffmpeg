@@ -195,6 +195,16 @@ PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, uns
     return 0;
 }
 
+PLAYH264DLL_API int playing_windows_RECT_changed_of_decode_DLL(int instance)
+{
+    if(0 > check_instance(instance))
+    {
+        return -1;
+    }
+
+    return  decode_list[instance].p_CDecode->playResize();
+}
+
 PLAYH264DLL_API int free_decode_instance(int instance)
 {
     if(0 > check_instance(instance) || 1 != decode_list[instance].idle)
@@ -247,7 +257,7 @@ PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_f
 #endif
     {
         return -1;
-    }
+}
 
     decode_list[instance].p_CDecode->m_p_function_YUV420 = p_function_YUV420;
     decode_list[instance].p_CDecode->m_p_YUV420_extra_data = additional_data;
@@ -325,15 +335,5 @@ PLAYH264DLL_API int inputBuf(int instance, char *buf, int bufsize)
         return -1;
     }
     decode_list[instance].p_CDecode->writeNetBuf(instance, (unsigned char*)buf, bufsize);
-    return 0;
-}
-
-PLAYH264DLL_API int resize(int instance, int width, int height)
-{
-    if(0 > check_instance(instance))
-    {
-        return -1;
-    }
-    decode_list[instance].p_CDecode->playResize(width, height);
     return 0;
 }

@@ -33,6 +33,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 private:
     int m_instance_1;
+    BOOL m_rect_change;
     int m_instance_2;
     SDL_Window* screen;
     SDL_Renderer* sdlRenderer;
@@ -46,6 +47,7 @@ public:
     afx_msg void OnClickedButtonPaly2();
     afx_msg void OnClickedButtonPause2();
     afx_msg void OnClickedButtonDisconnect2();
+    afx_msg void OnClickedButtonResize();
 };
 
 int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost);

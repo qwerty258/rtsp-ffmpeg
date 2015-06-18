@@ -65,7 +65,7 @@ public:
     //int getNetBuf(AVCodecContext* m_pCodecContext,AVCodecParserContext * m_parser,char *buf,int bufsize);
     int setReadPosize(int index, int readsize);
     dataNode* getNextNetBuf(void);
-    int playResize(int newWidth, int newHeight);
+    int playResize(void);
     //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);
     int playBMPbuf(AVFrame* pFrameRGB, int width, int height, int playW, int playH);
     void dataQueueClean();
@@ -92,7 +92,7 @@ public:
     int playVideo();
     int pauseVideo();
 
-    HANDLE hThreadDecode, writewait;
+    HANDLE hThreadDecode;
 
     // function pointer for callback begin
     function_YUV420 m_p_function_YUV420;

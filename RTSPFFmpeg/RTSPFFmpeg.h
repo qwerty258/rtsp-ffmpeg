@@ -92,6 +92,15 @@ extern "C" {
 
 
     //************************************
+    // Function:  change inner GDI playing prarmeter to fit the window when the size changed;
+    //            the HWND you passed in earlier corresponding to the window
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you get from get_idle_instance()
+    //************************************
+    RTSPFFMPEG_API int playing_windows_RECT_changed(int instance);
+
+
+    //************************************
     // Function:  set hardware acceleration, default is software decode
     // Returns:   int: 0 success, -1 failure
     // Parameter: int instance: the instance you want to set whether use hardware acceleration

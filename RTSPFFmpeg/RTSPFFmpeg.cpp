@@ -197,9 +197,17 @@ RTSPFFMPEG_API int set_hardware_acceleration(int instance, bool acceleration)
         return -1;
     }
 
-    set_decode_hardware_acceleration(client_list[instance].p_CRTSPClient->m_decode_instance, acceleration);
+    return set_decode_hardware_acceleration(client_list[instance].p_CRTSPClient->m_decode_instance, acceleration);
+}
 
-    return 0;
+RTSPFFMPEG_API int playing_windows_RECT_changed(int instance)
+{
+    if(0 > checkINSTANCE(instance) || NULL == client_list[instance].p_CRTSPClient)
+    {
+        return -1;
+    }
+
+    return playing_windows_RECT_changed_of_decode_DLL(client_list[instance].p_CRTSPClient->m_decode_instance);
 }
 
 RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package)

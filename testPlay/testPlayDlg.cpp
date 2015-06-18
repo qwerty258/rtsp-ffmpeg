@@ -21,6 +21,9 @@
 CtestPlayDlg::CtestPlayDlg(CWnd* pParent /*=NULL*/): CDialogEx(CtestPlayDlg::IDD, pParent), m_instance_1(0)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+    m_rect_change = TRUE;
+    m_instance_1 = -1;
+    m_instance_2 = -1;
 }
 
 void CtestPlayDlg::DoDataExchange(CDataExchange* pDX)
@@ -39,6 +42,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_PALY_2, &CtestPlayDlg::OnClickedButtonPaly2)
     ON_BN_CLICKED(IDC_BUTTON_PAUSE_2, &CtestPlayDlg::OnClickedButtonPause2)
     ON_BN_CLICKED(IDC_BUTTON_DISCONNECT_2, &CtestPlayDlg::OnClickedButtonDisconnect2)
+ON_BN_CLICKED(IDC_BUTTON_RESIZE, &CtestPlayDlg::OnClickedButtonResize)
 END_MESSAGE_MAP()
 
 
@@ -126,10 +130,6 @@ void CtestPlayDlg::OnClickedButtonPlay()
     {
         AfxMessageBox(L"Play error");
     }
-    Sleep(2000);
-    HMODULE hDLL = LoadLibrary(L"PlayH264DLL.dll");
-    function_resize resize = (function_resize)GetProcAddress(hDLL, "resize");
-    resize(m_instance_1, 300, 300);
 }
 
 BOOL CtestPlayDlg::DestroyWindow()
@@ -296,4 +296,22 @@ void CtestPlayDlg::OnClickedButtonDisconnect2()
     {
         AfxMessageBox(L"DisConnect error");
     }
+}
+
+
+void CtestPlayDlg::OnClickedButtonResize()
+{
+    // TODO: Add your control notification handler code here
+    if(m_rect_change)
+    {
+        GetDlgItem(IDC_PICTURE_AREA)->SetWindowPos(NULL, 0, 0, 300, 300, SWP_NOZORDER | SWP_NOMOVE);
+    }
+    else
+    {
+        GetDlgItem(IDC_PICTURE_AREA)->SetWindowPos(NULL, 0, 0, 600, 400, SWP_NOZORDER | SWP_NOMOVE);
+    }
+
+    playing_windows_RECT_changed(m_instance_1);
+
+    m_rect_change = !m_rect_change;
 }
