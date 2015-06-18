@@ -78,8 +78,39 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     uint8_t* buf = NULL;
     uint8_t* buffer_for_RGB_av_malloc = NULL;
 
-    HWND hd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
 
+
+
+    // YUV420p: every 4 Y use a set of UV as 6 bytes every 4 pixels, reordered
+    // Y:  +(a pixel, luminance information)
+    // UV: o(chrominance information)
+    // YUV420p sampling:
+    // + + + + + + + + + + + + + +
+    //  o o o o o o o o o o o o o 
+    // + + + + + + + + + + + + + +
+    // + + + + + + + + + + + + + +
+    //  o o o o o o o o o o o o o 
+    // + + + + + + + + + + + + + +
+    // + + + + + + + + + + + + + +
+    //  o o o o o o o o o o o o o 
+    // + + + + + + + + + + + + + +
+    // + + + + + + + + + + + + + +
+    //  o o o o o o o o o o o o o 
+    // + + + + + + + + + + + + + +
+
+    // the size of the cache must be calculated using length and width by the book
+    // use number for convenient
+    // be ware of this will cause some problem when HD advances beyond 1080
+    unsigned char* buffer_for_YUV420_raw_data = NULL;
+    if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420)
+    {
+        buffer_for_YUV420_raw_data = new unsigned char[2000 * 1100 * 6 / 4];
+    }
+
+
+
+
+    HWND hd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
     HDC hDC = GetDC(hd);
     HDC hMemoryDC = CreateCompatibleDC(hDC);
     if(NULL == hMemoryDC)
@@ -253,31 +284,30 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420 && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
-            unsigned char * data = new unsigned char[2000 * 1500 / 4 * 6];
             for(int i = 0; i < p_AVCodecContext->height; i++)
             {
                 memcpy(
-                    data + i*p_AVCodecContext->width,
+                    buffer_for_YUV420_raw_data + i*p_AVCodecContext->width,
                     p_AVFrame_for_YUV420->data[0] + i*p_AVFrame_for_YUV420->linesize[0],
                     p_AVCodecContext->width);
             }
             for(int i = 0; i < p_AVCodecContext->height / 2; i++)
             {
                 memcpy(
-                    data + p_AVCodecContext->width*p_AVCodecContext->height + i*p_AVCodecContext->width / 2,
+                    buffer_for_YUV420_raw_data + p_AVCodecContext->width*p_AVCodecContext->height + i*p_AVCodecContext->width / 2,
                     p_AVFrame_for_YUV420->data[2] + i*p_AVFrame_for_YUV420->linesize[2],
                     p_AVCodecContext->width / 2);
             }
             for(int i = 0; i < p_AVCodecContext->height / 2; i++)
             {
                 memcpy(
-                    data + p_AVCodecContext->width*p_AVCodecContext->height / 4 * 5 + i*p_AVCodecContext->width / 2,
+                    buffer_for_YUV420_raw_data + p_AVCodecContext->width*p_AVCodecContext->height / 4 * 5 + i*p_AVCodecContext->width / 2,
                     p_AVFrame_for_YUV420->data[1] + i*p_AVFrame_for_YUV420->linesize[1],
                     p_AVCodecContext->width / 2);
             }
             static_cast<CDecode*>(lpParam)->m_p_function_YUV420(
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
-                (char*)data,
+                (char*)buffer_for_YUV420_raw_data,
                 avpicture_get_size(
                     PIX_FMT_YUV420P,
                     p_AVCodecContext->width,
@@ -287,60 +317,36 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_data_node_temp->frame_ID,
                 static_cast<CDecode*>(lpParam)->m_p_YUV420_extra_data,
                 p_data_node_temp->number_of_lost_frame);
-            delete[] data;
         }
 
         // software decode and give out YUV420 data by callback function
         if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420 && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
-            // YUV420p: every 4 Y use a set of UV as 6 bytes every 4 pixels, reordered
-            // Y:  +(a pixel, luminance information)
-            // UV: o(chrominance information)
-            // YUV420p sampling:
-            // + + + + + + + + + + + + + +
-            //  o o o o o o o o o o o o o 
-            // + + + + + + + + + + + + + +
-            // + + + + + + + + + + + + + +
-            //  o o o o o o o o o o o o o 
-            // + + + + + + + + + + + + + +
-            // + + + + + + + + + + + + + +
-            //  o o o o o o o o o o o o o 
-            // + + + + + + + + + + + + + +
-            // + + + + + + + + + + + + + +
-            //  o o o o o o o o o o o o o 
-            // + + + + + + + + + + + + + +
-
-            // the size of the cache must be calculated using length and width by the book
-            // use number for convenient
-            // be ware of this will cause some problem when HD advances beyond 1080
-            unsigned char * data = new unsigned char[2000 * 1100 * 6 / 4];
             // copy Y data:
             memcpy(
-                data,
+                buffer_for_YUV420_raw_data,
                 p_AVFrame_for_decode->data[0],
                 p_AVFrame_for_decode->width * p_AVFrame_for_decode->height);
             // copy U data:
             memcpy(
-                data + p_AVFrame_for_decode->width * p_AVFrame_for_decode->height,
+                buffer_for_YUV420_raw_data + p_AVFrame_for_decode->width * p_AVFrame_for_decode->height,
                 p_AVFrame_for_decode->data[1],
                 p_AVFrame_for_decode->width * p_AVFrame_for_decode->height / 4);
             // copy V data:
             memcpy(
-                data + p_AVFrame_for_decode->width * p_AVFrame_for_decode->height * 5 / 4,
+                buffer_for_YUV420_raw_data + p_AVFrame_for_decode->width * p_AVFrame_for_decode->height * 5 / 4,
                 p_AVFrame_for_decode->data[2],
                 p_AVFrame_for_decode->width * p_AVFrame_for_decode->height / 4);
 
             static_cast<CDecode*>(lpParam)->m_p_function_YUV420(
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
-                (char*)data,
+                (char*)buffer_for_YUV420_raw_data,
                 avpicture_get_size(AV_PIX_FMT_YUV420P, p_AVCodecContext->width, p_AVCodecContext->height),
                 p_AVCodecContext->width,
                 p_AVCodecContext->height,
                 p_data_node_temp->frame_ID,
                 static_cast<CDecode*>(lpParam)->m_p_YUV420_extra_data,
                 p_data_node_temp->number_of_lost_frame);
-
-            delete[] data;
         }
 
         if((width != p_AVCodecContext->width) || (height != p_AVCodecContext->height) && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
@@ -448,6 +454,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         av_freep(&buf);
     }
 
+    if(NULL != buffer_for_YUV420_raw_data)
+    {
+        delete[] buffer_for_YUV420_raw_data;
+        buffer_for_YUV420_raw_data = NULL;
+    }
     av_frame_free(&p_AVFrame_for_decode);
     av_frame_free(&p_AVFrame_for_YUV420);
     av_frame_free(&p_AVFrame_for_RGB);
