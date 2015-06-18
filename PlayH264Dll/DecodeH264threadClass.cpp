@@ -75,7 +75,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     // for pixel format conversion end
 
     int PictureSize;
-    uint8_t *buf = NULL;
+    uint8_t* buf = NULL;
+    uint8_t* buffer_for_RGB_av_malloc = NULL;
 
     HWND hd = static_cast<CDecode*>(lpParam)->paramUser.playHandle;
 
@@ -332,10 +333,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             static_cast<CDecode*>(lpParam)->m_p_function_YUV420(
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
                 (char*)data,
-                avpicture_get_size(
-                    PIX_FMT_YUV420P,
-                    p_AVCodecContext->width,
-                    p_AVCodecContext->height),
+                avpicture_get_size(AV_PIX_FMT_YUV420P, p_AVCodecContext->width, p_AVCodecContext->height),
                 p_AVCodecContext->width,
                 p_AVCodecContext->height,
                 p_data_node_temp->frame_ID,
@@ -343,21 +341,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_data_node_temp->number_of_lost_frame);
 
             delete[] data;
-        }
-
-        if(first_round&&!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
-        {
-            width = p_AVCodecContext->width;
-            height = p_AVCodecContext->height;
-            PictureSize = avpicture_get_size(AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
-            buf = (uint8_t*)av_malloc(PictureSize);
-            if(buf == NULL)
-            {
-                break;
-            }
-            static_cast<CDecode*>(lpParam)->bmpinfo.biWidth = p_AVCodecContext->width;
-            static_cast<CDecode*>(lpParam)->bmpinfo.biHeight = p_AVCodecContext->height;
-            avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buf, AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
         }
 
         if((width != p_AVCodecContext->width) || (height != p_AVCodecContext->height) && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
@@ -376,8 +359,19 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buf, AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
         }
 
-        if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration&&first_round)
+        if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration &&
+           NULL != static_cast<CDecode*>(lpParam)->paramUser.playHandle &&
+           first_round)
         {
+            buffer_for_RGB_av_malloc = (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height));
+            if(buffer_for_RGB_av_malloc == NULL)
+            {
+                break;
+            }
+            static_cast<CDecode*>(lpParam)->bmpinfo.biWidth = p_AVCodecContext->width;
+            static_cast<CDecode*>(lpParam)->bmpinfo.biHeight = p_AVCodecContext->height;
+            avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buffer_for_RGB_av_malloc, AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
+
             p_SwsContext_for_RGB = sws_getContext(p_AVCodecContext->width, p_AVCodecContext->height, p_AVCodecContext->pix_fmt, p_AVCodecContext->width, p_AVCodecContext->height, AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
             first_round = FALSE;
         }
@@ -442,6 +436,16 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     else
     {
         availableGPU[currentGPU] -= 60;
+    }
+
+    if(NULL != buffer_for_RGB_av_malloc)
+    {
+        av_freep(&buffer_for_RGB_av_malloc);
+    }
+
+    if(NULL != buf)
+    {
+        av_freep(&buf);
     }
 
     av_frame_free(&p_AVFrame_for_decode);
