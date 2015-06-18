@@ -345,7 +345,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if((width != p_AVCodecContext->width) || (height != p_AVCodecContext->height) && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
-            av_free(buf);
+            av_freep(&buf);
             width = p_AVCodecContext->width;
             height = p_AVCodecContext->height;
             PictureSize = avpicture_get_size(AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
@@ -364,7 +364,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
            first_round)
         {
             buffer_for_RGB_av_malloc = (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height));
-            if(buffer_for_RGB_av_malloc == NULL)
+            if(NULL == buffer_for_RGB_av_malloc)
             {
                 break;
             }
@@ -478,7 +478,7 @@ CDecode::CDecode()
         MessageBox(NULL, L"memory new error", NULL, MB_OK);
     }
 
-    bpp = 24; //24 colors
+    bits_per_pixel = 24; //24 colors
 
     m_b_hardware_acceleration = false;
 
@@ -617,8 +617,8 @@ int CDecode::InputParam(myparamInput *p1)
         paramUser.playChannle = p1->playChannle;
         paramUser.isDecode = p1->isDecode;
 
-        bmpheader.bfSize = bmpheader.bfOffBits + (p1->width)*(p1->height)*bpp / 8;
-        bmpinfo.biSizeImage = ((p1->width)*bpp + 31) / 32 * 4 * (p1->height);
+        bmpheader.bfSize = bmpheader.bfOffBits + (p1->width)*(p1->height)*bits_per_pixel / 8;
+        bmpinfo.biSizeImage = ((p1->width)*bits_per_pixel + 31) / 32 * 4 * (p1->height);
 
         bmpheader.bfType = 0x4d42;
         bmpheader.bfReserved1 = 0;
@@ -628,7 +628,7 @@ int CDecode::InputParam(myparamInput *p1)
         bmpinfo.biSize = sizeof(BITMAPINFOHEADER);
 
         bmpinfo.biPlanes = 1;
-        bmpinfo.biBitCount = bpp;
+        bmpinfo.biBitCount = bits_per_pixel;
         bmpinfo.biCompression = BI_RGB;
 
         bmpinfo.biXPelsPerMeter = 100;

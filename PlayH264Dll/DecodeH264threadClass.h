@@ -80,7 +80,7 @@ private:
     DWORD m_decode_thread_ID;
     BITMAPFILEHEADER bmpheader;
 
-    int bpp;
+    int bits_per_pixel;
     HBITMAP  hbit;
     HBITMAP  OldBitmap;
     uint8_t *bufptr;
