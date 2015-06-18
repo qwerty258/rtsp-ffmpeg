@@ -296,20 +296,20 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             // Y:  +(a pixel, luminance information)
             // UV: o(chrominance information)
             // YUV420p sampling:
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // |o|o|o|o|o|o|o|o|o|o|o|o|o|
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // |o|o|o|o|o|o|o|o|o|o|o|o|o|
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // |o|o|o|o|o|o|o|o|o|o|o|o|o|
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
-            // |o|o|o|o|o|o|o|o|o|o|o|o|o|
-            // +-+-+-+-+-+-+-+-+-+-+-+-+-+
+            // + + + + + + + + + + + + + +
+            //  o o o o o o o o o o o o o 
+            // + + + + + + + + + + + + + +
+            // + + + + + + + + + + + + + +
+            //  o o o o o o o o o o o o o 
+            // + + + + + + + + + + + + + +
+            // + + + + + + + + + + + + + +
+            //  o o o o o o o o o o o o o 
+            // + + + + + + + + + + + + + +
+            // + + + + + + + + + + + + + +
+            //  o o o o o o o o o o o o o 
+            // + + + + + + + + + + + + + +
 
-            // must use width and height to calculate buffer size by the book
+            // the size of the cache must be calculated using length and width by the book
             // use number for convenient
             // be ware of this will cause some problem when HD advances beyond 1080
             unsigned char * data = new unsigned char[2000 * 1100 * 6 / 4];
