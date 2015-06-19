@@ -3,11 +3,9 @@
 #include <atlimage.h>
 #include <ddraw.h>
 #include "va.h"
-#include <d3d9.h>
 
 using namespace std;
 #pragma comment(lib,"ddraw.lib")
-#pragma warning(disable: 4996)
 
 #ifdef _DEBUG // for memory leak check
 #define _CRTDBG_MAP_ALLOC
