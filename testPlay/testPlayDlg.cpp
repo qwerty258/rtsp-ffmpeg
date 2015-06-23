@@ -306,7 +306,7 @@ void CtestPlayDlg::OnClickedButtonResize()
     }
     else
     {
-        GetDlgItem(IDC_PICTURE_AREA)->SetWindowPos(NULL, 0, 0, 600, 400, SWP_NOZORDER | SWP_NOMOVE);
+        GetDlgItem(IDC_PICTURE_AREA)->SetWindowPos(NULL, 0, 0, 558, 354, SWP_NOZORDER | SWP_NOMOVE);
     }
 
     playing_windows_RECT_changed(m_instance_1);

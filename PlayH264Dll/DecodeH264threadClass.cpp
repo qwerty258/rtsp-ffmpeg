@@ -410,11 +410,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 static_cast<CDecode*>(lpParam)->paramUser.playHeight);
         }
 
-        if(NULL != buf)
-        {
-            av_freep(&buf);
-        }
-
         if(NULL != p_data_node_temp->data)
         {
             delete[] p_data_node_temp->data;
@@ -446,6 +441,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     {
         delete[] buffer_for_YUV420_raw_data;
         buffer_for_YUV420_raw_data = NULL;
+    }
+
+    if(NULL != buf)
+    {
+        av_freep(&buf);
     }
 
     av_frame_free(&p_AVFrame_for_decode);
