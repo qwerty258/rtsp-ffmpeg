@@ -35,8 +35,6 @@ private:
     int m_instance_1;
     BOOL m_rect_change;
     int m_instance_2;
-    SDL_Window* screen;
-    SDL_Renderer* sdlRenderer;
 public:
     afx_msg void OnClickedButtonPlay();
     virtual BOOL DestroyWindow();
