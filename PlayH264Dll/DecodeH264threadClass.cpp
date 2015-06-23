@@ -252,9 +252,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             {
                 p_AVFrame_for_YUV420->width = p_AVFrame_for_decode->width;
                 p_AVFrame_for_YUV420->height = p_AVFrame_for_decode->height;
+                buf = (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height));
                 avpicture_fill(
                     (AVPicture*)p_AVFrame_for_YUV420,
-                    (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height)),
+                    buf,
                     AV_PIX_FMT_YUV420P,
                     p_AVFrame_for_decode->width,
                     p_AVFrame_for_decode->height);
@@ -409,6 +410,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 static_cast<CDecode*>(lpParam)->paramUser.playHeight);
         }
 
+        if(NULL != buf)
+        {
+            av_freep(&buf);
+        }
+
         if(NULL != p_data_node_temp->data)
         {
             delete[] p_data_node_temp->data;
@@ -436,16 +442,12 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         availableGPU[currentGPU] -= 60;
     }
 
-    if(NULL != buf)
-    {
-        av_freep(&buf);
-    }
-
     if(NULL != buffer_for_YUV420_raw_data)
     {
         delete[] buffer_for_YUV420_raw_data;
         buffer_for_YUV420_raw_data = NULL;
     }
+
     av_frame_free(&p_AVFrame_for_decode);
     av_frame_free(&p_AVFrame_for_YUV420);
     av_frame_free(&p_AVFrame_for_RGB);
