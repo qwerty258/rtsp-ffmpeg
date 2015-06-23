@@ -121,8 +121,6 @@ HCURSOR CtestPlayDlg::OnQueryDragIcon()
     return static_cast<HCURSOR>(m_hIcon);
 }
 
-typedef int(*function_resize)(int instance, int width, int height);
-
 void CtestPlayDlg::OnClickedButtonPlay()
 {
     // TODO: Add your control notification handler code here
