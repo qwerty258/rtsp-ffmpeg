@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DecodeH264threadClass.h" />
-    <ClInclude Include="Direct3D9DisplayVideo.h" />
     <ClInclude Include="dxva2api.h" />
     <ClInclude Include="PlayH264DLL.h" />
     <ClInclude Include="resource.h" />
@@ -95,7 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DecodeH264threadClass.cpp" />
-    <ClCompile Include="Direct3D9DisplayVideo.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
