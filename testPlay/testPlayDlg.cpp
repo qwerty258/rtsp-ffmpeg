@@ -42,7 +42,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_PALY_2, &CtestPlayDlg::OnClickedButtonPaly2)
     ON_BN_CLICKED(IDC_BUTTON_PAUSE_2, &CtestPlayDlg::OnClickedButtonPause2)
     ON_BN_CLICKED(IDC_BUTTON_DISCONNECT_2, &CtestPlayDlg::OnClickedButtonDisconnect2)
-ON_BN_CLICKED(IDC_BUTTON_RESIZE, &CtestPlayDlg::OnClickedButtonResize)
+    ON_BN_CLICKED(IDC_BUTTON_RESIZE, &CtestPlayDlg::OnClickedButtonResize)
 END_MESSAGE_MAP()
 
 

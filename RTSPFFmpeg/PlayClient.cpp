@@ -6,6 +6,14 @@
 // thread function
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
+#ifdef _DEBUG // thread log
+    FILE* pFile = fopen("C:\\thread.log", "ab");
+    char temp[1024];
+    sprintf(temp, "rtsp instance: %d, %p Created\n", static_cast<CRTSPClient*>(lpParam)->m_decode_instance, static_cast<CRTSPClient*>(lpParam)->m_hThread);
+    fwrite(temp, 1, strlen(temp), pFile);
+    fclose(pFile);
+#endif // thread log end
+
     //RTSPCLient->m_SetupName_audio = "";
     //RTSPCLient->m_SetupName_video = "";
     if(!static_cast<CRTSPClient*>(lpParam)->m_RTSPRequest->RequestPlay())
@@ -179,6 +187,13 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     }
 
     static_cast<CRTSPClient*>(lpParam)->m_ans = 2;
+
+#ifdef _DEBUG // thread log
+    pFile = fopen("C:\\thread.log", "ab");
+    sprintf(temp, "rtsp instance: %d, %p end\n", static_cast<CRTSPClient*>(lpParam)->m_decode_instance, static_cast<CRTSPClient*>(lpParam)->m_hThread);
+    fwrite(temp, 1, strlen(temp), pFile);
+    fclose(pFile);
+#endif // thread log end
 
     return 0;
 }
@@ -408,13 +423,6 @@ int CRTSPClient::play(void)
     {
         // enter the thread
         m_hThread = CreateThread(NULL, 0, RTSPVideo, this, 0, &m_threadID);
-#ifdef MY_DEBUG // thread log
-        FILE* pFile = fopen("C:\\thread.log", "ab");
-        char temp[1024];
-        sprintf(temp, "%p Created\n", m_hThread);
-        fwrite(temp, 1, strlen(temp), pFile);
-        fclose(pFile);
-#endif // thread log end
         m_bPlaying = true;
 
         if(m_threadID == -1 || m_ans == 4)

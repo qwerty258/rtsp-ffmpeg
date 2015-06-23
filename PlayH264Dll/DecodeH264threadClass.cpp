@@ -75,6 +75,13 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     int PictureSize;
     uint8_t* buf = NULL;
 
+#ifdef _DEBUG // thread log
+    FILE* pFile = fopen("C:\\thread.log", "ab");
+    char temp[1024];
+    sprintf(temp, "decode instance: %d, %p Created\n", static_cast<CDecode*>(lpParam)->m_decode_instance, static_cast<CDecode*>(lpParam)->hThreadDecode);
+    fwrite(temp, 1, strlen(temp), pFile);
+    fclose(pFile);
+#endif // thread log end
 
 
 
@@ -338,6 +345,12 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_data_node_temp->number_of_lost_frame);
         }
 
+        if(first_round &&
+           !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        {
+
+        }
+
         if((width != p_AVCodecContext->width) || (height != p_AVCodecContext->height) && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             av_freep(&buf);
@@ -355,8 +368,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 
         if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration &&
-           NULL != static_cast<CDecode*>(lpParam)->paramUser.playHandle &&
-           first_round)
+           NULL != static_cast<CDecode*>(lpParam)->paramUser.playHandle)
         {
             av_freep(&buf);
             buf = (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height));
@@ -452,6 +464,13 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     }
 
     avcodec_free_context(&p_AVCodecContext);
+
+#ifdef _DEBUG // thread log
+    pFile = fopen("C:\\thread.log", "ab");
+    sprintf(temp, "decode instance: %d, %p end\n", static_cast<CDecode*>(lpParam)->m_decode_instance, static_cast<CDecode*>(lpParam)->hThreadDecode);
+    fwrite(temp, 1, strlen(temp), pFile);
+    fclose(pFile);
+#endif // thread log end
 
     return 0;
 }
@@ -629,14 +648,6 @@ int CDecode::InputParam(myparamInput *p1)
         // for GDI paly end
 
         hThreadDecode = CreateThread(NULL, 0, videoDecodeQueue, this, 0, &m_decode_thread_ID);
-
-#ifdef MY_DEBUG // thread log
-        FILE* pFile = fopen("C:\\thread.log", "ab");
-        char temp[1024];
-        sprintf(temp, "%p Created\n", hThreadDecode);
-        fwrite(temp, 1, strlen(temp), pFile);
-        fclose(pFile);
-#endif // thread log end
 
         return m_decode_thread_ID;
     }

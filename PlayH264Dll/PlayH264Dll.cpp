@@ -222,14 +222,6 @@ PLAYH264DLL_API int free_decode_instance(int instance)
         GetExitCodeThread(decode_list[instance].p_CDecode->hThreadDecode, &exit_code);
     }
 
-#ifdef MY_DEBUG // thread log
-    FILE* pFile = fopen("C:\\thread.log", "ab");
-    char temp[1024];
-    sprintf(temp, "%p Closed\n", decode_list[instance].p_CDecode->hThreadDecode);
-    fwrite(temp, 1, strlen(temp), pFile);
-    fclose(pFile);
-#endif // thread log end
-
     CloseHandle(decode_list[instance].p_CDecode->hThreadDecode);
 
     decode_list[instance].p_CDecode->dataQueueClean();
