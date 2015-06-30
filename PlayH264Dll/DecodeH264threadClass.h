@@ -17,11 +17,6 @@ extern "C" {
 }
 #endif
 
-#pragma comment(lib,"avcodec.lib")
-#pragma comment(lib,"avformat.lib")
-#pragma comment(lib,"avutil.lib")
-#pragma comment(lib,"swscale.lib")
-
 #include "PlayH264DLL.h"
 
 #define PLAYVIDEO 0

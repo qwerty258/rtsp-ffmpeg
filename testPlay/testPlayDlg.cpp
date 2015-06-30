@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_PAUSE_2, &CtestPlayDlg::OnClickedButtonPause2)
     ON_BN_CLICKED(IDC_BUTTON_DISCONNECT_2, &CtestPlayDlg::OnClickedButtonDisconnect2)
     ON_BN_CLICKED(IDC_BUTTON_RESIZE, &CtestPlayDlg::OnClickedButtonResize)
+ON_BN_CLICKED(IDC_BUTTON_DESKTOP, &CtestPlayDlg::OnClickedButtonDesktop)
 END_MESSAGE_MAP()
 
 
@@ -312,4 +313,36 @@ void CtestPlayDlg::OnClickedButtonResize()
     playing_windows_RECT_changed(m_instance_1);
 
     m_rect_change = !m_rect_change;
+}
+
+
+void CtestPlayDlg::OnClickedButtonDesktop()
+{
+    // TODO: Add your control notification handler code here
+    char URI[] = "rtsp://192.168.10.195:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
+
+    m_instance_1 = get_idle_instance();
+
+    set_hardware_acceleration(m_instance_1, false);
+    int i = 1;
+    set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
+    set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
+    set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
+
+    if(0 > m_instance_1)
+    {
+        AfxMessageBox(L"GetRtspINSTANCE error");
+        return;
+    }
+
+    if(0 > initial_RTSP_parameter(m_instance_1, URI, "admin", "12345", ::GetDesktopWindow()))
+    {
+        AfxMessageBox(L"InitRtspVideoParam error");
+        return;
+    }
+
+    if(0 > RTSP_connect(m_instance_1))
+    {
+        AfxMessageBox(L"Connect error");
+    }
 }

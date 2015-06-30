@@ -46,6 +46,7 @@ public:
     afx_msg void OnClickedButtonPause2();
     afx_msg void OnClickedButtonDisconnect2();
     afx_msg void OnClickedButtonResize();
+    afx_msg void OnClickedButtonDesktop();
 };
 
 int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost);

@@ -744,8 +744,10 @@ static int D3dCreateDevice(va_dxva2_t *va)
     //搜索可用GPU
     static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
     static int physGPU = displayCount;
+#ifdef log_GPU
     FILE * pFile = fopen("c:\\numGpu.log", "ab+");
     fwrite(&physGPU, 1, 4, pFile);
+#endif
 
 
     //寻找最空闲的GPU
@@ -754,9 +756,10 @@ static int D3dCreateDevice(va_dxva2_t *va)
         if(availableGPU[i] < availableGPU[currentGPU])
             currentGPU = i;
     }
+#ifdef log_GPU
     fwrite(&currentGPU, 1, 4, pFile);
     fclose(pFile);
-    //
+#endif
 
     if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, currentGPU, 0, d3dai)))
     {
