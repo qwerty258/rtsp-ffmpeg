@@ -43,7 +43,7 @@ BEGIN_MESSAGE_MAP(CtestPlayDlg, CDialogEx)
     ON_BN_CLICKED(IDC_BUTTON_PAUSE_2, &CtestPlayDlg::OnClickedButtonPause2)
     ON_BN_CLICKED(IDC_BUTTON_DISCONNECT_2, &CtestPlayDlg::OnClickedButtonDisconnect2)
     ON_BN_CLICKED(IDC_BUTTON_RESIZE, &CtestPlayDlg::OnClickedButtonResize)
-ON_BN_CLICKED(IDC_BUTTON_DESKTOP, &CtestPlayDlg::OnClickedButtonDesktop)
+    ON_BN_CLICKED(IDC_BUTTON_DESKTOP, &CtestPlayDlg::OnClickedButtonDesktop)
 END_MESSAGE_MAP()
 
 
@@ -63,25 +63,6 @@ BOOL CtestPlayDlg::OnInitDialog()
     {
         AfxMessageBox(L"InitRtspDLL error");
     }
-
-    //char* buffer = new char[256];
-
-    //if(SDL_Init(SDL_INIT_VIDEO))
-    //{
-    //    sprintf(buffer, "Could not initialize SDL - %s\n", SDL_GetError());
-    //    MessageBoxA(NULL, buffer, NULL, MB_OK);
-    //}
-
-    //screen = SDL_CreateWindow("YUV420p callback test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1920, 1080, SDL_WINDOW_OPENGL);
-    //if(!screen)
-    //{
-    //    sprintf(buffer, "SDL: could not create window - exiting:%s\n", SDL_GetError());
-    //    MessageBoxA(NULL, buffer, NULL, MB_OK);
-    //}
-
-    //sdlRenderer = SDL_CreateRenderer(screen, -1, 0);
-
-    //delete[] buffer;
 
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
