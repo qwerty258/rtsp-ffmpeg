@@ -137,11 +137,11 @@ void CtestPlayDlg::OnClickedButtonPause()
 void CtestPlayDlg::OnClickedButtonConnect()
 {
     // TODO: Add your control notification handler code here
-    char URI[] = "rtsp://192.168.10.195:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
+    char URI[] = "rtsp://192.168.10.185:554/Streaming/Channels/1?transportmode=unicast&profile=Profile_1";
 
     m_instance_1 = get_idle_instance();
 
-    set_hardware_acceleration(m_instance_1, false);
+    set_hardware_acceleration(m_instance_1, true);
     int i = 1;
     set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
     set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
@@ -228,7 +228,7 @@ void CtestPlayDlg::OnClickedButtonConnect2()
 
     m_instance_2 = get_idle_instance();
 
-    set_hardware_acceleration(m_instance_2, false);
+    set_hardware_acceleration(m_instance_2, true);
 
     if(0 > m_instance_2)
     {
