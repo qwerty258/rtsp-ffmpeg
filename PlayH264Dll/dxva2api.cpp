@@ -488,7 +488,7 @@ static int Open(va_dxva2_t** pva, int codec_id)
     va->codec_id = codec_id;
 
     /* Load dll*/
-    va->hd3d9_dll = LoadLibrary(TEXT("D3D9.DLL"));
+    va->hd3d9_dll = LoadLibrary(L"D3D9.DLL");
     if(!va->hd3d9_dll)
     {
         av_log(NULL, AV_LOG_WARNING, "cannot load d3d9.dll");
@@ -497,7 +497,7 @@ static int Open(va_dxva2_t** pva, int codec_id)
 #endif
         goto error;
     }
-    va->hdxva2_dll = LoadLibrary(TEXT("DXVA2.DLL"));
+    va->hdxva2_dll = LoadLibrary(L"DXVA2.DLL");
     if(!va->hdxva2_dll)
     {
         av_log(NULL, AV_LOG_WARNING, "cannot load dxva2.dll");
