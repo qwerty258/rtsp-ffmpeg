@@ -267,8 +267,8 @@ struct va_sys_t
     int          height;
 
     /* DLL */
-    HINSTANCE             hd3d9_dll;
-    HINSTANCE             hdxva2_dll;
+    HMODULE hd3d9_dll;
+    HMODULE hdxva2_dll;
 
     /* Direct3D */
     D3DPRESENT_PARAMETERS  d3dpp;
