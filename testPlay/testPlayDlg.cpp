@@ -142,10 +142,10 @@ void CtestPlayDlg::OnClickedButtonConnect()
     m_instance_1 = get_idle_instance();
 
     set_hardware_acceleration(m_instance_1, true);
-    int i = 1;
-    set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
-    set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
-    set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
+    //int i = 1;
+    //set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
+    //set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
+    //set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
 
     if(0 > m_instance_1)
     {
@@ -304,11 +304,11 @@ void CtestPlayDlg::OnClickedButtonDesktop()
 
     m_instance_1 = get_idle_instance();
 
-    set_hardware_acceleration(m_instance_1, false);
-    int i = 1;
-    set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
-    set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
-    set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
+    set_hardware_acceleration(m_instance_1, true);
+    //int i = 1;
+    //set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
+    //set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
+    //set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
 
     if(0 > m_instance_1)
     {
