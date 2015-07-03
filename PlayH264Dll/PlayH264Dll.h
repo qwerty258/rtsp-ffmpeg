@@ -27,30 +27,109 @@ typedef struct container_myparam_input
 extern "C" {
 #endif // __cplusplus
 
+    //************************************
+    // Function:  initial DLL and set max number of decodeing instance
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int max_number_of_decoding_instance
+    //************************************
     PLAYH264DLL_API int initial_decode_DLL(int max_number_of_decoding_instance);
 
+    //************************************
+    // Function:  release DLL inner resource
+    // Returns:   int: 0 success, -1 failure
+    //************************************
     PLAYH264DLL_API int free_decode_DLL(void);
 
+    //************************************
+    // Function:  return idle instance
+    // Returns:   int: idle instance number on success, -1 on failure
+    // Parameter: void
+    //************************************
     PLAYH264DLL_API int get_idle_decode_instance(void);
 
+    //************************************
+    // Function:  set decode parameters
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_decode_instance()
+    // Parameter: myparamInput* Myparam: decode parameters
+    // Parameter: int type: encoding type, h264: 1 , mpeg: 2 
+    //************************************
     PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam, int type);
 
+    //************************************
+    // Function:  decode a frame buffer
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_decode_instance()
+    // Parameter: unsigned char* pInBuffer: a frame's buffer
+    // Parameter: int size: frame buffer size in bytes
+    // Parameter: unsigned short sequence_number: for trace lost package,
+    //            if you don't set trace_lost_package in callback functions to true,
+    //            this parameter will be ignored, just pass a value into it.
+    // Parameter: unsigned int timestamp: for trace lost package,
+    //            if you don't set trace_lost_package in callback functions to true,
+    //            this parameter will be ignored, just pass a value into it.
+    //************************************
     PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp);
 
+    //************************************
+    // Function:  change inner GDI playing prarmeter to fit the window when the size changed;
+    //            the HWND you passed in earlier corresponding to the window
+    //            this only works when using software decode.
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_decode_instance()
+    //************************************
     PLAYH264DLL_API int playing_windows_RECT_changed_of_decode_DLL(int instance);
 
+    //************************************
+    // Function:  free decode instance specified by user
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the idle instance return by get_idle_decode_instance()
+    //************************************
     PLAYH264DLL_API int free_decode_instance(int instance);
 
+    //************************************
+    // Function:  set YUV420 callback function,
+    //            when this callback function set, the HWND you set won't dispaly.
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_YUV420 p_function_YUV420: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
     PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 
+    //************************************
+    // Function:  set YV12 callback function
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_YV12 p_function_YV12: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
     PLAYH264DLL_API int set_decode_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
 
+    //************************************
+    // Function:  set H264 callback function
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_H264 p_function_H264: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
     PLAYH264DLL_API int set_decode_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
 
-    //support hardware acceleration, default is software decode.
-    //hardware acceleration support h264 and YUV callback, software decode support all callback functions
+    //************************************
+    // Function:  set hardware acceleration, default is software decode
+    //            hardware acceleration support h264 and YUV callback, software decode support all callback functions
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set whether use hardware acceleration
+    // Parameter: bool acceleration: true: use hardware acceleration, false: use software decode
+    //************************************
     PLAYH264DLL_API int set_decode_hardware_acceleration(int instance, bool acceleration = false);
 
+    //************************************
+    // the functions below is deprecated
+    //************************************
     PLAYH264DLL_API int pauseVideos(int instance);
 
     PLAYH264DLL_API int playVideos(int instance);
