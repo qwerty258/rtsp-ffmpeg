@@ -23,8 +23,6 @@ typedef struct container_myparam_input
     //int  VideoCode;       //code type: 0: H264, 1: mpeg4
 }myparamInput;
 
-typedef unsigned char uint8_t;
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
