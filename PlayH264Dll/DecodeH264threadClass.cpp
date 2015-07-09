@@ -36,6 +36,21 @@ extern int DxPictureCopy(struct AVCodecContext *avctx, AVFrame *src, AVFrame* ds
 HWND gPlayWnd = NULL;
 int bGPlayWnd = 0;
 
+void release_dataNode(dataNode* p_dataNode)
+{
+    if(NULL == p_dataNode)
+    {
+        return;
+    }
+
+    if(NULL != p_dataNode->data)
+    {
+        delete[] p_dataNode->data;
+    }
+
+    delete p_dataNode;
+}
+
 int mAVCodecContextInit(AVCodecContext* p_AVCodecContext)
 {
     p_AVCodecContext->get_buffer = DxGetFrameBuf;
@@ -147,6 +162,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     extern int availableGPU[8];
     extern int currentGPU;
 
+    // when H264 callback is set, we need to decode first frame to get width and height, this flag is used to record first decode action
+    bool no_decode_flag = false;
+
     for(;;)
     {
         p_data_node_temp = static_cast<CDecode*>(lpParam)->getNextNetBuf();
@@ -159,16 +177,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(STOPVIDEO == p_data_node_temp->size)
         {
-            if(NULL != p_data_node_temp->data)
-            {
-                delete[] p_data_node_temp->data;
-            }
-
-            if(NULL != p_data_node_temp)
-            {
-                delete p_data_node_temp;
-            }
-
+            release_dataNode(p_data_node_temp);
             break;
         }
 
@@ -183,9 +192,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 #endif
 
-        int nWH = 0;
         // h264 callback output, give out data directly
-        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264 && nWH)
+        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264 && no_decode_flag)
         {
             static_cast<CDecode*>(lpParam)->m_p_function_H264(
                 static_cast<CDecode*>(lpParam)->m_decode_instance,
@@ -196,18 +204,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
                 p_data_node_temp->number_of_lost_frame);
 
-            if(NULL != p_data_node_temp->data)
-            {
-                delete[] p_data_node_temp->data;
-            }
-
-            if(NULL != p_data_node_temp)
-            {
-                delete p_data_node_temp;
-            }
+            release_dataNode(p_data_node_temp);
 
             continue;
-        }
+    }
 
         av_init_packet(&avp);
         avp.data = (uint8_t*)p_data_node_temp->data;
@@ -282,17 +282,9 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_AVFrame_for_decode->height,
                 static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
                 p_data_node_temp->number_of_lost_frame);
-            nWH = 1;
+            no_decode_flag = true;
 
-            if(NULL != p_data_node_temp->data)
-            {
-                delete[] p_data_node_temp->data;
-            }
-
-            if(NULL != p_data_node_temp)
-            {
-                delete p_data_node_temp;
-            }
+            release_dataNode(p_data_node_temp);
 
             continue;
         }
@@ -438,15 +430,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 static_cast<CDecode*>(lpParam)->paramUser.playHeight);
         }
 
-        if(NULL != p_data_node_temp->data)
-        {
-            delete[] p_data_node_temp->data;
-        }
-        if(NULL != p_data_node_temp)
-        {
-            delete p_data_node_temp;
-        }
-    }
+        release_dataNode(p_data_node_temp);
+}
 
     if(p_AVFrame_for_decode->height >= 1080)
     {
