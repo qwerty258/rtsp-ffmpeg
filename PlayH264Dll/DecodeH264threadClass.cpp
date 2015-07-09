@@ -195,13 +195,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_AVFrame_for_decode->height,
                 static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
                 p_data_node_temp->number_of_lost_frame);
-        }
 
-        // if YUV420 YV12 and RGB dispaly not set, there is no need to decode anything
-        if(NULL == static_cast<CDecode*>(lpParam)->m_p_function_YUV420 &&
-           NULL == static_cast<CDecode*>(lpParam)->m_p_function_YV12 &&
-           NULL == static_cast<CDecode*>(lpParam)->paramUser.playHandle)
-        {
+            if(NULL != p_data_node_temp->data)
+            {
+                delete[] p_data_node_temp->data;
+            }
+
+            if(NULL != p_data_node_temp)
+            {
+                delete p_data_node_temp;
+            }
+
             continue;
         }
 
@@ -267,20 +271,31 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             continue;
         }
 
-        //h264 callback
-        //if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264)
-        //{
-        //    static_cast<CDecode*>(lpParam)->m_p_function_H264(
-        //        static_cast<CDecode*>(lpParam)->m_decode_instance,
-        //        (char*)p_data_node_temp->data,
-        //        p_data_node_temp->size,
-        //        p_AVFrame_for_decode->width,
-        //        p_AVFrame_for_decode->height,
-        //        static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
-        //        p_data_node_temp->number_of_lost_frame);
-        //    nWH = 1;
-        //    //continue;
-        //}
+        // h264 callback
+        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264)
+        {
+            static_cast<CDecode*>(lpParam)->m_p_function_H264(
+                static_cast<CDecode*>(lpParam)->m_decode_instance,
+                (char*)p_data_node_temp->data,
+                p_data_node_temp->size,
+                p_AVFrame_for_decode->width,
+                p_AVFrame_for_decode->height,
+                static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
+                p_data_node_temp->number_of_lost_frame);
+            nWH = 1;
+
+            if(NULL != p_data_node_temp->data)
+            {
+                delete[] p_data_node_temp->data;
+            }
+
+            if(NULL != p_data_node_temp)
+            {
+                delete p_data_node_temp;
+            }
+
+            continue;
+        }
 
         if(static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
