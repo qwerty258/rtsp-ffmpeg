@@ -797,8 +797,8 @@ static int D3dCreateDevice(va_dxva2_t *va)
     d3dpp = &va->d3dpp;
     ZeroMemory(d3dpp, sizeof(*d3dpp));
 
-    RECT rct;
-    GetWindowRect(gPlayWnd, &rct);
+    //RECT rct;
+    //GetWindowRect(gPlayWnd, &rct);
     d3dpp->Flags = D3DPRESENTFLAG_VIDEO;
     if(gPlayWnd)
     {
@@ -812,19 +812,24 @@ static int D3dCreateDevice(va_dxva2_t *va)
     }
     d3dpp->SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp->MultiSampleType = D3DMULTISAMPLE_NONE;
-    d3dpp->BackBufferCount = 0;                  /* FIXME what to put here */
-    d3dpp->BackBufferFormat = D3DFMT_R5G6B5;    /* FIXME what to put here */
-    if(gPlayWnd)
-    {
-        d3dpp->BackBufferWidth = ((rct.right - rct.left) > 0 ? (rct.right - rct.left) : (rct.left - rct.right));
-        d3dpp->BackBufferHeight = ((rct.bottom - rct.top) > 0 ? (rct.bottom - rct.top) : (rct.top - rct.bottom));
-    }
-    else
-    {
-        d3dpp->BackBufferWidth = GetSystemMetrics(SM_CXSCREEN);
-        d3dpp->BackBufferHeight = GetSystemMetrics(SM_CYSCREEN);
-    }
-    d3dpp->EnableAutoDepthStencil = FALSE;
+    //d3dpp->BackBufferCount = 0;                  /* FIXME what to put here */
+    //d3dpp->BackBufferFormat = D3DFMT_R5G6B5;    /* FIXME what to put here */
+    //if(gPlayWnd)
+    //{
+    //    //d3dpp->BackBufferWidth = ((rct.right - rct.left) > 0 ? (rct.right - rct.left) : (rct.left - rct.right));
+    //    //d3dpp->BackBufferHeight = ((rct.bottom - rct.top) > 0 ? (rct.bottom - rct.top) : (rct.top - rct.bottom));
+    //    d3dpp->BackBufferWidth = 1920;
+    //    d3dpp->BackBufferHeight = 1080;
+    //}
+    //else
+    //{
+    //*********************************************************************************************************
+    // use screen size, if use HWND's width and height, when the size of rect is enlarged, the picture is fuzzy
+    //*********************************************************************************************************
+    d3dpp->BackBufferWidth = GetSystemMetrics(SM_CXSCREEN);
+    d3dpp->BackBufferHeight = GetSystemMetrics(SM_CYSCREEN);
+    //}
+    //d3dpp->EnableAutoDepthStencil = FALSE;
     d3dpp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     //if ( D3DERR_INVALIDCALL == ( d3dobj->CheckDeviceFormat( currentGPU, D3DDEVTYPE_HAL,
