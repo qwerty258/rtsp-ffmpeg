@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="DecodeH264threadClass.h" />
     <ClInclude Include="dxva2api.h" />
+    <ClInclude Include="GPUUsage.h" />
     <ClInclude Include="PlayH264DLL.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -185,6 +186,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="dxva2api.cpp" />
+    <ClCompile Include="GPUUsage.cpp" />
     <ClCompile Include="PlayH264DLL.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
