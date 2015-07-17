@@ -22,6 +22,7 @@ bool initial_NVIDIA_driver(void)
 {
     if(NVAPI_OK != NvAPI_Initialize())
     {
+        MessageBox(NULL, L"no NVIDIA driver detected, only software decode are aviable", L"WARNING", MB_OK | MB_ICONWARNING);
         return false;
     }
     else
@@ -42,7 +43,7 @@ bool free_NVIDIA_driver(void)
     }
 }
 
-bool initial_usage_count(void)
+bool initial_NVIDIA_GPU_usage_count(void)
 {
     InitializeCriticalSection(&critical_section_lock);
 
@@ -149,6 +150,18 @@ bool initial_usage_count(void)
             }
         }
     }
+
+    return true;
+}
+
+bool free_NVIDIA_GPU_usage_count(void)
+{
+    for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
+    {
+        delete (*correspondence_list_iterator);
+    }
+
+    correspondence_list.clear();
 
     return true;
 }

@@ -29,7 +29,7 @@ typedef struct container_decode_data
 decode_data* decode_list;
 int          max_decode_number;
 
-bool GPU_driver_initialed;
+bool NVIDIA_GPU_driver_initialed;
 
 int check_instance(int instance)
 {
@@ -62,11 +62,14 @@ PLAYH264DLL_API int initial_decode_DLL(int max_number_of_decoding_instance)
 
     memset(decode_list, 0x0, max_decode_number * sizeof(decode_data));
 
-    GPU_driver_initialed = initial_NVIDIA_driver();
+    NVIDIA_GPU_driver_initialed = initial_NVIDIA_driver();
 
-    if(!initial_usage_count())
+    if(NVIDIA_GPU_driver_initialed)
     {
-        return -1;
+        if(!initial_NVIDIA_GPU_usage_count())
+        {
+            return -1;
+        }
     }
 
     return 0;
@@ -81,9 +84,13 @@ PLAYH264DLL_API int free_decode_DLL(void)
 
     delete[] decode_list;
 
-    if(GPU_driver_initialed)
+    if(NVIDIA_GPU_driver_initialed)
     {
-        free_NVIDIA_driver();
+        free_NVIDIA_GPU_usage_count();
+        if(!free_NVIDIA_driver())
+        {
+            MessageBox(NULL, L"free_NVIDIA_driver error", L"WARNING", MB_OK | MB_ICONWARNING);
+        }
     }
 
     return 0;
@@ -309,7 +316,7 @@ PLAYH264DLL_API int set_decode_hardware_acceleration(int instance, bool accelera
         return -1;
     }
 
-    if(GPU_driver_initialed)
+    if(NVIDIA_GPU_driver_initialed)
     {
         decode_list[instance].p_CDecode->m_b_hardware_acceleration = acceleration;
     }
