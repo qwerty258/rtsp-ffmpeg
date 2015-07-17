@@ -165,3 +165,28 @@ bool free_NVIDIA_GPU_usage_count(void)
 
     return true;
 }
+
+bool get_NVIDIA_GPU_usage(void)
+{
+    NV_GPU_DYNAMIC_PSTATES_INFO_EX GPUPstatesInfo;
+    GPUPstatesInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
+
+    for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
+    {
+        if(NVAPI_OK != NvAPI_GPU_GetDynamicPstatesInfoEx((*correspondence_list_iterator)->physical_GPU_handle, &GPUPstatesInfo))
+        {
+            break;
+        }
+
+        (*correspondence_list_iterator)->video_engine_load_percentage = GPUPstatesInfo.utilization[2].percentage;
+    }
+
+    if(correspondence_list_iterator == correspondence_list.end())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
