@@ -227,3 +227,28 @@ bool is_NVIDIA_GPU_usage_full(void)
 
     return result;
 }
+
+unsigned int get_most_idle_NVIDIA_GPU(void)
+{
+    unsigned int result;
+
+    EnterCriticalSection(&critical_section_lock);
+
+    vector<adapter_to_physical_GPU*>::iterator iterator_most_idle;
+
+    iterator_most_idle = correspondence_list.begin();
+
+    for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
+    {
+        if((*iterator_most_idle)->video_engine_load_percentage > (*correspondence_list_iterator)->video_engine_load_percentage)
+        {
+            iterator_most_idle = correspondence_list_iterator;
+        }
+    }
+
+    result = (*iterator_most_idle)->adapter;
+
+    LeaveCriticalSection(&critical_section_lock);
+
+    return result;
+}
