@@ -64,6 +64,11 @@ PLAYH264DLL_API int initial_decode_DLL(int max_number_of_decoding_instance)
 
     GPU_driver_initialed = initial_NVIDIA_driver();
 
+    if(!initial_usage_count())
+    {
+        return -1;
+    }
+
     return 0;
 }
 
