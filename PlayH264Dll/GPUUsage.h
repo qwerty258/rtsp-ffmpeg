@@ -9,3 +9,5 @@ bool initial_NVIDIA_GPU_usage_count(void);
 bool free_NVIDIA_GPU_usage_count(void);
 
 bool get_NVIDIA_GPU_usage(void);
+
+bool is_NVIDIA_GPU_usage_full(void);

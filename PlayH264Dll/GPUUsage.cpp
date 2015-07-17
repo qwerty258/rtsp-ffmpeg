@@ -156,6 +156,8 @@ bool initial_NVIDIA_GPU_usage_count(void)
 
 bool free_NVIDIA_GPU_usage_count(void)
 {
+    DeleteCriticalSection(&critical_section_lock);
+
     for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
     {
         delete (*correspondence_list_iterator);
@@ -170,6 +172,9 @@ bool get_NVIDIA_GPU_usage(void)
 {
     NV_GPU_DYNAMIC_PSTATES_INFO_EX GPUPstatesInfo;
     GPUPstatesInfo.version = NV_GPU_DYNAMIC_PSTATES_INFO_EX_VER;
+    bool result;
+
+    EnterCriticalSection(&critical_section_lock);
 
     for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
     {
@@ -183,10 +188,42 @@ bool get_NVIDIA_GPU_usage(void)
 
     if(correspondence_list_iterator == correspondence_list.end())
     {
-        return true;
+        result = true;
     }
     else
     {
-        return false;
+        result = false;
     }
+
+    LeaveCriticalSection(&critical_section_lock);
+
+    return result;
+}
+
+bool is_NVIDIA_GPU_usage_full(void)
+{
+    bool result;
+    EnterCriticalSection(&critical_section_lock);
+
+    for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
+    {
+        if(90 > (*correspondence_list_iterator)->video_engine_load_percentage)
+        {
+            break;
+        }
+    }
+
+    if(correspondence_list_iterator == correspondence_list.end())
+    {
+        result = true;
+    }
+    else
+    {
+        LeaveCriticalSection(&critical_section_lock);
+        result = false;
+    }
+
+    LeaveCriticalSection(&critical_section_lock);
+
+    return result;
 }
