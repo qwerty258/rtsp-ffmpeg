@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "PlayH264Dll.h"
 #include "DecodeH264threadClass.h"
+#include "GPUUsage.h"
 #pragma warning(disable: 4996)
 
 using namespace std;
@@ -28,6 +29,7 @@ typedef struct container_decode_data
 decode_data* decode_list;
 int          max_decode_number;
 
+bool GPU_driver_initialed;
 
 int check_instance(int instance)
 {
@@ -60,6 +62,8 @@ PLAYH264DLL_API int initial_decode_DLL(int max_number_of_decoding_instance)
 
     memset(decode_list, 0x0, max_decode_number * sizeof(decode_data));
 
+    GPU_driver_initialed = initial_NVIDIA_driver();
+
     return 0;
 }
 
@@ -71,6 +75,11 @@ PLAYH264DLL_API int free_decode_DLL(void)
     }
 
     delete[] decode_list;
+
+    if(GPU_driver_initialed)
+    {
+        free_NVIDIA_driver();
+    }
 
     return 0;
 }
@@ -249,7 +258,7 @@ PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_f
 #endif
     {
         return -1;
-}
+    }
 
     decode_list[instance].p_CDecode->m_p_function_YUV420 = p_function_YUV420;
     decode_list[instance].p_CDecode->m_p_YUV420_extra_data = additional_data;
@@ -295,7 +304,10 @@ PLAYH264DLL_API int set_decode_hardware_acceleration(int instance, bool accelera
         return -1;
     }
 
-    decode_list[instance].p_CDecode->m_b_hardware_acceleration = acceleration;
+    if(GPU_driver_initialed)
+    {
+        decode_list[instance].p_CDecode->m_b_hardware_acceleration = acceleration;
+    }
 
     return 0;
 }
