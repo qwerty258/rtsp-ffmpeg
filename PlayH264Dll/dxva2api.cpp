@@ -40,6 +40,7 @@ extern "C" {
 #include <d3d9.h>
 
 #include "va.h"
+#include "GPUUsage.h"
 
 #include <initguid.h> /* must be last included to not redefine existing GUIDs */
 #include <assert.h>
@@ -768,26 +769,26 @@ static int D3dCreateDevice(va_dxva2_t *va)
     /* */
     d3dai = &va->d3dai;
     //搜索可用GPU
-    static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
-    static int physGPU = displayCount;
-#ifdef log_GPU
-    FILE * pFile = fopen("c:\\numGpu.log", "ab+");
-    fwrite(&physGPU, 1, 4, pFile);
-#endif
+    //    static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
+    //    static int physGPU = displayCount;
+    //#ifdef log_GPU
+    //    FILE * pFile = fopen("c:\\numGpu.log", "ab+");
+    //    fwrite(&physGPU, 1, 4, pFile);
+    //#endif
 
 
     //寻找最空闲的GPU
-    for(int i = 0; i < physGPU; i++)
-    {
-        if(availableGPU[i] < availableGPU[currentGPU])
-            currentGPU = i;
-    }
-#ifdef log_GPU
-    fwrite(&currentGPU, 1, 4, pFile);
-    fclose(pFile);
-#endif
+    //    for(int i = 0; i < physGPU; i++)
+    //    {
+    //        if(availableGPU[i] < availableGPU[currentGPU])
+    //            currentGPU = i;
+    //    }
+    //#ifdef log_GPU
+    //    fwrite(&currentGPU, 1, 4, pFile);
+    //    fclose(pFile);
+    //#endif
 
-    if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, currentGPU, 0, d3dai)))
+    if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, get_most_idle_NVIDIA_GPU(), 0, d3dai)))
     {
         av_log(NULL, AV_LOG_WARNING, "IDirect3D9_GetAdapterIdentifier failed");
         ZeroMemory(d3dai, sizeof(*d3dai));

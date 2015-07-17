@@ -219,7 +219,6 @@ bool is_NVIDIA_GPU_usage_full(void)
     }
     else
     {
-        LeaveCriticalSection(&critical_section_lock);
         result = false;
     }
 

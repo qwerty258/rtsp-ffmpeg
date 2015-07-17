@@ -3,6 +3,7 @@
 #include <atlimage.h>
 #include <ddraw.h>
 #include "va.h"
+#include "GPUUsage.h"
 
 using namespace std;
 #pragma comment(lib,"ddraw.lib")
@@ -149,9 +150,18 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     p_AVCodec = avcodec_find_decoder(codeType);
     p_AVCodecContext = avcodec_alloc_context3(p_AVCodec);
 
+    get_NVIDIA_GPU_usage();
+
     if(static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
     {
-        mAVCodecContextInit(p_AVCodecContext);
+        if(is_NVIDIA_GPU_usage_full())
+        {
+            static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration = false;
+        }
+        else
+        {
+            mAVCodecContextInit(p_AVCodecContext);
+        }
     }
 
     if(0 > avcodec_open2(p_AVCodecContext, p_AVCodec, NULL))
@@ -207,7 +217,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             release_dataNode(p_data_node_temp);
 
             continue;
-    }
+        }
 
         av_init_packet(&avp);
         avp.data = (uint8_t*)p_data_node_temp->data;
@@ -431,7 +441,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 
         release_dataNode(p_data_node_temp);
-}
+    }
 
     if(p_AVFrame_for_decode->height >= 1080)
     {
