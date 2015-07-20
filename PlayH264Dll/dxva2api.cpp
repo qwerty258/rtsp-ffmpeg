@@ -840,7 +840,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     //		return FALSE; // Return FALSE
     //}
 
-    if(FAILED(IDirect3D9_CreateDevice(d3dobj, /*D3DADAPTER_DEFAULT*/ currentGPU, D3DDEVTYPE_HAL, gPlayWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, d3dpp, &d3ddev)))
+    if(FAILED(IDirect3D9_CreateDevice(d3dobj, get_most_idle_NVIDIA_GPU(), D3DDEVTYPE_HAL, gPlayWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, d3dpp, &d3ddev)))
     {
 #ifdef _DEBUG
         fputs("IDirect3D9_CreateDevice failed\n", pFile);

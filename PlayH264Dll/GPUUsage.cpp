@@ -4,6 +4,12 @@
 #include <d3d9.h>
 #include <vector>
 #include <string>
+
+#ifdef _DEBUG
+FILE* p_log_file;
+char* buffer;
+#endif
+
 using namespace std;
 
 typedef struct container_adapter_to_physical_GPU
@@ -20,6 +26,12 @@ CRITICAL_SECTION critical_section_lock;
 
 bool initial_NVIDIA_driver(void)
 {
+
+#ifdef _DEBUG
+    p_log_file = fopen("C:\\gpu_count.log", "wb");
+    buffer = new char[1024];
+#endif
+
     if(NVAPI_OK != NvAPI_Initialize())
     {
         MessageBox(NULL, L"no NVIDIA driver detected, only software decode are aviable", L"WARNING", MB_OK | MB_ICONWARNING);
@@ -33,8 +45,15 @@ bool initial_NVIDIA_driver(void)
 
 bool free_NVIDIA_driver(void)
 {
+
+#ifdef _DEBUG
+    fclose(p_log_file);
+    delete buffer;
+#endif
+
     if(NVAPI_OK != NvAPI_Unload())
     {
+        MessageBox(NULL, L"free_NVIDIA_driver error, please restart program.", L"WARNING", MB_OK | MB_ICONWARNING);
         return false;
     }
     else
@@ -45,6 +64,12 @@ bool free_NVIDIA_driver(void)
 
 bool initial_NVIDIA_GPU_usage_count(void)
 {
+
+#ifdef _DEBUG
+    sprintf(buffer, "initial_NVIDIA_GPU_usage_count:\r\n");
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+#endif
+
     InitializeCriticalSection(&critical_section_lock);
 
     IDirect3D9* p_IDirect3D9 = Direct3DCreate9(D3D_SDK_VERSION);
@@ -54,6 +79,11 @@ bool initial_NVIDIA_GPU_usage_count(void)
     }
 
     UINT adapter_count = p_IDirect3D9->GetAdapterCount();
+
+#ifdef _DEBUG
+    sprintf(buffer, "adapter_count: %u\r\n", adapter_count);
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+#endif
 
     correspondence_list.resize(adapter_count);
 
@@ -118,6 +148,21 @@ bool initial_NVIDIA_GPU_usage_count(void)
         adapter_count = p_IDirect3D9->Release();
     } while(adapter_count > 0);
 
+#ifdef _DEBUG
+    sprintf(buffer, "before remove usless:\r\n");
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+    for(size_t i = 0; i < correspondence_list.size(); i++)
+    {
+        sprintf(buffer, "adapter: %u\r\n", correspondence_list[i]->adapter);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+        sprintf(buffer, "physical_GPU_handle: %p\r\n", correspondence_list[i]->physical_GPU_handle);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+        sprintf(buffer, "video_engine_load_percentage: %u\r\n\r\n", correspondence_list[i]->video_engine_load_percentage);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+    }
+#endif
+
+
     vector<adapter_to_physical_GPU*>::iterator iterator_temp;
 
     for(correspondence_list_iterator = correspondence_list.begin(); correspondence_list_iterator != correspondence_list.end(); ++correspondence_list_iterator)
@@ -150,6 +195,20 @@ bool initial_NVIDIA_GPU_usage_count(void)
             }
         }
     }
+
+#ifdef _DEBUG
+    sprintf(buffer, "after remove usless:\r\n");
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+    for(size_t i = 0; i < correspondence_list.size(); i++)
+    {
+        sprintf(buffer, "adapter: %u\r\n", correspondence_list[i]->adapter);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+        sprintf(buffer, "physical_GPU_handle: %p\r\n", correspondence_list[i]->physical_GPU_handle);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+        sprintf(buffer, "video_engine_load_percentage: %u\r\n\r\n", correspondence_list[i]->video_engine_load_percentage);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+    }
+#endif
 
     return true;
 }
@@ -194,6 +253,20 @@ bool get_NVIDIA_GPU_usage(void)
     {
         result = false;
     }
+
+#ifdef _DEBUG
+    sprintf(buffer, "after get_NVIDIA_GPU_usage:\r\n");
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+    for(size_t i = 0; i < correspondence_list.size(); i++)
+    {
+        sprintf(buffer, "adapter: %u\r\n", correspondence_list[i]->adapter);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+        sprintf(buffer, "physical_GPU_handle: %p\r\n", correspondence_list[i]->physical_GPU_handle);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+        sprintf(buffer, "video_engine_load_percentage: %u\r\n\r\n", correspondence_list[i]->video_engine_load_percentage);
+        fwrite(buffer, strlen(buffer), 1, p_log_file);
+    }
+#endif
 
     LeaveCriticalSection(&critical_section_lock);
 
@@ -246,6 +319,13 @@ unsigned int get_most_idle_NVIDIA_GPU(void)
     }
 
     result = (*iterator_most_idle)->adapter;
+
+#ifdef _DEBUG
+    sprintf(buffer, "get_most_idle_NVIDIA_GPU:\r\n");
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+    sprintf(buffer, "most idle adapter: %u\r\n\r\n", (*iterator_most_idle)->adapter);
+    fwrite(buffer, strlen(buffer), 1, p_log_file);
+#endif
 
     LeaveCriticalSection(&critical_section_lock);
 

@@ -87,10 +87,7 @@ PLAYH264DLL_API int free_decode_DLL(void)
     if(NVIDIA_GPU_driver_initialed)
     {
         free_NVIDIA_GPU_usage_count();
-        if(!free_NVIDIA_driver())
-        {
-            MessageBox(NULL, L"free_NVIDIA_driver error", L"WARNING", MB_OK | MB_ICONWARNING);
-        }
+        free_NVIDIA_driver();
     }
 
     return 0;
