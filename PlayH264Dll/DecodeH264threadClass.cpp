@@ -237,31 +237,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             break;
         }
 
-        // count GPU usage
         if(first_round && static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
-            //GT620 total number: 1000
-            // 1080, GPU consume: 300
-            //  960, GPU consume: 250
-            //  720, GPU consume: 140
-            //   D1, GPU consume: 60
-
-            if(p_AVFrame_for_decode->height >= 1080)
-            {
-                availableGPU[currentGPU] += 300;
-            }
-            else if(p_AVFrame_for_decode->height >= 960)
-            {
-                availableGPU[currentGPU] += 250;
-            }
-            else if(p_AVFrame_for_decode->height >= 720)
-            {
-                availableGPU[currentGPU] += 140;
-            }
-            else
-            {
-                availableGPU[currentGPU] += 60;
-            }
             if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_YUV420)
             {
                 p_AVFrame_for_YUV420->width = p_AVFrame_for_decode->width;
@@ -441,23 +418,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 
         release_dataNode(p_data_node_temp);
-    }
-
-    if(p_AVFrame_for_decode->height >= 1080)
-    {
-        availableGPU[currentGPU] -= 300;
-    }
-    else if(p_AVFrame_for_decode->height >= 960)
-    {
-        availableGPU[currentGPU] -= 250;
-    }
-    else if(p_AVFrame_for_decode->height >= 720)
-    {
-        availableGPU[currentGPU] -= 140;
-    }
-    else
-    {
-        availableGPU[currentGPU] -= 60;
     }
 
     if(NULL != buffer_for_YUV420_raw_data)
