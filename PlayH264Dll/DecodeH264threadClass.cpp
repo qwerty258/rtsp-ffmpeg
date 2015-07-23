@@ -391,7 +391,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             p_SwsContext_for_RGB = sws_getContext(p_AVCodecContext->width, p_AVCodecContext->height, p_AVCodecContext->pix_fmt, p_AVCodecContext->width, p_AVCodecContext->height, AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
             first_round = false;
         }
-        if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        if(NULL == static_cast<CDecode*>(lpParam)->m_p_function_YUV420 && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             p_AVFrame_for_decode->data[0] += p_AVFrame_for_decode->linesize[0] * (p_AVCodecContext->height - 1);
             p_AVFrame_for_decode->linesize[0] *= -1;
