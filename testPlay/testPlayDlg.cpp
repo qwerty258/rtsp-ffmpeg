@@ -367,9 +367,9 @@ void CtestPlayDlg::OnClickedButtonConnect()
 
     m_instance_1 = get_idle_instance();
 
-    //int i = 1;xingyun
+    int i = 1;
     //set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
-    //set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
+    set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
     //set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
 
     if(0 > m_instance_1)

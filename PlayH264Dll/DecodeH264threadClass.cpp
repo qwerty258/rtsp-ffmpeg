@@ -340,8 +340,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                     AV_PIX_FMT_YUV420P,
                     p_AVCodecContext->width,
                     p_AVCodecContext->height),
-                p_AVCodecContext->height,
                 p_AVCodecContext->width,
+                p_AVCodecContext->height,
                 p_data_node_temp->frame_ID,
                 static_cast<CDecode*>(lpParam)->m_p_YUV420_extra_data,
                 p_data_node_temp->number_of_lost_frame);
