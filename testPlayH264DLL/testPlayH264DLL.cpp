@@ -43,6 +43,21 @@ DWORD WINAPI DecodeThread(LPVOID lpParam)
     fclose(pSizeFile);
     fclose(pDataFile);
 
+    unsigned int CurrentPos = 0;
+    unsigned int DataJumpBytes = 0;
+
+    while((*(bool*)lpParam))
+    {
+
+
+        DataJumpBytes += size[CurrentPos];
+        CurrentPos++;
+        if(CurrentPos >= test_video_size_file_size / 4)
+        {
+            CurrentPos = 0;
+            DataJumpBytes = 0;
+        }
+    }
 
     delete[] buffer;
     delete[] size;
@@ -76,8 +91,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 
     DWORD dDecodeThreadID;
     HANDLE hDecodeThread;
+    bool bLoop = true;
 
-    hDecodeThread = CreateThread(NULL, 0, DecodeThread, NULL, 0, &dDecodeThreadID);
+    hDecodeThread = CreateThread(NULL, 0, DecodeThread, &bLoop, 0, &dDecodeThreadID);
 
     // Main message loop:
     while(GetMessage(&msg, NULL, 0, 0))
@@ -88,6 +104,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
             DispatchMessage(&msg);
         }
     }
+
+    bLoop = false;
 
     WaitForSingleObject(hDecodeThread, INFINITE);
 
