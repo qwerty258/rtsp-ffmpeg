@@ -73,7 +73,6 @@ private:
     double m_available_phys_memory;
 
     DWORD m_decode_thread_ID;
-    BITMAPFILEHEADER bmpheader;
 
     int bits_per_pixel;
     HBITMAP  hbit;
@@ -98,7 +97,7 @@ public:
     void* m_p_H264_extra_data;
     // function pointer for callback end
 
-    BITMAPINFOHEADER bmpinfo;
+    BITMAPINFO bmpinfo;
 
 public:
     int type;//code type: 1: h264, 2: mpeg, 3: FLV

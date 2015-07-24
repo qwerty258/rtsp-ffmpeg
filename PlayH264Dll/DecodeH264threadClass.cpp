@@ -342,8 +342,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             {
                 break;
             }
-            static_cast<CDecode*>(lpParam)->bmpinfo.biWidth = p_AVFrame_for_decode->width;
-            static_cast<CDecode*>(lpParam)->bmpinfo.biHeight = p_AVFrame_for_decode->height;
+            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biWidth = p_AVFrame_for_decode->width;
+            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biHeight = p_AVFrame_for_decode->height;
             avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buf, PIX_FMT_BGR24, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height);
         }
 
@@ -358,8 +358,8 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             {
                 break;
             }
-            static_cast<CDecode*>(lpParam)->bmpinfo.biWidth = p_AVCodecContext->width;
-            static_cast<CDecode*>(lpParam)->bmpinfo.biHeight = p_AVCodecContext->height;
+            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biWidth = p_AVCodecContext->width;
+            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biHeight = p_AVCodecContext->height;
             avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buf, AV_PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
         }
 
@@ -481,6 +481,7 @@ CDecode::CDecode()
 
     // for GDI paly begin
     m_hDC = NULL;
+    memset(&bmpinfo, 0x0, sizeof(BITMAPINFOHEADER));
     // for GDI paly end
 }
 
@@ -588,24 +589,15 @@ int CDecode::InputParam(myparamInput *p1)
         paramUser.playChannle = p1->playChannle;
         paramUser.isDecode = p1->isDecode;
 
-        bmpheader.bfSize = bmpheader.bfOffBits + (p1->width)*(p1->height)*bits_per_pixel / 8;
-        bmpinfo.biSizeImage = ((p1->width)*bits_per_pixel + 31) / 32 * 4 * (p1->height);
-
-        bmpheader.bfType = 0x4d42;
-        bmpheader.bfReserved1 = 0;
-        bmpheader.bfReserved2 = 0;
-        bmpheader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-
-        bmpinfo.biSize = sizeof(BITMAPINFOHEADER);
-
-        bmpinfo.biPlanes = 1;
-        bmpinfo.biBitCount = bits_per_pixel;
-        bmpinfo.biCompression = BI_RGB;
-
-        bmpinfo.biXPelsPerMeter = 100;
-        bmpinfo.biYPelsPerMeter = 100;
-        bmpinfo.biClrUsed = 0;
-        bmpinfo.biClrImportant = 0;
+        bmpinfo.bmiHeader.biBitCount = bits_per_pixel;
+        bmpinfo.bmiHeader.biClrImportant = 0;
+        bmpinfo.bmiHeader.biClrUsed = 0;
+        bmpinfo.bmiHeader.biCompression = BI_RGB;
+        bmpinfo.bmiHeader.biPlanes = 1;
+        bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFO);
+        bmpinfo.bmiHeader.biSizeImage = 0;
+        bmpinfo.bmiHeader.biXPelsPerMeter = 0;
+        bmpinfo.bmiHeader.biYPelsPerMeter = 0;
 
         playResize();
 
