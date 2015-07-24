@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPlay", "testPlay\testPlay.vcxproj", "{83043528-0972-4377-A99F-B18E0655084A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -14,6 +14,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTSPFFmpeg", "RTSPFFmpeg\RT
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayH264DLL", "PlayH264DLL\PlayH264DLL.vcxproj", "{4C40B635-5336-4950-8C1F-17296D0F422D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPlayH264DLL", "testPlayH264DLL\testPlayH264DLL.vcxproj", "{13EC801C-8C55-4E87-8717-F7484AF09E30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,12 @@ Global
 		{4C40B635-5336-4950-8C1F-17296D0F422D}.Release|Win32.Build.0 = Release|Win32
 		{4C40B635-5336-4950-8C1F-17296D0F422D}.Release|x64.ActiveCfg = Release|x64
 		{4C40B635-5336-4950-8C1F-17296D0F422D}.Release|x64.Build.0 = Release|x64
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Debug|Win32.ActiveCfg = Debug|Win32
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Debug|Win32.Build.0 = Debug|Win32
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Debug|x64.ActiveCfg = Debug|Win32
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|Win32.ActiveCfg = Release|Win32
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|Win32.Build.0 = Release|Win32
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
