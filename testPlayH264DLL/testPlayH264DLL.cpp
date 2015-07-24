@@ -48,7 +48,7 @@ DWORD WINAPI DecodeThread(LPVOID lpParam)
 
     while((*(bool*)lpParam))
     {
-
+        decode(playing_intance, (unsigned char*)(buffer + DataJumpBytes), size[CurrentPos], 0, 0);
 
         DataJumpBytes += size[CurrentPos];
         CurrentPos++;
@@ -67,6 +67,8 @@ DWORD WINAPI DecodeThread(LPVOID lpParam)
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow)
 {
+    playing_intance = -1;
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -86,6 +88,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
     }
 
     playing_intance = get_idle_decode_instance();
+
+    myparamInput input_parameter;
+    memset(&input_parameter, 0x0, sizeof(myparamInput));
+    input_parameter.fps = 25;
+    input_parameter.isDecode = true;
+    input_parameter.playChannle = playing_intance;
+    input_parameter.playHandle = hWnd;
+
+    //set_decode_hardware_acceleration(playing_intance, true);
+
+    initial_decode_parameter(playing_intance, &input_parameter, 1);
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TESTPLAYH264DLL));
 
@@ -209,6 +222,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: Add any drawing code here...
             EndPaint(hWnd, &ps);
             break;
+            //case WM_SIZE:
+            //    playing_windows_RECT_changed_of_decode_DLL(playing_intance);
+            //    break;
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
