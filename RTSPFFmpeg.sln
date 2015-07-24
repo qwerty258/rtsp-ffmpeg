@@ -54,7 +54,8 @@ Global
 		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Debug|x64.ActiveCfg = Debug|Win32
 		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|Win32.ActiveCfg = Release|Win32
 		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|Win32.Build.0 = Release|Win32
-		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|x64.ActiveCfg = Release|Win32
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|x64.ActiveCfg = Release|x64
+		{13EC801C-8C55-4E87-8717-F7484AF09E30}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
