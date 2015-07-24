@@ -50,6 +50,8 @@ DWORD WINAPI DecodeThread(LPVOID lpParam)
     {
         decode(playing_intance, (unsigned char*)(buffer + DataJumpBytes), size[CurrentPos], 0, 0);
 
+        Sleep(30);
+
         DataJumpBytes += size[CurrentPos];
         CurrentPos++;
         if(CurrentPos >= test_video_size_file_size / 4)
@@ -224,9 +226,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: Add any drawing code here...
             EndPaint(hWnd, &ps);
             break;
-            //case WM_SIZE:
-            //    playing_windows_RECT_changed_of_decode_DLL(playing_intance);
-            //    break;
+        case WM_SIZE:
+            playing_windows_RECT_changed_of_decode_DLL(playing_intance);
+            break;
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
