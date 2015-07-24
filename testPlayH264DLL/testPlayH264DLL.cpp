@@ -92,9 +92,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
     myparamInput input_parameter;
     memset(&input_parameter, 0x0, sizeof(myparamInput));
     input_parameter.fps = 25;
+    input_parameter.height = 720;
     input_parameter.isDecode = true;
-    input_parameter.playChannle = playing_intance;
+    input_parameter.playChannle = 1;
     input_parameter.playHandle = hWnd;
+    input_parameter.width = 1280;
 
     //set_decode_hardware_acceleration(playing_intance, true);
 
