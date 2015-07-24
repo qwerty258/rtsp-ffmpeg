@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "testPlayH264DLL.h"
+#include <PlayH264DLL.h>
 
 #define MAX_LOADSTRING 100
 
@@ -32,7 +33,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
     MyRegisterClass(hInstance);
 
     // Perform application initialization:
-    if(!InitInstance(hInstance, nCmdShow))
+    if(!InitInstance(hInstance, nCmdShow) || 0 != initial_decode_DLL(10))
     {
         return FALSE;
     }
@@ -48,6 +49,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
             DispatchMessage(&msg);
         }
     }
+
+    free_decode_DLL();
 
     return (int)msg.wParam;
 }
