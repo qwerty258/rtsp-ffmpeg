@@ -19,6 +19,11 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+DWORD WINAPI DecodeThread(LPVOID lpParam)
+{
+    return 0;
+}
+
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
@@ -43,6 +48,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TESTPLAYH264DLL));
 
+    DWORD dDecodeThreadID;
+    HANDLE hDecodeThread;
+
+    hDecodeThread = CreateThread(NULL, 0, DecodeThread, NULL, 0, &dDecodeThreadID);
+
     // Main message loop:
     while(GetMessage(&msg, NULL, 0, 0))
     {
@@ -52,6 +62,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
             DispatchMessage(&msg);
         }
     }
+
+    WaitForSingleObject(hDecodeThread, INFINITE);
 
     free_decode_DLL();
 
