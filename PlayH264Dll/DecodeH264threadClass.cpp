@@ -90,6 +90,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
     int PictureSize;
     uint8_t* buf = NULL;
+    uint8_t* buf2 = NULL;
 
 #ifdef _DEBUG // thread log
     FILE* pFile = fopen("C:\\thread.log", "ab");
@@ -172,9 +173,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     extern int availableGPU[8];
     extern int currentGPU;
 
-    // when H264 callback is set, we need to decode first frame to get width and height, this flag is used to record first decode action
-    bool no_decode_flag = false;
-
     for(;;)
     {
         p_data_node_temp = static_cast<CDecode*>(lpParam)->getNextNetBuf();
@@ -202,23 +200,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         }
 #endif
 
-        // h264 callback output, give out data directly
-        if(NULL != static_cast<CDecode*>(lpParam)->m_p_function_H264 && no_decode_flag)
-        {
-            static_cast<CDecode*>(lpParam)->m_p_function_H264(
-                static_cast<CDecode*>(lpParam)->m_decode_instance,
-                (char*)p_data_node_temp->data,
-                p_data_node_temp->size,
-                p_AVFrame_for_decode->width,
-                p_AVFrame_for_decode->height,
-                static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
-                p_data_node_temp->number_of_lost_frame);
-
-            release_dataNode(p_data_node_temp);
-
-            continue;
-        }
-
         av_init_packet(&avp);
         avp.data = (uint8_t*)p_data_node_temp->data;
         avp.size = p_data_node_temp->size;
@@ -243,9 +224,10 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             {
                 p_AVFrame_for_YUV420->width = p_AVFrame_for_decode->width;
                 p_AVFrame_for_YUV420->height = p_AVFrame_for_decode->height;
+                buf2 = (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height));
                 avpicture_fill(
                     (AVPicture*)p_AVFrame_for_YUV420,
-                    (uint8_t*)av_malloc(avpicture_get_size(AV_PIX_FMT_YUV420P, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height)),
+                    buf2,
                     AV_PIX_FMT_YUV420P,
                     p_AVFrame_for_decode->width,
                     p_AVFrame_for_decode->height);
@@ -269,11 +251,6 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
                 p_AVFrame_for_decode->height,
                 static_cast<CDecode*>(lpParam)->m_p_H264_extra_data,
                 p_data_node_temp->number_of_lost_frame);
-            no_decode_flag = true;
-
-            release_dataNode(p_data_node_temp);
-
-            continue;
         }
 
         if(static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
@@ -391,7 +368,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             p_SwsContext_for_RGB = sws_getContext(p_AVCodecContext->width, p_AVCodecContext->height, p_AVCodecContext->pix_fmt, p_AVCodecContext->width, p_AVCodecContext->height, AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
             first_round = false;
         }
-        if(NULL == static_cast<CDecode*>(lpParam)->m_p_function_YUV420 && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
+        if(!static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
             p_AVFrame_for_decode->data[0] += p_AVFrame_for_decode->linesize[0] * (p_AVCodecContext->height - 1);
             p_AVFrame_for_decode->linesize[0] *= -1;
@@ -429,6 +406,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     if(NULL != buf)
     {
         av_freep(&buf);
+    }
+
+    if(NULL != buf2)
+    {
+        av_freep(&buf2);
     }
 
     av_frame_free(&p_AVFrame_for_decode);

@@ -464,10 +464,10 @@ static void Close(va_dxva2_t* va)
     D3dDestroyDeviceManager(va);//
     D3dDestroyDevice(va);//应该减
 
-    //if (va->hdxva2_dll)
-    //    FreeLibrary(va->hdxva2_dll);
-    //if (va->hd3d9_dll)
-    //    FreeLibrary(va->hd3d9_dll);
+    if(va->hdxva2_dll)
+        FreeLibrary(va->hdxva2_dll);
+    if(va->hd3d9_dll)
+        FreeLibrary(va->hd3d9_dll);
 
     free(va);
 }
@@ -623,28 +623,23 @@ static void CopyFromYv12(AVFrame *dst, uint8_t *src[3], size_t src_pitch[3], uns
 
 static int Extract(va_dxva2_t *va, AVFrame *src, AVFrame *dst, void *p)
 {
-
     LPDIRECT3DSURFACE9 d3d = (LPDIRECT3DSURFACE9)(uintptr_t)src->data[3];
-    //直接显示
-#define drShow
-#ifdef drShow
-    if(!p)
+
+    //display image using Direct3D
+    va->d3ddev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, 0);
+    //update surface on backBuffer
+    va->d3ddev->BeginScene();
+    LPDIRECT3DSURFACE9 backBuffer;
+    va->d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+    va->d3ddev->StretchRect(d3d, NULL, backBuffer, NULL, D3DTEXF_NONE);
+    va->d3ddev->EndScene();
+    va->d3ddev->Present(NULL, NULL, NULL, NULL);
+
+    // if YUV420 callback function is NULL return
+    if(NULL == p)
     {
-        va->d3ddev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, 0);
-        //update surface on backBuffer
-        va->d3ddev->BeginScene();
-        LPDIRECT3DSURFACE9 backBuffer;
-        va->d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-        va->d3ddev->StretchRect(d3d, NULL, backBuffer, NULL, D3DTEXF_NONE);
-        //
-        va->d3ddev->EndScene();
-
-        va->d3ddev->Present(NULL, NULL, NULL, NULL);
-
         return 0;
     }
-#endif
-    //
 
     D3DLOCKED_RECT lock;
 
