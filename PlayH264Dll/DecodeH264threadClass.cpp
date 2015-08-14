@@ -93,7 +93,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     uint8_t* buf2 = NULL;
 
 #ifdef _DEBUG // thread log
-    FILE* pFile = fopen("C:\\thread.log", "ab");
+    FILE* pFile = fopen("D:\\thread.log", "ab");
     char temp[1024];
     sprintf(temp, "decode instance: %d, %p Created\n", static_cast<CDecode*>(lpParam)->m_decode_instance, static_cast<CDecode*>(lpParam)->hThreadDecode);
     fwrite(temp, 1, strlen(temp), pFile);
@@ -433,7 +433,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
     avcodec_free_context(&p_AVCodecContext);
 
 #ifdef _DEBUG // thread log
-    pFile = fopen("C:\\thread.log", "ab");
+    pFile = fopen("D:\\thread.log", "ab");
     sprintf(temp, "decode instance: %d, %p end\n", static_cast<CDecode*>(lpParam)->m_decode_instance, static_cast<CDecode*>(lpParam)->hThreadDecode);
     fwrite(temp, 1, strlen(temp), pFile);
     fclose(pFile);

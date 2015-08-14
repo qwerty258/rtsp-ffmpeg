@@ -28,7 +28,7 @@ bool initial_NVIDIA_driver(void)
 {
 
 #ifdef _DEBUG
-    p_log_file = fopen("C:\\gpu_count.log", "wb");
+    p_log_file = fopen("D:\\gpu_count.log", "wb");
     buffer = new char[1024];
 #endif
 
