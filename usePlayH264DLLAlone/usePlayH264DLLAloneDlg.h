@@ -35,4 +35,7 @@ public:
     UINT* m_pSizeList;
     UCHAR* m_pBuffer;
     int m_instance;
+    int m_test_video_data_file_size;
+    int m_test_video_size_file_size;
+    virtual BOOL DestroyWindow();
 };

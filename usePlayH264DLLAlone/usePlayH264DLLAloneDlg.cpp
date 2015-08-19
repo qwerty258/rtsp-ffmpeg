@@ -53,6 +53,21 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     FILE* pSizeFile;
     error = fopen_s(&pSizeFile, "D:\\test_video_size", "rb");
 
+    fseek(pDataFile, 0, SEEK_END);
+    fseek(pSizeFile, 0, SEEK_END);
+
+    m_test_video_data_file_size = ftell(pDataFile);
+    m_test_video_size_file_size = ftell(pSizeFile);
+
+    rewind(pDataFile);
+    rewind(pSizeFile);
+
+    m_pSizeList = new UINT[m_test_video_size_file_size / 4];
+    m_pBuffer = new UCHAR[m_test_video_data_file_size];
+
+    fread(m_pSizeList, m_test_video_size_file_size, 1, pSizeFile);
+    fread(m_pBuffer, m_test_video_data_file_size, 1, pDataFile);
+
     fclose(pSizeFile);
     fclose(pDataFile);
 
@@ -95,3 +110,22 @@ HCURSOR CusePlayH264DLLAloneDlg::OnQueryDragIcon()
     return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+BOOL CusePlayH264DLLAloneDlg::DestroyWindow()
+{
+    // TODO: Add your specialized code here and/or call the base class
+    if(NULL != m_pSizeList)
+    {
+        delete[] m_pSizeList;
+        m_pSizeList = NULL;
+    }
+
+    if(NULL != m_pBuffer)
+    {
+        delete[] m_pBuffer;
+        m_pBuffer = NULL;
+    }
+
+    return CDialogEx::DestroyWindow();
+}
