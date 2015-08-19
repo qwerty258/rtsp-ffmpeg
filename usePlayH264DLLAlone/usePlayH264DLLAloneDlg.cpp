@@ -64,6 +64,7 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     CDialogEx::OnInitDialog();
 
     AllocConsole();
+    printf("console print test\n");
 
     // Set the icon for this dialog.  The framework does this automatically
     //  when the application's main window is not a dialog
