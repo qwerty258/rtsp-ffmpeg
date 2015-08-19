@@ -192,7 +192,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 #ifdef MY_DEBUG
         if(static_cast<CDecode*>(lpParam)->m_trace_lost_package)
         {
-            FILE* pFile = fopen("C:\\frame.log", "ab");
+            FILE* pFile = fopen("D:\\frame.log", "ab");
             char temp[256];
             sprintf(temp, "frame ID: %08X, lost: %08X\n", p_data_node_temp->frame_ID, p_data_node_temp->number_of_lost_frame);
             fwrite(temp, 1, strlen(temp), pFile);

@@ -298,9 +298,9 @@ BOOL CtestPlayDlg::DestroyWindow()
 
 int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
 {
-    FILE* pFile = fopen("C:\\h264_callback.log", "ab");
-    FILE* pDataFile = fopen("C:\\test_video_data.h264", "ab");
-    FILE* pSizeFile = fopen("C:\\test_video_size", "ab");
+    FILE* pFile = fopen("D:\\h264_callback.log", "ab");
+    FILE* pDataFile = fopen("D:\\test_video_data.h264", "ab");
+    FILE* pSizeFile = fopen("D:\\test_video_size", "ab");
     char* buffer = new char[2048];
 
     sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
@@ -320,14 +320,21 @@ int H264_callback(int instance, char* frame_buff, int frame_buffer_size, int fra
 
 int YUV420_callback(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, size_t frame_ID, void* userdata, int frame_lost)
 {
-    FILE* pFile = fopen("C:\\YUV420_callback.log", "ab");
+    FILE* pFile = fopen("D:\\YUV420_callback.log", "ab");
+
+    FILE* pDataFile = fopen("D:\\test_video_data.yuv", "ab");
+
     char* buffer = new char[2048];
 
     sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buffer, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
 
     fwrite(buffer, 1, strlen(buffer), pFile);
 
+    fwrite(frame_buffer, frame_buffer_size, 1, pDataFile);
+
     delete[] buffer;
+
+    fclose(pDataFile);
     fclose(pFile);
 
     return 0;
@@ -335,7 +342,7 @@ int YUV420_callback(int instance, char* frame_buffer, int frame_buffer_size, int
 
 int YV12_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
 {
-    FILE* pFile = fopen("C:\\YV12_callback.log", "ab");
+    FILE* pFile = fopen("D:\\YV12_callback.log", "ab");
     char* buffer = new char[2048];
 
     sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
@@ -367,8 +374,8 @@ void CtestPlayDlg::OnClickedButtonConnect()
 
     m_instance_1 = get_idle_instance();
 
-    //int i = 1;
-    //set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
+    int i = 1;
+    set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
     //set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
     //set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
 

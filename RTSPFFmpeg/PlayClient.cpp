@@ -7,7 +7,7 @@
 DWORD WINAPI RTSPVideo(LPVOID lpParam)
 {
 #ifdef _DEBUG // thread log
-    FILE* pFile = fopen("C:\\thread.log", "ab");
+    FILE* pFile = fopen("D:\\thread.log", "ab");
     char temp[1024];
     sprintf(temp, "rtsp instance: %d, %p Created\n", static_cast<CRTSPClient*>(lpParam)->m_decode_instance, static_cast<CRTSPClient*>(lpParam)->m_hThread);
     fwrite(temp, 1, strlen(temp), pFile);
@@ -189,7 +189,7 @@ DWORD WINAPI RTSPVideo(LPVOID lpParam)
     static_cast<CRTSPClient*>(lpParam)->m_ans = 2;
 
 #ifdef _DEBUG // thread log
-    pFile = fopen("C:\\thread.log", "ab");
+    pFile = fopen("D:\\thread.log", "ab");
     sprintf(temp, "rtsp instance: %d, %p end\n", static_cast<CRTSPClient*>(lpParam)->m_decode_instance, static_cast<CRTSPClient*>(lpParam)->m_hThread);
     fwrite(temp, 1, strlen(temp), pFile);
     fclose(pFile);
@@ -360,7 +360,7 @@ int CRTSPClient::connect(void)
     }
 
 #ifdef MY_DEBUG
-    FILE* pFile = fopen("C:\\sdp.log", "w");
+    FILE* pFile = fopen("D:\\sdp.log", "w");
     fwrite(sdp.c_str(), 1, sdp.length(), pFile);
     fclose(pFile);
 #endif

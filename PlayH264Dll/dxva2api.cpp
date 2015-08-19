@@ -376,7 +376,7 @@ ok:
 static int Get(va_dxva2_t *va, AVFrame *ff)
 {
 #ifdef _DEBUG
-    FILE* pFile = fopen("C:\\GPU.log", "ab+");
+    FILE* pFile = fopen("D:\\GPU.log", "ab+");
 #endif
     unsigned i, old;
 
@@ -475,7 +475,7 @@ static void Close(va_dxva2_t* va)
 static int Open(va_dxva2_t** pva, int codec_id)
 {
 #ifdef _DEBUG
-    FILE* pFile = fopen("C:\\GPU.log", "ab+");
+    FILE* pFile = fopen("D:\\GPU.log", "ab+");
     fputs("enter va creation\n", pFile);
 #endif
 
@@ -735,7 +735,7 @@ int currentGPU = 0;
 static int D3dCreateDevice(va_dxva2_t *va)
 {
 #ifdef _DEBUG
-    FILE* pFile = fopen("C:\\GPU.log", "ab+");
+    FILE* pFile = fopen("D:\\GPU.log", "ab+");
     fputs("enter D3dCreateDevice\n", pFile);
 #endif
 
@@ -1120,7 +1120,7 @@ static int DxFindVideoServiceConversion(va_dxva2_t *va, GUID *input, D3DFORMAT *
 static int DxCreateVideoDecoder(va_dxva2_t *va, int codec_id, const AVCodecContext *avctx)
 {
 #ifdef _DEBUG
-    FILE* pFile = fopen("C:\\GPU.log", "ab+");
+    FILE* pFile = fopen("D:\\GPU.log", "ab+");
 #endif
 
     unsigned i;

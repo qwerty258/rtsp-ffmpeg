@@ -124,8 +124,8 @@ void CRTPPackage::unpack_RTP_header(void)
     }
 
 #ifdef MY_DEBUG
-    FILE* p_file_sequence_number = fopen("C:\\sequence_number.log", "ab");
-    FILE* p_file_timestamp = fopen("C:\\timestamp.log", "ab");
+    FILE* p_file_sequence_number = fopen("D:\\sequence_number.log", "ab");
+    FILE* p_file_timestamp = fopen("D:\\timestamp.log", "ab");
     char* strBuffer = new char[256];
 
     sprintf(strBuffer, "%05u\n", m_p_RTP_header->sequence_number);

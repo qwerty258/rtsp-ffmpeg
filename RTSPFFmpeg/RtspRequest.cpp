@@ -104,7 +104,7 @@ BOOL CRTSPRequest::RequestDescribe(string* pDescribe, char* name, char* pwd)
         return FALSE;
 #ifdef log
     FILE *fp;
-    fp = fopen("C:\\sdp.log","a+");
+    fp = fopen("D:\\sdp.log","a+");
     fputs(pDescribe->c_str(),fp);
     fputc('\n',fp);
     fclose(fp);
