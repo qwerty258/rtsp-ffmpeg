@@ -22,8 +22,8 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 DWORD WINAPI DecodeThread(LPVOID lpParam)
 {
-    FILE* pDataFile = fopen("test_video_data.h264", "rb");
-    FILE* pSizeFile = fopen("test_video_size", "rb");
+    FILE* pDataFile = fopen("D:\\test_video_data.h264", "rb");
+    FILE* pSizeFile = fopen("D:\\test_video_size", "rb");
 
     fseek(pDataFile, 0, SEEK_END);
     fseek(pSizeFile, 0, SEEK_END);
