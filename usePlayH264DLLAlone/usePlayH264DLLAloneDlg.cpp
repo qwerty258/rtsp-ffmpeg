@@ -48,6 +48,14 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
 
     // TODO: Add extra initialization here
 
+    FILE* pDataFile;
+    errno_t error = fopen_s(&pDataFile, "D:\\test_video_data.h264", "rb");
+    FILE* pSizeFile;
+    error = fopen_s(&pSizeFile, "D:\\test_video_size", "rb");
+
+    fclose(pSizeFile);
+    fclose(pDataFile);
+
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
