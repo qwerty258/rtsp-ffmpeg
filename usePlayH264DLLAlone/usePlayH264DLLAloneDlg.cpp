@@ -6,6 +6,7 @@
 #include "usePlayH264DLLAlone.h"
 #include "usePlayH264DLLAloneDlg.h"
 #include "afxdialogex.h"
+#include <PlayH264DLL.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +23,7 @@ CusePlayH264DLLAloneDlg::CusePlayH264DLLAloneDlg(CWnd* pParent /*=NULL*/): CDial
     m_pSizeList = NULL;
     m_pBuffer = NULL;
     m_instance = -1;
+    memset(&m_inputParameter, 0x0, sizeof(myparamInput));
 }
 
 void CusePlayH264DLLAloneDlg::DoDataExchange(CDataExchange* pDX)
@@ -70,6 +72,28 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
 
     fclose(pSizeFile);
     fclose(pDataFile);
+
+    if(0 > initial_decode_DLL(5))
+    {
+        AfxMessageBox(_T("initial decode DLL failed"));
+        return TRUE;
+    }
+
+    m_instance = get_idle_decode_instance();
+
+    RECT rectTemp;
+    GetClientRect(&rectTemp);
+
+    m_inputParameter.fps = 25;
+    m_inputParameter.height = 1080;
+    m_inputParameter.isDecode = true;
+    m_inputParameter.playChannle = 1;
+    m_inputParameter.playHandle = this->m_hWnd;
+    m_inputParameter.playHeight = rectTemp.bottom - rectTemp.top;
+    m_inputParameter.playWidth = rectTemp.right - rectTemp.left;
+    m_inputParameter.width = 1920;
+
+    initial_decode_parameter(m_instance, &m_inputParameter, 1);
 
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
