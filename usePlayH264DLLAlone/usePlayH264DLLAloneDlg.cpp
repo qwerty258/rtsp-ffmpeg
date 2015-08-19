@@ -102,13 +102,13 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     m_instance = get_idle_decode_instance();
 
     RECT rectTemp;
-    GetClientRect(&rectTemp);
+    ::GetWindowRect(GetDlgItem(IDC_DISPLAY_AREA)->m_hWnd, &rectTemp);
 
     m_inputParameter.fps = 25;
     m_inputParameter.height = 1080;
     m_inputParameter.isDecode = true;
     m_inputParameter.playChannle = 1;
-    m_inputParameter.playHandle = this->m_hWnd;
+    m_inputParameter.playHandle = GetDlgItem(IDC_DISPLAY_AREA)->m_hWnd;
     m_inputParameter.playHeight = rectTemp.bottom - rectTemp.top;
     m_inputParameter.playWidth = rectTemp.right - rectTemp.left;
     m_inputParameter.width = 1920;
@@ -119,7 +119,7 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
         return TRUE;
     }
 
-    m_bLoop = false;
+    m_bLoop = true;
 
     m_hDecodeThread = CreateThread(NULL, 0, DecodeThread, this, 0, &m_dDecodeThreadID);
 
