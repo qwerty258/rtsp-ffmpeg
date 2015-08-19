@@ -6,7 +6,6 @@
 #include "usePlayH264DLLAlone.h"
 #include "usePlayH264DLLAloneDlg.h"
 #include "afxdialogex.h"
-#include <PlayH264DLL.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,8 +13,29 @@
 
 
 // CusePlayH264DLLAloneDlg dialog
+DWORD WINAPI DecodeThread(LPVOID lpParam)
+{
+    CusePlayH264DLLAloneDlg* pCusePlayH264DLLAloneDlg = static_cast<CusePlayH264DLLAloneDlg*>(lpParam);
+    unsigned int CurrentPos = 0;
+    unsigned int DataJumpBytes = 0;
 
+    while(pCusePlayH264DLLAloneDlg->m_bLoop)
+    {
+        decode(pCusePlayH264DLLAloneDlg->m_instance, (unsigned char*)(pCusePlayH264DLLAloneDlg->m_pBuffer + DataJumpBytes), pCusePlayH264DLLAloneDlg->m_pSizeList[CurrentPos], 0, 0);
 
+        Sleep(30);
+
+        DataJumpBytes += pCusePlayH264DLLAloneDlg->m_pSizeList[CurrentPos];
+        CurrentPos++;
+        if(CurrentPos >= pCusePlayH264DLLAloneDlg->m_test_video_size_file_size / 4)
+        {
+            CurrentPos = 0;
+            DataJumpBytes = 0;
+        }
+    }
+
+    return 0;
+}
 
 CusePlayH264DLLAloneDlg::CusePlayH264DLLAloneDlg(CWnd* pParent /*=NULL*/): CDialogEx(CusePlayH264DLLAloneDlg::IDD, pParent)
 {
@@ -93,7 +113,15 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     m_inputParameter.playWidth = rectTemp.right - rectTemp.left;
     m_inputParameter.width = 1920;
 
-    initial_decode_parameter(m_instance, &m_inputParameter, 1);
+    if(0 > initial_decode_parameter(m_instance, &m_inputParameter, 1))
+    {
+        AfxMessageBox(_T("initial_decode_parameter failed"));
+        return TRUE;
+    }
+
+    m_bLoop = false;
+
+    m_hDecodeThread = CreateThread(NULL, 0, DecodeThread, this, 0, &m_dDecodeThreadID);
 
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -139,6 +167,12 @@ HCURSOR CusePlayH264DLLAloneDlg::OnQueryDragIcon()
 BOOL CusePlayH264DLLAloneDlg::DestroyWindow()
 {
     // TODO: Add your specialized code here and/or call the base class
+    m_bLoop = false;
+
+    WaitForSingleObject(m_hDecodeThread, INFINITE);
+
+    free_decode_DLL();
+
     if(NULL != m_pSizeList)
     {
         delete[] m_pSizeList;

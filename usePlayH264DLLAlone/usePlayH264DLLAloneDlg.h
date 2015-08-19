@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include <PlayH264DLL.h>
 
 // CusePlayH264DLLAloneDlg dialog
 class CusePlayH264DLLAloneDlg : public CDialogEx
@@ -38,5 +38,9 @@ public:
     int m_test_video_data_file_size;
     int m_test_video_size_file_size;
     myparamInput m_inputParameter;
+    DWORD m_dDecodeThreadID;
+    HANDLE m_hDecodeThread;
+    bool m_bLoop = true;
+
     virtual BOOL DestroyWindow();
 };
