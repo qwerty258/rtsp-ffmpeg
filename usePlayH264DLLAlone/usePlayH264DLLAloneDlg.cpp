@@ -19,6 +19,9 @@
 CusePlayH264DLLAloneDlg::CusePlayH264DLLAloneDlg(CWnd* pParent /*=NULL*/): CDialogEx(CusePlayH264DLLAloneDlg::IDD, pParent)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+    m_pSizeList = NULL;
+    m_pBuffer = NULL;
+    m_instance = -1;
 }
 
 void CusePlayH264DLLAloneDlg::DoDataExchange(CDataExchange* pDX)
