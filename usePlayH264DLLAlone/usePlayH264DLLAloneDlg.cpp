@@ -104,9 +104,6 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
 
     m_instance = get_idle_decode_instance();
 
-    RECT rectTemp;
-    ::GetWindowRect(GetDlgItem(IDC_DISPLAY_AREA)->m_hWnd, &rectTemp);
-
     m_inputParameter.fps = 25;
     m_inputParameter.height = 1080;
     m_inputParameter.isDecode = true;
