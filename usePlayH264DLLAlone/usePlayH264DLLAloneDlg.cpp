@@ -112,8 +112,6 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     m_inputParameter.isDecode = true;
     m_inputParameter.playChannle = 1;
     m_inputParameter.playHandle = GetDlgItem(IDC_DISPLAY_AREA)->m_hWnd;
-    m_inputParameter.playHeight = rectTemp.bottom - rectTemp.top;
-    m_inputParameter.playWidth = rectTemp.right - rectTemp.left;
     m_inputParameter.width = 1920;
 
     if(0 > initial_decode_parameter(m_instance, &m_inputParameter, 1))

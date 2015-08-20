@@ -5,8 +5,6 @@
 #pragma once
 #include <PlayH264DLL.h>
 
-#pragma comment(linker,"/subsystem:console /entry:WinMainCRTStartup")
-
 // CusePlayH264DLLAloneDlg dialog
 class CusePlayH264DLLAloneDlg : public CDialogEx
 {
