@@ -68,23 +68,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\R343-developer;D:\ffmpeg-2.7-win32-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\R343-developer\x86;D:\ffmpeg-2.7-win32-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\R352-developer;D:\ffmpeg-2.7-win32-dev\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\R352-developer\x86;D:\ffmpeg-2.7-win32-dev\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\R343-developer;D:\ffmpeg-2.7-win64-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\R343-developer\amd64;D:\ffmpeg-2.7-win64-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\R352-developer;D:\ffmpeg-2.7-win64-dev\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\R352-developer\amd64;D:\ffmpeg-2.7-win64-dev\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\R343-developer;D:\ffmpeg-2.7-win32-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\R343-developer\x86;D:\ffmpeg-2.7-win32-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\R352-developer;D:\ffmpeg-2.7-win32-dev\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\R352-developer\x86;D:\ffmpeg-2.7-win32-dev\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\R343-developer;D:\ffmpeg-2.7-win64-dev\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\R343-developer\amd64;D:\ffmpeg-2.7-win64-dev\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\R352-developer;D:\ffmpeg-2.7-win64-dev\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\R352-developer\amd64;D:\ffmpeg-2.7-win64-dev\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
