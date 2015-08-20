@@ -29,10 +29,14 @@ protected:
     HICON m_hIcon;
 
     // Generated message map functions
+    DECLARE_MESSAGE_MAP()
+
     virtual BOOL OnInitDialog();
+    virtual BOOL DestroyWindow();
     afx_msg void OnPaint();
     afx_msg HCURSOR OnQueryDragIcon();
-    DECLARE_MESSAGE_MAP()
+    afx_msg void OnSize(UINT nType, int cx, int cy);
+
 public:
     UINT* m_pSizeList;
     UCHAR* m_pBuffer;
@@ -43,6 +47,4 @@ public:
     DWORD m_dDecodeThreadID;
     HANDLE m_hDecodeThread;
     bool m_bLoop = true;
-
-    virtual BOOL DestroyWindow();
 };

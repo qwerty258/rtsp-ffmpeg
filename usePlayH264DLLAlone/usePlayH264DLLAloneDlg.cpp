@@ -54,6 +54,7 @@ void CusePlayH264DLLAloneDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CusePlayH264DLLAloneDlg, CDialogEx)
     ON_WM_PAINT()
     ON_WM_QUERYDRAGICON()
+ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -108,7 +109,7 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     m_inputParameter.height = 1080;
     m_inputParameter.isDecode = true;
     m_inputParameter.playChannle = 1;
-    m_inputParameter.playHandle = GetDlgItem(IDC_DISPLAY_AREA)->m_hWnd;
+    m_inputParameter.playHandle = m_hWnd;
     m_inputParameter.width = 1920;
 
     if(0 > initial_decode_parameter(m_instance, &m_inputParameter, 1))
@@ -186,4 +187,13 @@ BOOL CusePlayH264DLLAloneDlg::DestroyWindow()
     FreeConsole();
 
     return CDialogEx::DestroyWindow();
+}
+
+
+void CusePlayH264DLLAloneDlg::OnSize(UINT nType, int cx, int cy)
+{
+    CDialogEx::OnSize(nType, cx, cy);
+
+    // TODO: Add your message handler code here
+    playing_windows_RECT_changed_of_decode_DLL(m_instance);
 }
