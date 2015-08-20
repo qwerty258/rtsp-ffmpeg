@@ -308,8 +308,7 @@ struct va_sys_t
     va_surface_t surface[VA_DXVA2_MAX_SURFACE_COUNT];
     LPDIRECT3DSURFACE9 hw_surface[VA_DXVA2_MAX_SURFACE_COUNT];
 
-    HWND playHWD;
-    bool bInitHWD;
+    bool bHadWindow;
 };
 //typedef struct va_sys_t va_dxva2_t;
 
@@ -625,15 +624,18 @@ static int Extract(va_dxva2_t *va, AVFrame *src, AVFrame *dst, void *p)
 {
     LPDIRECT3DSURFACE9 d3d = (LPDIRECT3DSURFACE9)(uintptr_t)src->data[3];
 
-    //display image using Direct3D
-    va->d3ddev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, 0);
-    //update surface on backBuffer
-    va->d3ddev->BeginScene();
-    LPDIRECT3DSURFACE9 backBuffer;
-    va->d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
-    va->d3ddev->StretchRect(d3d, NULL, backBuffer, NULL, D3DTEXF_NONE);
-    va->d3ddev->EndScene();
-    va->d3ddev->Present(NULL, NULL, NULL, NULL);
+    if(va->bHadWindow)
+    {
+        //display image using Direct3D
+        va->d3ddev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_COLORVALUE(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, 0);
+        //update surface on backBuffer
+        va->d3ddev->BeginScene();
+        LPDIRECT3DSURFACE9 backBuffer;
+        va->d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+        va->d3ddev->StretchRect(d3d, NULL, backBuffer, NULL, D3DTEXF_NONE);
+        va->d3ddev->EndScene();
+        va->d3ddev->Present(NULL, NULL, NULL, NULL);
+    }
 
     // if YUV420 callback function is NULL return
     if(NULL == p)
@@ -800,11 +802,13 @@ static int D3dCreateDevice(va_dxva2_t *va)
     {
         d3dpp->Windowed = TRUE;
         d3dpp->hDeviceWindow = gPlayWnd;
+        va->bHadWindow = true;
     }
     else
     {
         d3dpp->Windowed = TRUE;
         d3dpp->hDeviceWindow = GetDesktopWindow();
+        va->bHadWindow = false;
     }
     d3dpp->SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp->MultiSampleType = D3DMULTISAMPLE_NONE;
