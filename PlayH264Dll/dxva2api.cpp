@@ -458,10 +458,10 @@ static void Release(va_dxva2_t *va, AVFrame *ff)
 static void Close(va_dxva2_t* va)
 {
     DxDestroyVideoConversion(va);
-    DxDestroyVideoDecoder(va);//减少了内存
+    DxDestroyVideoDecoder(va);//reduce memory
     DxDestroyVideoService(va);//
     D3dDestroyDeviceManager(va);//
-    D3dDestroyDevice(va);//应该减
+    D3dDestroyDevice(va);//should reduce
 
     if(va->hdxva2_dll)
         FreeLibrary(va->hdxva2_dll);
@@ -765,7 +765,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
 
     /* */
     d3dai = &va->d3dai;
-    //搜索可用GPU
+    //search usable GPU
     //    static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
     //    static int physGPU = displayCount;
     //#ifdef log_GPU
@@ -774,7 +774,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     //#endif
 
 
-    //寻找最空闲的GPU
+    //look for most idle GPU
     //    for(int i = 0; i < physGPU; i++)
     //    {
     //        if(availableGPU[i] < availableGPU[currentGPU])
