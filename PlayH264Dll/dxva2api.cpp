@@ -765,7 +765,9 @@ static int D3dCreateDevice(va_dxva2_t *va)
 
     d3dai = &va->d3dai;
 
-    if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, get_most_idle_NVIDIA_GPU(), 0, d3dai)))
+    UINT mostIdleAdapter = get_most_idle_NVIDIA_GPU();
+
+    if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, mostIdleAdapter, 0, d3dai)))
     {
         av_log(NULL, AV_LOG_WARNING, "IDirect3D9_GetAdapterIdentifier failed");
         ZeroMemory(d3dai, sizeof(*d3dai));
@@ -806,7 +808,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     //		return FALSE; // Return FALSE
     //}
 
-    if(FAILED(IDirect3D9_CreateDevice(d3dobj, get_most_idle_NVIDIA_GPU(), D3DDEVTYPE_HAL, gPlayWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, d3dpp, &d3ddev)))
+    if(FAILED(IDirect3D9_CreateDevice(d3dobj, mostIdleAdapter, D3DDEVTYPE_HAL, gPlayWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, d3dpp, &d3ddev)))
     {
 #ifdef _DEBUG
         fputs("IDirect3D9_CreateDevice failed\n", pFile);
