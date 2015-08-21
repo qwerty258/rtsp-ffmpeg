@@ -763,27 +763,7 @@ static int D3dCreateDevice(va_dxva2_t *va)
     }
     va->d3dobj = d3dobj;
 
-    /* */
     d3dai = &va->d3dai;
-    //search usable GPU
-    //    static UINT displayCount = IDirect3D9_GetAdapterCount(va->d3dobj);
-    //    static int physGPU = displayCount;
-    //#ifdef log_GPU
-    //    FILE * pFile = fopen("c:\\numGpu.log", "ab+");
-    //    fwrite(&physGPU, 1, 4, pFile);
-    //#endif
-
-
-    //look for most idle GPU
-    //    for(int i = 0; i < physGPU; i++)
-    //    {
-    //        if(availableGPU[i] < availableGPU[currentGPU])
-    //            currentGPU = i;
-    //    }
-    //#ifdef log_GPU
-    //    fwrite(&currentGPU, 1, 4, pFile);
-    //    fclose(pFile);
-    //#endif
 
     if(FAILED(IDirect3D9_GetAdapterIdentifier(va->d3dobj, get_most_idle_NVIDIA_GPU(), 0, d3dai)))
     {
@@ -812,24 +792,11 @@ static int D3dCreateDevice(va_dxva2_t *va)
     }
     d3dpp->SwapEffect = D3DSWAPEFFECT_DISCARD;
     d3dpp->MultiSampleType = D3DMULTISAMPLE_NONE;
-    //d3dpp->BackBufferCount = 0;                  /* FIXME what to put here */
-    //d3dpp->BackBufferFormat = D3DFMT_R5G6B5;    /* FIXME what to put here */
-    //if(gPlayWnd)
-    //{
-    //    //d3dpp->BackBufferWidth = ((rct.right - rct.left) > 0 ? (rct.right - rct.left) : (rct.left - rct.right));
-    //    //d3dpp->BackBufferHeight = ((rct.bottom - rct.top) > 0 ? (rct.bottom - rct.top) : (rct.top - rct.bottom));
-    //    d3dpp->BackBufferWidth = 1920;
-    //    d3dpp->BackBufferHeight = 1080;
-    //}
-    //else
-    //{
     //*********************************************************************************************************
     // use screen size, if use HWND's width and height, when the size of rect is enlarged, the picture is fuzzy
     //*********************************************************************************************************
     d3dpp->BackBufferWidth = GetSystemMetrics(SM_CXSCREEN);
     d3dpp->BackBufferHeight = GetSystemMetrics(SM_CYSCREEN);
-    //}
-    //d3dpp->EnableAutoDepthStencil = FALSE;
     d3dpp->PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
     //if ( D3DERR_INVALIDCALL == ( d3dobj->CheckDeviceFormat( currentGPU, D3DDEVTYPE_HAL,

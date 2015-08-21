@@ -6,7 +6,6 @@
 #include "GPUUsage.h"
 
 using namespace std;
-//#pragma comment(lib,"ddraw.lib")
 
 #ifdef _DEBUG // for memory leak check
 #define _CRTDBG_MAP_ALLOC
