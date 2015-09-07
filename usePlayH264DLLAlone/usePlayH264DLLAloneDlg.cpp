@@ -118,7 +118,7 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
         return TRUE;
     }
 
-    if(0 > set_decode_hardware_acceleration(m_instance, true))
+    if(0 > set_decode_hardware_acceleration(m_instance, false))
     {
         AfxMessageBox(_T("set_decode_hardware_acceleration failed"));
         return TRUE;

@@ -333,17 +333,17 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
         if(first_round &&
            !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
         {
-            width = p_AVFrame_for_decode->width;
-            height = p_AVFrame_for_decode->height;
-            PictureSize = avpicture_get_size(PIX_FMT_BGR24, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height);
+            width = p_AVCodecContext->width;
+            height = p_AVCodecContext->height;
+            PictureSize = avpicture_get_size(PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
             buf = (uint8_t*)av_malloc(PictureSize);
             if(buf == NULL)
             {
                 break;
             }
-            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biWidth = p_AVFrame_for_decode->width;
-            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biHeight = p_AVFrame_for_decode->height;
-            avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buf, PIX_FMT_BGR24, p_AVFrame_for_decode->width, p_AVFrame_for_decode->height);
+            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biWidth = p_AVCodecContext->width;
+            static_cast<CDecode*>(lpParam)->bmpinfo.bmiHeader.biHeight = p_AVCodecContext->height;
+            avpicture_fill((AVPicture*)p_AVFrame_for_RGB, buf, PIX_FMT_BGR24, p_AVCodecContext->width, p_AVCodecContext->height);
         }
 
         if((width != p_AVCodecContext->width) || (height != p_AVCodecContext->height) && !static_cast<CDecode*>(lpParam)->m_b_hardware_acceleration)
