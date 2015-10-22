@@ -604,10 +604,11 @@ static void CopyFromNv12(AVFrame *dst, uint8_t *src[2], size_t src_pitch[2], uns
     CopyPlane(dst->data[0], dst->linesize[0],
               src[0], src_pitch[0],
               width, height);
-    SplitPlanes(dst->data[2], dst->linesize[2],
-                dst->data[1], dst->linesize[1],
-                src[1], src_pitch[1],
-                width / 2, height / 2);
+    //SplitPlanes(dst->data[2], dst->linesize[2],
+    //            dst->data[1], dst->linesize[1],
+    //            src[1], src_pitch[1],
+    //            width / 2, height / 2);
+    CopyPlane(dst->data[1], dst->linesize[1], src[1], src_pitch[1], src_pitch[1], height / 2);
 }
 
 static void CopyFromYv12(AVFrame *dst, uint8_t *src[3], size_t src_pitch[3], unsigned width, unsigned height)
@@ -637,7 +638,7 @@ static int Extract(va_dxva2_t *va, AVFrame *src, AVFrame *dst, void *p)
         va->d3ddev->Present(NULL, NULL, NULL, NULL);
     }
 
-    // if YUV420 callback function is NULL return
+    // if NV12 callback function is NULL return
     if(NULL == p)
     {
         return 0;
@@ -687,9 +688,8 @@ static int Extract(va_dxva2_t *va, AVFrame *src, AVFrame *dst, void *p)
         }
         CopyFromYv12(dst, plane, pitch, va->width, va->height);
     }
-    else
+    else if(va->render == MAKEFOURCC('N', 'V', '1', '2'))
     {
-        //assert(va->render == MAKEFOURCC('N','V','1','2'));
         uint8_t *plane[2] = {
             (uint8_t *)lock.pBits,
             (uint8_t*)lock.pBits + lock.Pitch * va->surface_height

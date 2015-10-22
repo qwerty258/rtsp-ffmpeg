@@ -218,14 +218,14 @@ RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_
     return 0;
 }
 
-RTSPFFMPEG_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
+RTSPFFMPEG_API int set_NV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
 {
     if(0 > checkINSTANCE(instance) || NULL == p_function_YV12)
     {
         return -1;
     }
 
-    set_decode_YV12_callback(client_list[instance].p_CRTSPClient->m_decode_instance, p_function_YV12, additional_data, trace_lost_package);
+    set_decode_NV12_callback(client_list[instance].p_CRTSPClient->m_decode_instance, p_function_YV12, additional_data, trace_lost_package);
 
     return 0;
 }
@@ -238,6 +238,18 @@ RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264
     }
 
     set_decode_H264_callback(client_list[instance].p_CRTSPClient->m_decode_instance, p_function_H264, additional_data, trace_lost_package);
+
+    return 0;
+}
+
+RTSPFFMPEG_API int set_RGB24_callback(int instance, function_RGB24 p_function_RGB24, void* additional_data, bool trace_lost_package)
+{
+    if(0 > checkINSTANCE(instance) || NULL == p_function_RGB24)
+    {
+        return -1;
+    }
+
+    set_decode_RGB24_callback(client_list[instance].p_CRTSPClient->m_decode_instance, p_function_RGB24, additional_data, trace_lost_package);
 
     return 0;
 }

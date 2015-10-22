@@ -8,8 +8,9 @@
 #include <Windows.h>
 
 typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, size_t frame_ID, void* userdata, int frame_lost); // YUV420 callback
-typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
+typedef int(*function_NV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
 typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
+typedef int(*function_RGB24)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // RGB24 callback
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,14 +122,14 @@ extern "C" {
     RTSPFFMPEG_API int set_YUV420_callback(int instance, function_YUV420 p_function_YUV420, void* additional_data, bool trace_lost_package);
 
     //************************************
-    // Function:  set YV12 callback function
+    // Function:  set NV12 callback function
     // Returns:   int: 0 success, -1 failure
     // Parameter: int instance: the instance you want to set callback function
-    // Parameter: function_YV12 p_function_YV12: the function address
+    // Parameter: function_NV12 p_function_NV12: the function address
     // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
     // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
     //************************************
-    RTSPFFMPEG_API int set_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package);
+    RTSPFFMPEG_API int set_NV12_callback(int instance, function_NV12 p_function_NV12, void* additional_data, bool trace_lost_package);
 
     //************************************
     // Function:  set H264 callback function
@@ -139,6 +140,16 @@ extern "C" {
     // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
     //************************************
     RTSPFFMPEG_API int set_H264_callback(int instance, function_H264 p_function_H264, void* additional_data, bool trace_lost_package);
+
+    //************************************
+    // Function:  set RGB24 callback function
+    // Returns:   int: 0 success, -1 failure
+    // Parameter: int instance: the instance you want to set callback function
+    // Parameter: function_RGB24 p_function_RGB24: the function address
+    // Parameter: void * additional_data: additional data, give back to you when the callback funciton is called
+    // Parameter: bool trace_lost_package: true: trace lost package, will cause more calculations; false: don't trace lost package
+    //************************************
+    RTSPFFMPEG_API int set_RGB24_callback(int instance, function_RGB24 p_function_RGB24, void* additional_data, bool trace_lost_package);
 
 #ifdef __cplusplus
 }

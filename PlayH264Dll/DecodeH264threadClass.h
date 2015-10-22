@@ -29,7 +29,7 @@ typedef struct SwsContext SwScaleContext;    //just for convenience
 const int ListCount = 100;
 
 typedef int(*function_YUV420)(int instance, char* frame_buffer, int frame_buffer_size, int frame_width, int frame_height, size_t frame_ID, void* userdata, int frame_lost); // YUV420 callback
-typedef int(*function_YV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
+typedef int(*function_NV12)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // YV12 callback
 typedef int(*function_H264)(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost); // h264 callback
 
 // received net packages
@@ -91,10 +91,12 @@ public:
     // function pointer for callback begin
     function_YUV420 m_p_function_YUV420;
     void* m_p_YUV420_extra_data;
-    function_YV12 m_p_function_YV12;
-    void* m_p_YV12_extra_data;
+    function_NV12 m_p_function_NV12;
+    void* m_p_NV12_extra_data;
     function_H264 m_p_function_H264;
     void* m_p_H264_extra_data;
+    function_RGB24 m_p_function_RGB24;
+    void* m_p_RGB24_extra_data;
     // function pointer for callback end
 
     BITMAPINFO bmpinfo;
@@ -103,7 +105,6 @@ public:
     int type;//code type: 1: h264, 2: mpeg, 3: FLV
     bool m_b_hardware_acceleration;
 
-    char* m_BMP_buffer;
     int m_decode_instance;
 
     // for FFmpeg begin

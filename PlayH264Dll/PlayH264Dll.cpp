@@ -276,15 +276,15 @@ PLAYH264DLL_API int set_decode_YUV420_callback(int instance, function_YUV420 p_f
     return 0;
 }
 
-PLAYH264DLL_API int set_decode_YV12_callback(int instance, function_YV12 p_function_YV12, void* additional_data, bool trace_lost_package)
+PLAYH264DLL_API int set_decode_NV12_callback(int instance, function_NV12 p_function_NV12, void* additional_data, bool trace_lost_package)
 {
-    if(NULL == p_function_YV12 || 0 > check_instance(instance))
+    if(NULL == p_function_NV12 || 0 > check_instance(instance))
     {
         return -1;
     }
 
-    decode_list[instance].p_CDecode->m_p_function_YV12 = p_function_YV12;
-    decode_list[instance].p_CDecode->m_p_YV12_extra_data = additional_data;
+    decode_list[instance].p_CDecode->m_p_function_NV12 = p_function_NV12;
+    decode_list[instance].p_CDecode->m_p_NV12_extra_data = additional_data;
     decode_list[instance].p_CDecode->m_trace_lost_package = trace_lost_package;
 
     return 0;
@@ -299,6 +299,20 @@ PLAYH264DLL_API int set_decode_H264_callback(int instance, function_H264 p_funct
 
     decode_list[instance].p_CDecode->m_p_function_H264 = p_function_H264;
     decode_list[instance].p_CDecode->m_p_H264_extra_data = additional_data;
+    decode_list[instance].p_CDecode->m_trace_lost_package = trace_lost_package;
+
+    return 0;
+}
+
+PLAYH264DLL_API int set_decode_RGB24_callback(int instance, function_RGB24 p_function_RGB24, void* additional_data, bool trace_lost_package)
+{
+    if(NULL == p_function_RGB24 || 0 > check_instance(instance))
+    {
+        return -1;
+    }
+
+    decode_list[instance].p_CDecode->m_p_function_RGB24 = p_function_RGB24;
+    decode_list[instance].p_CDecode->m_p_RGB24_extra_data = additional_data;
     decode_list[instance].p_CDecode->m_trace_lost_package = trace_lost_package;
 
     return 0;
