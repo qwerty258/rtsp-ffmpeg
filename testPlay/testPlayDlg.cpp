@@ -340,9 +340,9 @@ int YUV420_callback(int instance, char* frame_buffer, int frame_buffer_size, int
     return 0;
 }
 
-int YV12_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
+int NV12_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
 {
-    FILE* pFile = fopen("D:\\YV12_callback.log", "ab");
+    FILE* pFile = fopen("D:\\NV12_callback.log", "ab");
     char* buffer = new char[2048];
 
     sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
@@ -354,6 +354,21 @@ int YV12_callback(int instance, char* frame_buff, int frame_buffer_size, int fra
 
     return 0;
 
+}
+
+int RGB24_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
+{
+    FILE* pFile = fopen("D:\\RGB24_callback.log", "ab");
+    char* buffer = new char[2048];
+
+    sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
+
+    fwrite(buffer, 1, strlen(buffer), pFile);
+
+    delete[] buffer;
+    fclose(pFile);
+
+    return 0;
 }
 
 void CtestPlayDlg::OnClickedButtonConnect()
@@ -375,9 +390,10 @@ void CtestPlayDlg::OnClickedButtonConnect()
     m_instance_1 = get_idle_instance();
 
     int i = 1;
-    set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
+    //set_H264_callback(m_instance_1, H264_callback, (void*)i, true);
     //set_YUV420_callback(m_instance_1, YUV420_callback, (void*)i, true);
-    //set_YV12_callback(m_instance_1, YV12_callback, (void*)i, true);
+    //set_NV12_callback(m_instance_1, NV12_callback, (void*)i, true);
+    //set_RGB24_callback(m_instance_1, RGB24_callback, (void*)i, true);
 
     if(0 > m_instance_1)
     {
