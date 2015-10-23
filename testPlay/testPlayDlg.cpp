@@ -356,17 +356,84 @@ int NV12_callback(int instance, char* frame_buff, int frame_buffer_size, int fra
 
 }
 
+static unsigned int count;
+
+typedef struct _BmpHead
+{
+    long imageSize;
+    long blank;
+    long startPosition;
+}BmpHead;
+
+typedef struct _InfoHead
+{
+    long    Length;
+    long    width;
+    long    height;
+    WORD    colorPlane;
+    WORD    bitColor;
+    long    zipFormat;
+    long    realSize;
+    long    xPels;
+    long    yPels;
+    long    colorUse;
+    long    colorImportant;
+}InfoHead;
+
 int RGB24_callback(int instance, char* frame_buff, int frame_buffer_size, int frame_width, int frame_height, void* userdata, int frame_lost)
 {
     FILE* pFile = fopen("D:\\RGB24_callback.log", "ab");
     char* buffer = new char[2048];
+    sprintf(buffer, "D:\\RGB24Data%u.bmp", count);
+    FILE* pBMPFile = fopen(buffer, "wb");
 
     sprintf(buffer, "instance: %02d, frame_buff: %p,frame_buffer_size: %08d, frame_width: %d, frame_height: %d, userdata: %p, frame_lost:%02d\n", instance, frame_buff, frame_buffer_size, frame_width, frame_height, userdata, frame_lost);
 
     fwrite(buffer, 1, strlen(buffer), pFile);
 
     delete[] buffer;
+
+    BmpHead m_BMPHeader;
+    char bfType[2] = {'B', 'M'};
+    m_BMPHeader.imageSize = 3 * frame_width * frame_height + 54;
+    m_BMPHeader.blank = 0;
+    m_BMPHeader.startPosition = 54;
+
+    fwrite(bfType, 1, sizeof(bfType), pBMPFile);
+    fwrite(&m_BMPHeader.imageSize, 1, sizeof(m_BMPHeader.imageSize), pBMPFile);
+    fwrite(&m_BMPHeader.blank, 1, sizeof(m_BMPHeader.blank), pBMPFile);
+    fwrite(&m_BMPHeader.startPosition, 1, sizeof(m_BMPHeader.startPosition), pBMPFile);
+
+    InfoHead  m_BMPInfoHeader;
+    m_BMPInfoHeader.Length = 40;
+    m_BMPInfoHeader.width = frame_width;
+    m_BMPInfoHeader.height = frame_height;
+    m_BMPInfoHeader.colorPlane = 1;
+    m_BMPInfoHeader.bitColor = 24;
+    m_BMPInfoHeader.zipFormat = 0;
+    m_BMPInfoHeader.realSize = 3 * frame_width * frame_height;
+    m_BMPInfoHeader.xPels = 0;
+    m_BMPInfoHeader.yPels = 0;
+    m_BMPInfoHeader.colorUse = 0;
+    m_BMPInfoHeader.colorImportant = 0;
+
+    fwrite(&m_BMPInfoHeader.Length, 1, sizeof(m_BMPInfoHeader.Length), pBMPFile);
+    fwrite(&m_BMPInfoHeader.width, 1, sizeof(m_BMPInfoHeader.width), pBMPFile);
+    fwrite(&m_BMPInfoHeader.height, 1, sizeof(m_BMPInfoHeader.height), pBMPFile);
+    fwrite(&m_BMPInfoHeader.colorPlane, 1, sizeof(m_BMPInfoHeader.colorPlane), pBMPFile);
+    fwrite(&m_BMPInfoHeader.bitColor, 1, sizeof(m_BMPInfoHeader.bitColor), pBMPFile);
+    fwrite(&m_BMPInfoHeader.zipFormat, 1, sizeof(m_BMPInfoHeader.zipFormat), pBMPFile);
+    fwrite(&m_BMPInfoHeader.realSize, 1, sizeof(m_BMPInfoHeader.realSize), pBMPFile);
+    fwrite(&m_BMPInfoHeader.xPels, 1, sizeof(m_BMPInfoHeader.xPels), pBMPFile);
+    fwrite(&m_BMPInfoHeader.yPels, 1, sizeof(m_BMPInfoHeader.yPels), pBMPFile);
+    fwrite(&m_BMPInfoHeader.colorUse, 1, sizeof(m_BMPInfoHeader.colorUse), pBMPFile);
+    fwrite(&m_BMPInfoHeader.colorImportant, 1, sizeof(m_BMPInfoHeader.colorImportant), pBMPFile);
+    fwrite(frame_buff, 3 * frame_width * frame_height, 1, pBMPFile);
+
+    fclose(pBMPFile);
     fclose(pFile);
+
+    count++;
 
     return 0;
 }
