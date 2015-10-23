@@ -260,11 +260,15 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(pCDecode->m_b_hardware_acceleration)
         {
-            DxPictureCopy(
-                p_AVCodecContext,
-                p_AVFrame_for_decode,
-                p_AVFrame_for_NV12,
-                pCDecode->m_p_function_NV12);// internal code change to display directly
+            if(NULL != pCDecode->m_p_function_NV12 || NULL != pCDecode->m_p_function_RGB24)
+            {
+                // internal code change to display directly
+                DxPictureCopy(p_AVCodecContext, p_AVFrame_for_decode, p_AVFrame_for_NV12, (void*)1);
+            }
+            else
+            {
+                DxPictureCopy(p_AVCodecContext, p_AVFrame_for_decode, p_AVFrame_for_NV12, NULL);
+            }
         }
 
 
@@ -400,6 +404,11 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
 
         if(pCDecode->m_b_hardware_acceleration && NULL != pCDecode->m_p_function_RGB24)
         {
+            p_AVFrame_for_NV12->data[0] += p_AVFrame_for_NV12->linesize[0] * (p_AVCodecContext->height - 1);
+            p_AVFrame_for_NV12->linesize[0] *= -1;
+            p_AVFrame_for_NV12->data[1] += p_AVFrame_for_NV12->linesize[1] * (p_AVCodecContext->height / 2 - 1);
+            p_AVFrame_for_NV12->linesize[1] *= -1;
+
             sws_scale(
                 p_SwsContext_for_RGB,
                 p_AVFrame_for_NV12->data,
