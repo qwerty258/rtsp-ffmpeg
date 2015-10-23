@@ -157,9 +157,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="DecodeH264threadClass.h" />
     <ClInclude Include="dxva2api.h" />
     <ClInclude Include="GPUUsage.h" />

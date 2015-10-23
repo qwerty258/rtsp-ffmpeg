@@ -155,9 +155,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="base64.h" />
     <ClInclude Include="Decode.h" />
     <ClInclude Include="PlayClient.h" />
