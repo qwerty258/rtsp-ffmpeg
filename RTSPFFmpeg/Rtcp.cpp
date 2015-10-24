@@ -1,18 +1,18 @@
 #include "Rtcp.h"
 
-int Rtcp::ssrc = 0xfa15cb45;//起始值随便定死一个源，以�?1
+int Rtcp::ssrc = 0xfa15cb45;//a fix number at start, afterwards plus 1
 
 Rtcp::Rtcp(UINT mtu):Udp(mtu)
 {
     memset(&rcvf, 0, sizeof(recieveSRFrom));
     memset(&sdt, 0, sizeof(sendRRTo));
-    initS = 0;//确定第一个包是否被填
-    memset(sSeNum, 0, 2);//最初的包数
-    memset(lSeNum, 0, 2);//上一次发送RR的包�?
-    memset(eSeNum, 0, 2);//最后一次的包数
-    allGet = 0;//总接受数
-    perGet = 0;//单次接受�?
-    memset(LSR, 0, 4);//:从reportee端最后收到的Sender Report中NTP timestamp的中32bits.(无则�?) 
+    initS = 0;//eetermining whether the fitst package is filled
+    memset(sSeNum, 0, 2);//the initial number of packets
+    memset(lSeNum, 0, 2);//number of RR packets send last time
+    memset(eSeNum, 0, 2);//number of packets at last time
+    allGet = 0;//The total package number of get
+    perGet = 0;//the package number per get
+    memset(LSR, 0, 4);//NTP timestamp (32bits) in Sender Report last received form reportee end.(nothing is 0)
     R_S = 0;
     jitter = 0;
 }
@@ -29,7 +29,6 @@ void Rtcp::ParseMrl(string mrl)
     iFind = mrl.find("rtsp://");
     if(iFind == string::npos)
     {
-        //printf("rtsp: bad url: %s\n", mrl);
         return;
     }
     mrl.erase(0, iFind + 7);
@@ -142,7 +141,7 @@ void Rtcp::copy(recieveSRFrom *des, recieveSRFrom *src)
 
 int Rtcp::Handle(BYTE* pBuffer, UINT16 bufferSize)
 {
-    //记录SR数据
+    //save SR data
 
     recieveSRFrom tmpSR;
     tmpSR.SR.head = pBuffer[0];
@@ -154,7 +153,7 @@ int Rtcp::Handle(BYTE* pBuffer, UINT16 bufferSize)
     memcpy(tmpSR.SR.packetCount, pBuffer + RTCP_PACKET_START, RTCP_PACKET_SIZE);
     memcpy(tmpSR.SR.octetCount, pBuffer + RTCP_PLAYLOAD_START, RTCP_PLAYLOAD_SIZE);
 
-    //记录SDES数据
+    //save SDES data
     UINT8 tmp[2] = {0};
     memcpy(tmp, &tmpSR.SR.length[1], 1);
     memcpy(tmp + 1, &tmpSR.SR.length[0], 1);
