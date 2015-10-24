@@ -32,12 +32,7 @@ BOOL CRTSPRequest::Open(char* mrl, PCSTR bindIp, INT bindPort)
     if(!Tcp::Connect(preSuffix.c_str(), port))
         return FALSE;
 
-    //printf("\nConnect server: %s port:%i addr:%s\n\n", preSuffix.c_str(), port, suffix.c_str());
-
     m_State = stateConnected;
-
-    //if ( !RequestOptions() )
-    //	return FALSE;
 
     return TRUE;
 }
@@ -94,8 +89,6 @@ BOOL CRTSPRequest::RequestDescribe(string* pDescribe, char* name, char* pwd)
         return FALSE;
 
     SendRequest("DESCRIBE", name, pwd);
-
-    //printf("\n");
 
     if(!GetResponses())
         return FALSE;
@@ -245,11 +238,6 @@ BOOL CRTSPRequest::RequestTeardown()
 
     SendRequest("TEARDOWN");
 
-    printf("\n");
-
-    //if ( !GetResponses() )
-    //	return FALSE;
-
     m_State = stateInit;
 
     return TRUE;
@@ -260,11 +248,6 @@ BOOL CRTSPRequest::RequestTeardown(char *name, char *pwd)
         return FALSE;
 
     SendRequest("TEARDOWN", name, pwd);
-
-    printf("\n");
-
-    //if ( !GetResponses() )
-    //	return FALSE;
 
     m_State = stateInit;
 
@@ -306,14 +289,14 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
     pDescribeBuffer[describeSize] = '\0';
 
     *pDescribe = (char*)pDescribeBuffer;
-    //提取字符串供setup使用
+    //get string for setup
     int tip;
-    //寻找video码流
+    //find video stream information
     tip = pDescribe->find("m=video", 0);
 
     if(tip < 0) return false;
 
-    //在video码流中寻找解码格�?
+    //find codec format in video stream information
     int deTip = pDescribe->find("a=rtpmap:96 MP4V-ES", tip + 1);
     if(deTip >= 0)
         encoding_type = 2;
@@ -326,14 +309,11 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
             return false;
     }
 
-    //
-    //寻找是否有给定帧�?
+    //find FPS
     frame = -1;
     int frameTip = pDescribe->find("a=framerate:", tip + 1);
     if(frameTip >= 0)
         frame = atoi(pDescribe->c_str() + frameTip + 12);
-
-    //
 
     int videoTip = pDescribe->find("a=control:", tip + 1);
 
@@ -341,7 +321,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
     {
         char videotemp[200];
         int i = 1;
-        videotemp[0] = '0';//代表添加
+        videotemp[0] = '0';//represent add
         while(*(pDescribeBuffer + videoTip + 10) != '\r')
         {
             videotemp[i] = *(pDescribeBuffer + videoTip + 10);
@@ -355,7 +335,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
     {
         char videotemp[200];
         int i = 1;
-        videotemp[0] = '1';//代表完整
+        videotemp[0] = '1';//represent completed
         while(*(pDescribeBuffer + videoTip + 10) != '\r')
         {
             videotemp[i] = *(pDescribeBuffer + videoTip + 10);
@@ -365,7 +345,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
         videotemp[i] = '\0';
         m_SetupName_video = videotemp;
     }
-    //寻找audio码流
+    //find audio stream
 
     tip = pDescribe->find("m=audio", 0);
 
@@ -378,7 +358,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
         {
             char audiotemp[200];
             int i = 1;
-            audiotemp[0] = '0';//代表添加
+            audiotemp[0] = '0';//represent add
             while(*(pDescribeBuffer + audioTip + 10) != '\r')
             {
                 audiotemp[i] = *(pDescribeBuffer + audioTip + 10);
@@ -392,7 +372,7 @@ BOOL CRTSPRequest::GetDescribe(string* pDescribe)
         {
             char audiotemp[200];
             int i = 1;
-            audiotemp[0] = '1';//代表完整
+            audiotemp[0] = '1';//represent completed
             while(*(pDescribeBuffer + audioTip + 10) != '\r')
             {
                 audiotemp[i] = *(pDescribeBuffer + audioTip + 10);
@@ -449,9 +429,8 @@ void CRTSPRequest::SendRequest(string requestType)
 
     if(m_Session[0] > 0)
         Write(session);
-    Write("User-Agent: LibVLC/2.1.3 (LIVE555 Streaming Media v2014.01.21)");//infito摄像头必须加�?
+    Write("User-Agent: LibVLC/2.1.3 (LIVE555 Streaming Media v2014.01.21)");//must be added if it is infito IPC 
     WriteFields();
-    //Write("Authorization: Basic YWRtaW46MTIzNDU=");
     Write("");
 }
 
@@ -528,15 +507,8 @@ BOOL CRTSPRequest::GetResponses()
     {
         iRead = Read(str);
 
-        //中心力维的相机会立马发送rtcp包，在这份代码里要去除这个干�?只有�?4 ** 00 **的模式时才有效，不然要重新设计代�?
-        /*if(*((char *)str.c_str()) == 0x24)
-        {
-        int size;
-        Socket::Read((BYTE *)&size,1);
-        char leave[0xFF];
-        Socket::Read((BYTE*)leave,size);
-        continue;
-        }*/
+        //CNV IPC will send rtcp package immediately, remove the disrupt in this code。
+        //Only when 24 ** 00 ** is valid, or the code will be redesigned.
 
         if(iRead > 0)
         {
@@ -546,7 +518,6 @@ BOOL CRTSPRequest::GetResponses()
                 cseq = atoi(str.substr(iFind + 5).c_str());
                 if(m_CSeq != cseq)
                 {
-                    //printf("warning: CSeq mismatch. got %u, assumed %u\n", cseq, m_CSeq);
                     m_CSeq = cseq;
                 }
             }
@@ -554,7 +525,7 @@ BOOL CRTSPRequest::GetResponses()
             iFind = str.find("Session:");
             if(iFind != -1)
             {
-                //session = _atoi64( str.substr(iFind+8).c_str() );//字符数字混搭就不行了
+                //won't work when character and number are together
                 int head, tail;
                 head = iFind + 8;
                 tail = iFind + 8;
@@ -567,14 +538,8 @@ BOOL CRTSPRequest::GetResponses()
                 if(m_Session[0] == 0)
                 {
                     strcpy(m_Session, session);
-                    //printf("setting session id to: %I64u\n", m_Session);
                 }
             }
-            //FILE *fp;
-            //fp = fopen("c:\\123.log","a+");
-            //fputs(str.c_str(),fp);
-            //fputc('\n',fp);
-            //fclose(fp);
             m_Responses.push_back(str);
         }
     }
@@ -606,7 +571,7 @@ BOOL CRTSPRequest::SearchResponses(string* pStr, string field)
         {
             *pStr = m_Responses[iResponse];
 
-            //去除头部多余字符
+            //remove unnecessary characters
             pStr->erase(0, iFind + field.size());
 
             iFind = pStr->find_first_not_of(':');
