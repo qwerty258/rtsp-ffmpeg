@@ -39,6 +39,12 @@
     <ClInclude Include="GPUUsage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PSData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libRTPConcurrentQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GPUUsage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libRTPConcurrentQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
