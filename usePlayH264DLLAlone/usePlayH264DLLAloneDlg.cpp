@@ -75,9 +75,9 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     // TODO: Add extra initialization here
 
     FILE* pDataFile;
-    errno_t error = fopen_s(&pDataFile, "D:\\test_video_data.h264", "rb");
+    errno_t error = fopen_s(&pDataFile, "D:\\PSdata", "rb");
     FILE* pSizeFile;
-    error = fopen_s(&pSizeFile, "D:\\test_video_size", "rb");
+    error = fopen_s(&pSizeFile, "D:\\PSdataSize", "rb");
 
     fseek(pDataFile, 0, SEEK_END);
     fseek(pSizeFile, 0, SEEK_END);
@@ -112,7 +112,7 @@ BOOL CusePlayH264DLLAloneDlg::OnInitDialog()
     m_inputParameter.playHandle = m_hWnd;
     m_inputParameter.width = 1920;
 
-    if(0 > initial_decode_parameter(m_instance, &m_inputParameter, 1))
+    if(0 > initial_decode_parameter(m_instance, &m_inputParameter, 3))
     {
         AfxMessageBox(_T("initial_decode_parameter failed"));
         return TRUE;
