@@ -18,6 +18,8 @@ extern "C" {
 #endif
 
 #include "PlayH264DLL.h"
+#include "PSData.h"
+#include "libRTPConcurrentQueue.h"
 
 #define PLAYVIDEO 0
 #define STOPVIDEO -2
@@ -50,6 +52,22 @@ typedef struct
     int number_of_lost_frame;
 }dataNode;
 
+#define IOBUFFERSIZE 4096
+
+typedef struct _special_context_for_PS
+{
+    bool stream_opened;
+    uint8_t* iobuffer;
+    AVIOContext* p_AVIOContext;
+    AVFormatContext* p_AVFormatContext;
+    concurrent_queue_handle PS_data_queue;
+    enum AVCodecID CodecID;
+    unsigned int video_stream_index;
+    HANDLE thread_handle;
+    PS_data* poped_buffer;
+    uint8_t* current_position;
+    int size_remain;
+}special_context_for_PS;
 
 class CDecode
 {
@@ -127,6 +145,11 @@ public:
     // for GDI paly begin
     HDC m_hDC;
     // for GDI paly end
+
+    // for PS begin
+    special_context_for_PS* m_p_special_context_for_PS;
+    int initial_PS_context(void);
+    // for PS end
 };
 
 //int SaveAsBMPbuf(AVFrame *pFrameRGB, int width, int height,uint8_t *BMPbuf);

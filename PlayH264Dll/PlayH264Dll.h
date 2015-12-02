@@ -53,7 +53,7 @@ extern "C" {
     // Returns:   int: 0 success, -1 failure
     // Parameter: int instance: the idle instance return by get_idle_decode_instance()
     // Parameter: myparamInput* Myparam: decode parameters
-    // Parameter: int type: encoding type, h264: 1 , mpeg: 2 
+    // Parameter: int type: encoding type, h264: 1 , mpeg: 2 ,PS: 3
     //************************************
     PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam, int type);
 

@@ -145,7 +145,7 @@ DWORD WINAPI videoDecodeQueue(LPVOID lpParam)
             codeType = CODEC_ID_MPEG4;
             break;
         case 3:
-            codeType = CODEC_ID_FLV1;
+            codeType = CODEC_ID_H264;
             break;
         default:
             break;
@@ -514,6 +514,10 @@ CDecode::CDecode()
     m_hDC = NULL;
     memset(&bmpinfo, 0x0, sizeof(BITMAPINFOHEADER));
     // for GDI paly end
+
+    // for PS begin
+    m_p_special_context_for_PS = NULL;
+    // for PS end
 }
 
 CDecode::~CDecode()
@@ -522,6 +526,36 @@ CDecode::~CDecode()
     {
         ReleaseDC(paramUser.playHandle, m_hDC);
     }
+
+    if(INVALID_HANDLE_VALUE != m_p_special_context_for_PS->thread_handle)
+    {
+        m_p_special_context_for_PS->stream_opened = false;
+        WaitForSingleObject(m_p_special_context_for_PS->thread_handle, INFINITE);
+        CloseHandle(m_p_special_context_for_PS->thread_handle);
+        m_p_special_context_for_PS->thread_handle = INVALID_HANDLE_VALUE;
+    }
+
+    concurrent_queue_free(&m_p_special_context_for_PS->PS_data_queue);
+
+    if(NULL != m_p_special_context_for_PS->p_AVIOContext)
+    {
+        av_free(m_p_special_context_for_PS->p_AVIOContext);
+        m_p_special_context_for_PS->p_AVIOContext = NULL;
+    }
+
+    if(NULL != m_p_special_context_for_PS->p_AVFormatContext)
+    {
+        avformat_free_context(m_p_special_context_for_PS->p_AVFormatContext);
+        m_p_special_context_for_PS->p_AVFormatContext = NULL;
+    }
+
+    if(NULL != m_p_special_context_for_PS->iobuffer)
+    {
+        av_free(m_p_special_context_for_PS->iobuffer);
+        m_p_special_context_for_PS->iobuffer = NULL;
+    }
+
+    delete m_p_special_context_for_PS;
 }
 
 int CDecode::playBMPbuf(AVFrame *pFrameRGB, int width, int height, int playW, int playH)
@@ -694,4 +728,99 @@ void CDecode::dataQueueClean()
             delete p_data_node_temp;
         }
     }
+}
+
+int fill_iobuffer(void* opaque, uint8_t* buf, int bufSize)
+{
+    CDecode* p_CDecode = (CDecode*)opaque;
+    PS_data* p_PS_data = NULL;
+    // poped buffer fully read
+    if(NULL == p_CDecode->m_p_special_context_for_PS->poped_buffer)
+    {
+        // get new PS data
+        p_PS_data = (PS_data*)concurrent_queue_pophead(p_CDecode->m_p_special_context_for_PS->PS_data_queue);
+        if(NULL == p_PS_data)
+        {
+            return 0;
+        }
+        else
+        {
+            p_CDecode->m_p_special_context_for_PS->poped_buffer = p_PS_data;
+            p_CDecode->m_p_special_context_for_PS->current_position = p_PS_data->data;
+            p_CDecode->m_p_special_context_for_PS->size_remain = p_PS_data->size;
+            if(bufSize >= p_CDecode->m_p_special_context_for_PS->size_remain)
+            {
+                memcpy(buf, p_CDecode->m_p_special_context_for_PS->current_position, p_CDecode->m_p_special_context_for_PS->size_remain);
+                bufSize = p_CDecode->m_p_special_context_for_PS->size_remain;
+                delete p_CDecode->m_p_special_context_for_PS->poped_buffer->data;
+                delete p_CDecode->m_p_special_context_for_PS->poped_buffer;
+                p_CDecode->m_p_special_context_for_PS->poped_buffer = NULL;
+                p_CDecode->m_p_special_context_for_PS->current_position = NULL;
+                p_CDecode->m_p_special_context_for_PS->size_remain = 0;
+                return bufSize;
+            }
+            else
+            {
+                memcpy(buf, p_CDecode->m_p_special_context_for_PS->current_position, bufSize);
+                p_CDecode->m_p_special_context_for_PS->current_position += bufSize;
+                p_CDecode->m_p_special_context_for_PS->size_remain -= bufSize;
+                return bufSize;
+            }
+        }
+    }
+    // poped buffer not fully read
+    else
+    {
+        if(bufSize >= p_CDecode->m_p_special_context_for_PS->size_remain)
+        {
+            memcpy(buf, p_CDecode->m_p_special_context_for_PS->current_position, p_CDecode->m_p_special_context_for_PS->size_remain);
+            bufSize = p_CDecode->m_p_special_context_for_PS->size_remain;
+            delete p_CDecode->m_p_special_context_for_PS->poped_buffer->data;
+            delete p_CDecode->m_p_special_context_for_PS->poped_buffer;
+            p_CDecode->m_p_special_context_for_PS->poped_buffer = NULL;
+            p_CDecode->m_p_special_context_for_PS->current_position = NULL;
+            p_CDecode->m_p_special_context_for_PS->size_remain = 0;
+            return bufSize;
+        }
+        else
+        {
+            memcpy(buf, p_CDecode->m_p_special_context_for_PS->current_position, bufSize);
+            p_CDecode->m_p_special_context_for_PS->current_position += bufSize;
+            p_CDecode->m_p_special_context_for_PS->size_remain -= bufSize;
+            return bufSize;
+        }
+    }
+}
+
+int CDecode::initial_PS_context(void)
+{
+    m_p_special_context_for_PS = new special_context_for_PS;
+    if(NULL == m_p_special_context_for_PS)
+    {
+        MessageBox(NULL, _T("Memory Error"), _T("Error"), MB_OK);
+        return -1;
+    }
+
+    memset(m_p_special_context_for_PS, 0x0, sizeof(special_context_for_PS));
+
+    m_p_special_context_for_PS->iobuffer = (uint8_t*)av_malloc(IOBUFFERSIZE);
+    m_p_special_context_for_PS->p_AVFormatContext = avformat_alloc_context();
+    m_p_special_context_for_PS->p_AVIOContext = avio_alloc_context(
+        m_p_special_context_for_PS->iobuffer,
+        IOBUFFERSIZE,
+        0,
+        this,
+        fill_iobuffer,
+        NULL,
+        NULL);
+    m_p_special_context_for_PS->stream_opened = true;
+    m_p_special_context_for_PS->thread_handle = INVALID_HANDLE_VALUE;
+    m_p_special_context_for_PS->poped_buffer = NULL;
+    m_p_special_context_for_PS->current_position = NULL;
+    m_p_special_context_for_PS->size_remain = 0;
+    m_p_special_context_for_PS->PS_data_queue = concurrent_queue_get_handle();
+
+    m_p_special_context_for_PS->p_AVFormatContext->pb = m_p_special_context_for_PS->p_AVIOContext;
+
+    return 0;
 }

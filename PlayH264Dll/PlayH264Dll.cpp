@@ -31,6 +31,8 @@ int          max_decode_number;
 
 bool NVIDIA_GPU_driver_initialed;
 
+int __decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp);
+
 int check_instance(int instance)
 {
     if(0 > instance || max_decode_number < instance || NULL == decode_list)
@@ -112,6 +114,71 @@ PLAYH264DLL_API int get_idle_decode_instance(void)
     return -1;
 }
 
+DWORD WINAPI get_H264_out_of_PS(LPVOID lpParam)
+{
+    CDecode* p_CDecode = (CDecode*)lpParam;
+    AVPacket* pAVPacket = (AVPacket*)av_malloc(sizeof(AVPacket));
+    bool opened = false;
+    int result = 0;
+
+    Sleep(500);
+
+    while(p_CDecode->m_p_special_context_for_PS->stream_opened)
+    {
+        Sleep(20);
+        if(!opened)
+        {
+            result = -1;
+            do
+            {
+                result = avformat_open_input(
+                    &p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
+                    "",
+                    NULL,
+                    NULL);
+            } while(0 != result);
+
+            result = avformat_find_stream_info(
+                p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
+                NULL);
+            if(0 != result)
+            {
+                return -1;
+            }
+
+            for(p_CDecode->m_p_special_context_for_PS->video_stream_index = 0;
+                p_CDecode->m_p_special_context_for_PS->video_stream_index < p_CDecode->m_p_special_context_for_PS->p_AVFormatContext->nb_streams;
+                p_CDecode->m_p_special_context_for_PS->video_stream_index++)
+            {
+                if(AVMEDIA_TYPE_VIDEO == p_CDecode->m_p_special_context_for_PS->p_AVFormatContext->streams[p_CDecode->m_p_special_context_for_PS->video_stream_index]->codec->codec_type)
+                {
+                    p_CDecode->m_p_special_context_for_PS->CodecID = p_CDecode->m_p_special_context_for_PS->p_AVFormatContext->streams[p_CDecode->m_p_special_context_for_PS->video_stream_index]->codec->codec_id;
+                    break;
+                }
+            }
+
+            p_CDecode->bmpinfo.bmiHeader.biHeight = p_CDecode->m_p_special_context_for_PS->p_AVFormatContext->streams[p_CDecode->m_p_special_context_for_PS->video_stream_index]->codec->height;
+            p_CDecode->bmpinfo.bmiHeader.biWidth = p_CDecode->m_p_special_context_for_PS->p_AVFormatContext->streams[p_CDecode->m_p_special_context_for_PS->video_stream_index]->codec->width;
+            p_CDecode->paramUser.height = p_CDecode->bmpinfo.bmiHeader.biHeight;
+            p_CDecode->paramUser.width = p_CDecode->bmpinfo.bmiHeader.biWidth;
+
+            opened = true;
+        }
+
+
+        av_read_frame(
+            p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
+            pAVPacket);
+        if(pAVPacket->stream_index == p_CDecode->m_p_special_context_for_PS->video_stream_index)
+        {
+            result = __decode(p_CDecode->m_decode_instance, pAVPacket->data, pAVPacket->size, 0, 0);
+        }
+        av_free_packet(pAVPacket);
+    }
+
+    return 0;
+}
+
 PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam, int type)
 {
     if(NULL == Myparam || 0 > check_instance(instance))
@@ -121,39 +188,51 @@ PLAYH264DLL_API int initial_decode_parameter(int instance, myparamInput* Myparam
 
     decode_list[instance].p_CDecode->type = type;
 
-    AVCodecID codeType;
+    AVCodecID codeType = AV_CODEC_ID_NONE;
+    int result = 0;
+    DWORD temp;
 
     switch(decode_list[instance].p_CDecode->type)
     {
         case 1:
-            codeType = CODEC_ID_H264;
+            codeType = AV_CODEC_ID_H264;
             break;
         case 2:
-            codeType = CODEC_ID_MPEG4;
-            break;
-        case 3:
-            codeType = CODEC_ID_FLV1;
+            codeType = AV_CODEC_ID_MPEG4;
             break;
         default:
             break;
     }
 
-    decode_list[instance].p_CDecode->m_p_AVCodecParserContext = av_parser_init(codeType);
-    decode_list[instance].p_CDecode->m_p_AVCodec = avcodec_find_decoder(codeType);
-    decode_list[instance].p_CDecode->m_p_AVCodecContext = avcodec_alloc_context3(decode_list[instance].p_CDecode->m_p_AVCodec);
+    if(3 != type)
+    {
+        decode_list[instance].p_CDecode->m_p_AVCodecParserContext = av_parser_init(codeType);
+        decode_list[instance].p_CDecode->m_p_AVCodec = avcodec_find_decoder(codeType);
+        decode_list[instance].p_CDecode->m_p_AVCodecContext = avcodec_alloc_context3(decode_list[instance].p_CDecode->m_p_AVCodec);
 
-    decode_list[instance].idle = 1;
+        decode_list[instance].idle = 1;
 
-    return decode_list[instance].p_CDecode->InputParam(Myparam);
+        return decode_list[instance].p_CDecode->InputParam(Myparam);
+    }
+    else
+    {
+        decode_list[instance].p_CDecode->m_p_AVCodecParserContext = av_parser_init(AV_CODEC_ID_H264);
+        decode_list[instance].p_CDecode->m_p_AVCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
+        decode_list[instance].p_CDecode->m_p_AVCodecContext = avcodec_alloc_context3(decode_list[instance].p_CDecode->m_p_AVCodec);
+
+        decode_list[instance].idle = 1;
+
+        result = decode_list[instance].p_CDecode->InputParam(Myparam);
+        result = decode_list[instance].p_CDecode->initial_PS_context();
+
+        decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle = CreateThread(NULL, 0, get_H264_out_of_PS, decode_list[instance].p_CDecode, 0, &temp);
+
+        return result;
+    }
 }
 
-PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp)
+int __decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp)
 {
-    if(0 > check_instance(instance) || 1 != decode_list[instance].idle || NULL == decode_list[instance].p_CDecode->m_p_AVCodecParserContext)
-    {
-        return -1;
-    }
-
     int pos = 0;
     int64_t pts = AV_NOPTS_VALUE;
     int64_t dts = AV_NOPTS_VALUE;
@@ -211,6 +290,41 @@ PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, uns
     } while(pos < size);
 
     return 0;
+}
+
+#include "PSData.h"
+
+PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, unsigned short sequence_number, unsigned int timestamp)
+{
+    if(0 > check_instance(instance) || 1 != decode_list[instance].idle || NULL == decode_list[instance].p_CDecode->m_p_AVCodecParserContext)
+    {
+        return -1;
+    }
+
+    PS_data* buffer = NULL;
+
+    if(3 != decode_list[instance].p_CDecode->type)
+    {
+        return __decode(instance, pInBuffer, size, sequence_number, timestamp);
+    }
+    else
+    {
+        buffer = new PS_data;
+        if(NULL != buffer)
+        {
+            buffer->data = new uint8_t[size];
+            if(NULL != buffer->data)
+            {
+                memcpy(buffer->data, pInBuffer, size);
+                buffer->size = size;
+                concurrent_queue_pushback(
+                    decode_list[instance].p_CDecode->m_p_special_context_for_PS->PS_data_queue,
+                    buffer);
+            }
+        }
+
+        return 0;
+    }
 }
 
 PLAYH264DLL_API int playing_windows_RECT_changed_of_decode_DLL(int instance)
