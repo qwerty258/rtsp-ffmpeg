@@ -121,28 +121,33 @@ DWORD WINAPI get_H264_out_of_PS(LPVOID lpParam)
     bool opened = false;
     int result = 0;
 
-    Sleep(500);
+    Sleep(1000);
 
     while(p_CDecode->m_p_special_context_for_PS->stream_opened)
     {
         Sleep(20);
         if(!opened)
         {
-            result = -1;
-            do
+            result = avformat_open_input(
+                &p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
+                "",
+                NULL,
+                NULL);
+            if(0 != result)
             {
                 result = avformat_open_input(
                     &p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
                     "",
                     NULL,
                     NULL);
-            } while(0 != result);
+            }
 
             result = avformat_find_stream_info(
                 p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
                 NULL);
-            if(0 != result)
+            if(0 <= result)
             {
+                MessageBoxA(NULL, "avformat_find_stream_info error", "ERROR", MB_OK);
                 return -1;
             }
 
@@ -315,11 +320,19 @@ PLAYH264DLL_API int decode(int instance, unsigned char* pInBuffer, int size, uns
             buffer->data = new uint8_t[size];
             if(NULL != buffer->data)
             {
-                memcpy(buffer->data, pInBuffer, size);
-                buffer->size = size;
-                concurrent_queue_pushback(
-                    decode_list[instance].p_CDecode->m_p_special_context_for_PS->PS_data_queue,
-                    buffer);
+                if(0 < size)
+                {
+                    memcpy(buffer->data, pInBuffer, size);
+                    buffer->size = size;
+                    concurrent_queue_pushback(
+                        decode_list[instance].p_CDecode->m_p_special_context_for_PS->PS_data_queue,
+                        buffer);
+                }
+                else
+                {
+                    delete buffer->data;
+                    delete buffer;
+                }
             }
         }
 
@@ -342,6 +355,26 @@ PLAYH264DLL_API int free_decode_instance(int instance)
     if(0 > check_instance(instance) || 1 != decode_list[instance].idle)
     {
         return -1;
+    }
+
+    PS_data* buffer = NULL;
+
+    if(3 == decode_list[instance].p_CDecode->type)
+    {
+        decode_list[instance].p_CDecode->m_p_special_context_for_PS->stream_opened = false;
+        WaitForSingleObject(decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle, INFINITE);
+        CloseHandle(decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle);
+        decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle = INVALID_HANDLE_VALUE;
+
+        do
+        {
+            buffer = (PS_data*)concurrent_queue_pophead(decode_list[instance].p_CDecode->m_p_special_context_for_PS->PS_data_queue);
+            if(NULL != buffer)
+            {
+                free(buffer->data);
+                free(buffer);
+            }
+        } while(NULL != buffer);
     }
 
     decode_list[instance].idle = 2;//ensure locks
