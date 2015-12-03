@@ -527,14 +527,6 @@ CDecode::~CDecode()
         ReleaseDC(paramUser.playHandle, m_hDC);
     }
 
-    if(INVALID_HANDLE_VALUE != m_p_special_context_for_PS->thread_handle)
-    {
-        m_p_special_context_for_PS->stream_opened = false;
-        WaitForSingleObject(m_p_special_context_for_PS->thread_handle, INFINITE);
-        CloseHandle(m_p_special_context_for_PS->thread_handle);
-        m_p_special_context_for_PS->thread_handle = INVALID_HANDLE_VALUE;
-    }
-
     concurrent_queue_free(&m_p_special_context_for_PS->PS_data_queue);
 
     if(NULL != m_p_special_context_for_PS->p_AVIOContext)
@@ -547,12 +539,6 @@ CDecode::~CDecode()
     {
         avformat_free_context(m_p_special_context_for_PS->p_AVFormatContext);
         m_p_special_context_for_PS->p_AVFormatContext = NULL;
-    }
-
-    if(NULL != m_p_special_context_for_PS->iobuffer)
-    {
-        av_free(m_p_special_context_for_PS->iobuffer);
-        m_p_special_context_for_PS->iobuffer = NULL;
     }
 
     delete m_p_special_context_for_PS;
