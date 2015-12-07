@@ -118,6 +118,7 @@ DWORD WINAPI get_H264_out_of_PS(LPVOID lpParam)
 {
     CDecode* p_CDecode = (CDecode*)lpParam;
     AVPacket* pAVPacket = (AVPacket*)av_malloc(sizeof(AVPacket));
+    AVInputFormat* p_AVInputFormat = NULL;
     bool opened = false;
     int result = 0;
 
@@ -128,10 +129,18 @@ DWORD WINAPI get_H264_out_of_PS(LPVOID lpParam)
         Sleep(20);
         if(!opened)
         {
+            result = av_probe_input_buffer2(
+                p_CDecode->m_p_special_context_for_PS->p_AVIOContext,
+                &p_AVInputFormat,
+                "",
+                NULL,
+                0,
+                0);
+
             result = avformat_open_input(
                 &p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
                 "",
-                NULL,
+                p_AVInputFormat,
                 NULL);
             if(0 != result)
             {
@@ -145,7 +154,7 @@ DWORD WINAPI get_H264_out_of_PS(LPVOID lpParam)
             result = avformat_find_stream_info(
                 p_CDecode->m_p_special_context_for_PS->p_AVFormatContext,
                 NULL);
-            if(0 <= result)
+            if(0 > result)
             {
                 MessageBoxA(NULL, "avformat_find_stream_info error", "ERROR", MB_OK);
                 return -1;
