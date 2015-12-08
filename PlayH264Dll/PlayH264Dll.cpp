@@ -366,24 +366,12 @@ PLAYH264DLL_API int free_decode_instance(int instance)
         return -1;
     }
 
-    PS_data* buffer = NULL;
-
     if(3 == decode_list[instance].p_CDecode->type)
     {
         decode_list[instance].p_CDecode->m_p_special_context_for_PS->stream_opened = false;
         WaitForSingleObject(decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle, INFINITE);
         CloseHandle(decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle);
         decode_list[instance].p_CDecode->m_p_special_context_for_PS->thread_handle = INVALID_HANDLE_VALUE;
-
-        do
-        {
-            buffer = (PS_data*)concurrent_queue_pophead(decode_list[instance].p_CDecode->m_p_special_context_for_PS->PS_data_queue);
-            if(NULL != buffer)
-            {
-                free(buffer->data);
-                free(buffer);
-            }
-        } while(NULL != buffer);
     }
 
     decode_list[instance].idle = 2;//ensure locks

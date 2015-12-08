@@ -527,18 +527,33 @@ CDecode::~CDecode()
         ReleaseDC(paramUser.playHandle, m_hDC);
     }
 
-    concurrent_queue_free(&m_p_special_context_for_PS->PS_data_queue);
+    PS_data* buffer = NULL;
 
-    if(NULL != m_p_special_context_for_PS->p_AVIOContext)
+    if(3 == type)
     {
-        av_free(m_p_special_context_for_PS->p_AVIOContext);
-        m_p_special_context_for_PS->p_AVIOContext = NULL;
-    }
+        if(NULL != m_p_special_context_for_PS->p_AVIOContext)
+        {
+            av_free(m_p_special_context_for_PS->p_AVIOContext);
+            m_p_special_context_for_PS->p_AVIOContext = NULL;
+        }
 
-    if(NULL != m_p_special_context_for_PS->p_AVFormatContext)
-    {
-        avformat_free_context(m_p_special_context_for_PS->p_AVFormatContext);
-        m_p_special_context_for_PS->p_AVFormatContext = NULL;
+        if(NULL != m_p_special_context_for_PS->p_AVFormatContext)
+        {
+            avformat_free_context(m_p_special_context_for_PS->p_AVFormatContext);
+            m_p_special_context_for_PS->p_AVFormatContext = NULL;
+        }
+
+        do
+        {
+            buffer = (PS_data*)concurrent_queue_pophead(m_p_special_context_for_PS->PS_data_queue);
+            if(NULL != buffer)
+            {
+                free(buffer->data);
+                free(buffer);
+            }
+        } while(NULL != buffer);
+
+        concurrent_queue_free(&m_p_special_context_for_PS->PS_data_queue);
     }
 
     delete m_p_special_context_for_PS;
