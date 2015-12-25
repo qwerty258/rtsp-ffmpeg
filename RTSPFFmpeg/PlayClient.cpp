@@ -203,6 +203,7 @@ CRTSPClient::CRTSPClient()
     m_bInitURI = false;
     m_bConnected = false;
     m_bPlaying = false;
+    m_bPause = false;
 
     m_URI = new char[256];
     m_userName = new char[256];
