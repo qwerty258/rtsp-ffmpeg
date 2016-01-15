@@ -1,0 +1,73 @@
+RTSPFFmpeg (1.0.1550.163)
+	* RTSPFFmpeg:
+	* Recompile to link to corresponding PlayH264DLL.dll.
+	* PlayH264DLL:
+	* Add PS(MPEG Program Stream) demux decoding and 
+	  playing.
+
+RTSPFFmpeg (1.0.1544.141)
+	* RTSPFFmpeg:
+	* Recompile to link to corresponding PlayH264DLL.dll.
+	* PlayH264DLL:
+	* Fix RGB24 callback data always to be green when 
+	  playing using hardware decoding.
+	* Fix the problem that RGB24 callback data is mirrored
+	  and rotated.
+
+RTSPFFmpeg (1.0.1543.124)
+	* RTSPFFmpeg:
+	* Add RGB24 callback setting API.
+	* PlayH264DLL:
+	* Add RGB24 callback to give out RGB24 data of every
+	  decoded frame for the efficiency of user application.
+	  This was because I can only get NV12 when using
+	  hardware decoding, and the convertion from NV12 to
+	  YUV420p is resource comsuming. Thus, from now on,
+	  user can set NV12 H264 RGB24 callbacks to get
+	  data when using hardware decoding and YUV420p H264
+	  RGB24 callbacks to get data when using software 
+	  decoding.
+
+RTSPFFmpeg (1.0.1531.101)
+	* RTSPFFmpeg:
+	* Recompile to link to corresponding PlayH264DLL.dll.
+	* PlayH264DLL:
+	* Make it give out all kinds of data in callback
+	  while playing video.
+
+RTSPFFmpeg (1.0.1530.84)
+	* RTSPFFmpeg:
+	* Recompile to link to corresponding PlayH264DLL.dll.
+	* PlayH264DLL:
+	* Fix the problem that width and length data was swaped
+	  in YUV420 callback function when using hardware
+	  decoding.
+	* Make it give out YUV420 data while playing video.
+
+RTSPFFmpeg (1.0.1530.61)
+	* RTSPFFmpeg:
+	* Recompile to link to corresponding PlayH264DLL.dll.
+	* PlayH264DLL:
+	* Rewrite GPU video engine usage moniter code.
+	  Get the real global(the entire computer) usage
+	  using NVIDIA API to distribute decoding tasks
+	  evenly and judge using hardware decoding or not.
+
+RTSPFFmpeg (1.0.1528.45)
+	* RTSPFFmpeg:
+	* Recompile to link to corresponding PlayH264DLL.dll.
+	* PlayH264DLL:
+	* Fix image blurry when using hardware decoding.
+	  This problem occurs when the window enlarged bigger
+	  than the size used to initialize hardware decoding
+	  parameter.
+
+RTSPFFmpeg (1.0.1527.25)
+	* RTSPFFmpeg:
+	* Use new API name.
+	* Rewrite RTP header process code.
+	* Implement package lost statistics.
+	* PlayH264DLL:
+	* Use new API name.
+	* Fix memory leak.
+	* Add package lost statistics.
